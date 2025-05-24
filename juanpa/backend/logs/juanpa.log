@@ -7249,3 +7249,35 @@ FROM card
 [2025-05-24 15:27:53] INFO - sqlalchemy.engine.Engine - _connection_commit_impl:2705 - COMMIT
 [2025-05-24 15:27:53] INFO - juanpa.main - info:130 - Base de datos y tablas verificadas/creadas.
 [2025-05-24 15:27:53] INFO - juanpa.main - info:130 - Sirviendo archivos estáticos desde: D:\Desktop\python\juanpa\backend\static
+[2025-05-24 15:44:14] INFO - juanpa.main - info:130 - Aplicación apagándose...
+[2025-05-24 15:44:18] INFO - juanpa.startup - info:130 - Sistema de logging configurado - Nivel: INFO, Consola: True, Archivo: True
+[2025-05-24 15:44:18] INFO - juanpa.startup - info:130 - Sistema de logging configurado - Nivel: INFO, Consola: True, Archivo: True
+[2025-05-24 15:44:18] INFO - juanpa.main - info:130 - Aplicación iniciando...
+[2025-05-24 15:44:18] INFO - sqlalchemy.engine.Engine - _connection_begin_impl:2699 - BEGIN (implicit)
+[2025-05-24 15:44:18] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - PRAGMA main.table_info("card")
+[2025-05-24 15:44:18] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - [raw sql] ()
+[2025-05-24 15:44:18] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - PRAGMA main.table_info("deck")
+[2025-05-24 15:44:18] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - [raw sql] ()
+[2025-05-24 15:44:18] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - PRAGMA main.table_info("reviewlog")
+[2025-05-24 15:44:18] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - [raw sql] ()
+[2025-05-24 15:44:18] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - PRAGMA main.table_info("usersettings")
+[2025-05-24 15:44:18] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - [raw sql] ()
+[2025-05-24 15:44:18] INFO - sqlalchemy.engine.Engine - _connection_commit_impl:2705 - COMMIT
+[2025-05-24 15:44:18] INFO - juanpa.main - info:130 - Base de datos y tablas verificadas/creadas.
+[2025-05-24 15:44:18] INFO - juanpa.main - info:130 - Sirviendo archivos estáticos desde: D:\Desktop\python\juanpa\backend\static
+[2025-05-24 15:44:25] INFO - juanpa.main - info:130 - Aplicación apagándose...
+[2025-05-24 15:44:29] INFO - juanpa.startup - info:130 - Sistema de logging configurado - Nivel: INFO, Consola: True, Archivo: True
+[2025-05-24 15:44:29] INFO - juanpa.startup - info:130 - Sistema de logging configurado - Nivel: INFO, Consola: True, Archivo: True
+[2025-05-24 15:44:29] INFO - juanpa.main - info:130 - Aplicación iniciando...
+[2025-05-24 15:44:29] INFO - sqlalchemy.engine.Engine - _connection_begin_impl:2699 - BEGIN (implicit)
+[2025-05-24 15:44:29] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - PRAGMA main.table_info("card")
+[2025-05-24 15:44:29] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - [raw sql] ()
+[2025-05-24 15:44:29] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - PRAGMA main.table_info("deck")
+[2025-05-24 15:44:29] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - [raw sql] ()
+[2025-05-24 15:44:29] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - PRAGMA main.table_info("reviewlog")
+[2025-05-24 15:44:29] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - [raw sql] ()
+[2025-05-24 15:44:29] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - PRAGMA main.table_info("usersettings")
+[2025-05-24 15:44:29] INFO - sqlalchemy.engine.Engine - _execute_context:1843 - [raw sql] ()
+[2025-05-24 15:44:29] INFO - sqlalchemy.engine.Engine - _connection_commit_impl:2705 - COMMIT
+[2025-05-24 15:44:29] INFO - juanpa.main - info:130 - Base de datos y tablas verificadas/creadas.
+[2025-05-24 15:44:29] INFO - juanpa.main - info:130 - Sirviendo archivos estáticos desde: D:\Desktop\python\juanpa\backend\static
