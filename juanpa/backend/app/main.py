@@ -17,7 +17,10 @@ try:
     from fsrs import Scheduler, Card as FSRSCard, Rating as FSRSRating, State 
     FSRS_AVAILABLE = True
     # --- DIAGNOSTIC PRINT FOR FSRS STATE ENUM ---
-    print(f"DEBUG: FSRS State Enum Members available: {State.__members__}")
+    try:
+        print(f"DEBUG: FSRS State Enum Members available: {list(State)}")
+    except:
+        print("DEBUG: FSRS State available but enum members not accessible")
     # --- END DIAGNOSTIC --- 
 except ImportError:
     print("WARNING: FSRS library not available. Review functionality will be limited.")
@@ -359,8 +362,8 @@ def get_next_review_card(
     # Query simplificada
     query = select(db.Card).where(
         or_(
-            db.Card.next_review_at == None,  # Nunca repasadas
-            db.Card.next_review_at <= now    # Vencidas
+            db.Card.next_review_at.is_(None),  # Nunca repasadas
+            db.Card.next_review_at <= now      # Vencidas
         )
     )
     
