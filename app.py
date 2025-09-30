@@ -28,10 +28,10 @@ except Exception as e:
 # Inicializar servicio de Gemini
 try:
     gemini_service = GeminiService()
-    # El mensaje ya se muestra dentro de GeminiService
+    print("Servicio de Gemini inicializado correctamente")
 except Exception as e:
     print(f"Servicio de Gemini no disponible: {e}")
-    print("La aplicación funcionará en modo básico sin IA")
+    print("La aplicacion funcionara sin funcionalidades de IA")
     gemini_service = None
 
 class TarjetaReparacion(db.Model):

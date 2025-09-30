@@ -180,6 +180,7 @@ FLASK_ENV=development  # o production
 
 ### 📚 Recursos Adicionales
 
+- 🚨 **QUICK FIX - Error Build**: `QUICK_FIX.md`
 - 🌐 **Despliegue en Render**: `RENDER_DEPLOY.md`
 - 🚨 **Render Manual (Fixes)**: `render-manual.md`
 - 🚂 **Despliegue en Railway**: `RAILWAY_DEPLOY.md`
