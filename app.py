@@ -17,14 +17,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Crear tablas automáticamente al importar (para despliegue)
-try:
-    with app.app_context():
-        db.create_all()
-        print("✅ Tablas de base de datos creadas/verficadas")
-except Exception as e:
-    print(f"⚠️ No se pudieron crear tablas (continuando): {e}")
-
 # Inicializar servicio de Gemini
 try:
     gemini_service = GeminiService()

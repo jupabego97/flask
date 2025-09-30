@@ -31,13 +31,9 @@ Aplicación web avanzada para gestionar reparaciones de equipos tecnológicos us
 # 1. Crear cuenta en Render: https://render.com
 # 2. Conectar repositorio de GitHub
 # 3. Render configura automáticamente PostgreSQL + SSL + HTTPS
-# 4. Elegir: Básico (sin IA) o Completo (con IA)
+# 4. Agregar variable: GEMINI_API_KEY=tu_clave (opcional)
 # ¡Listo! URL automática: https://tu-app.onrender.com
 ```
-
-**Modos de despliegue:**
-- **Básico** (`requirements.txt`): Sin IA, despliegue garantizado ✅
-- **Completo** (`requirements_ai.txt`): Con IA, puede requerir troubleshooting ⚠️
 
 ### Opción 2: Railway (Escalable - Producción Avanzada)
 ```bash
@@ -180,9 +176,7 @@ FLASK_ENV=development  # o production
 
 ### 📚 Recursos Adicionales
 
-- 🚨 **QUICK FIX - Error Build**: `QUICK_FIX.md`
 - 🌐 **Despliegue en Render**: `RENDER_DEPLOY.md`
-- 🚨 **Render Manual (Fixes)**: `render-manual.md`
 - 🚂 **Despliegue en Railway**: `RAILWAY_DEPLOY.md`
 - 📱 **Pruebas móviles**: `MOBILE_TESTING.md`
 - 🤖 **Configuración IA**: `README_GEMINI.md`
