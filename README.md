@@ -177,6 +177,7 @@ FLASK_ENV=development  # o production
 ### 📚 Recursos Adicionales
 
 - 🌐 **Despliegue en Render**: `RENDER_DEPLOY.md`
+- 🚨 **Render Manual (Fixes)**: `render-manual.md`
 - 🚂 **Despliegue en Railway**: `RAILWAY_DEPLOY.md`
 - 📱 **Pruebas móviles**: `MOBILE_TESTING.md`
 - 🤖 **Configuración IA**: `README_GEMINI.md`
