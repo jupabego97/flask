@@ -26,7 +26,16 @@ Aplicación web avanzada para gestionar reparaciones de equipos tecnológicos us
 
 ## 🚀 Despliegue
 
-### Opción 1: Railway (Recomendado - Producción)
+### Opción 1: Render (Recomendado - Fácil Setup)
+```bash
+# 1. Crear cuenta en Render: https://render.com
+# 2. Conectar repositorio de GitHub
+# 3. Render configura automáticamente PostgreSQL + SSL + HTTPS
+# 4. Agregar variable: GEMINI_API_KEY=tu_clave (opcional)
+# ¡Listo! URL automática: https://tu-app.onrender.com
+```
+
+### Opción 2: Railway (Escalable - Producción Avanzada)
 ```bash
 # 1. Crear cuenta en Railway: https://railway.app
 # 2. Conectar repositorio de GitHub
@@ -35,7 +44,7 @@ Aplicación web avanzada para gestionar reparaciones de equipos tecnológicos us
 # ¡Listo! URL automática: https://tu-app.up.railway.app
 ```
 
-### Opción 2: Instalación Local (Desarrollo)
+### Opción 3: Instalación Local (Desarrollo)
 
 1. **Instalar Python** (si no está instalado):
    - Descargar desde https://python.org
@@ -67,7 +76,8 @@ run.bat
 **URLs disponibles:**
 - **Local**: `http://localhost:5000`
 - **Red local**: `http://192.168.X.X:5000`
-- **Producción**: URL de Railway
+- **Render**: `https://tu-app.onrender.com`
+- **Railway**: `https://tu-app.up.railway.app`
 
 ## 🎯 Uso de la Aplicación
 
@@ -166,7 +176,8 @@ FLASK_ENV=development  # o production
 
 ### 📚 Recursos Adicionales
 
-- 📖 **Documentación completa**: `RAILWAY_DEPLOY.md`
+- 🌐 **Despliegue en Render**: `RENDER_DEPLOY.md`
+- 🚂 **Despliegue en Railway**: `RAILWAY_DEPLOY.md`
 - 📱 **Pruebas móviles**: `MOBILE_TESTING.md`
 - 🤖 **Configuración IA**: `README_GEMINI.md`
 
