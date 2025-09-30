@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reparaciones IT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .kanban-column {
+            min-height: 300px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        /* Responsive heights */
+        @media (min-width: 576px) {
+            .kanban-column {
+                min-height: 400px;
+                padding: 12px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .kanban-column {
+                min-height: 500px;
+                padding: 15px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .kanban-column {
+                min-height: 600px;
+            }
+        }
+
+        .droppable-column {
+            min-height: 250px;
+            border: 2px dashed transparent;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        /* Responsive droppable heights */
+        @media (min-width: 576px) {
+            .droppable-column {
+                min-height: 300px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .droppable-column {
+                min-height: 400px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .droppable-column {
+                min-height: 500px;
+            }
+        }
+
+        .droppable-column:hover {
+            border-color: #dee2e6;
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            margin-bottom: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: move;
+            transition: opacity 0.2s;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive card margins */
+        @media (min-width: 768px) {
+            .card {
+                margin-bottom: 10px;
+                font-size: 1rem;
+            }
+        }
+
+        .card:hover {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background-color: #e9ecef;
+            padding: 6px 8px;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive card header */
+        @media (min-width: 768px) {
+            .card-header {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        .card-body {
+            padding: 8px;
+        }
+
+        /* Responsive card body */
+        @media (min-width: 768px) {
+            .card-body {
+                padding: 10px 12px;
+            }
+        }
+
+        .whatsapp-btn {
+            background-color: #25d366;
+            border-color: #25d366;
+            color: white;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+        }
+
+        /* Botón WhatsApp más grande en header */
+        .whatsapp-btn-large {
+            background-color: #25d366 !important;
+            border-color: #25d366 !important;
+            color: white !important;
+            padding: 6px 12px !important;
+            font-size: 0.85rem !important;
+            font-weight: 500;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(37, 211, 102, 0.3);
+        }
+
+        .whatsapp-btn-large:hover {
+            background-color: #128c7e !important;
+            border-color: #128c7e !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(37, 211, 102, 0.4);
+        }
+
+        /* Responsive WhatsApp button */
+        @media (min-width: 768px) {
+            .whatsapp-btn {
+                padding: 4px 8px;
+                font-size: 0.8rem;
+            }
+
+            .whatsapp-btn-large {
+                padding: 8px 16px !important;
+                font-size: 0.9rem !important;
+            }
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #128c7e;
+            border-color: #128c7e;
+        }
+
+        .fecha-limite {
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
+        .fecha-vencida {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        /* Responsive title */
+        h1 {
+            font-size: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Responsive container */
+        .container-fluid {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        @media (min-width: 576px) {
+            .container-fluid {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+        }
+
+        /* Hide/show elements responsively */
+        .d-none {
+            display: none !important;
+        }
+
+        .d-sm-inline {
+            display: inline !important;
+        }
+
+        .d-sm-none {
+            display: none !important;
+        }
+
+        .d-md-none {
+            display: none !important;
+        }
+
+        @media (min-width: 576px) {
+            .d-sm-inline {
+                display: inline !important;
+            }
+            .d-sm-none {
+                display: none !important;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .d-md-none {
+                display: none !important;
+            }
+        }
+
+        /* Card footer styling */
+        .card-footer {
+            padding: 8px 12px 12px 12px !important;
+        }
+
+        /* Responsive card footer */
+        @media (min-width: 768px) {
+            .card-footer {
+                padding: 10px 15px 15px 15px !important;
+            }
+        }
+
+        /* Action buttons in footer */
+        .card-footer .btn {
+            transition: all 0.2s ease;
+        }
+
+        .card-footer .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Modal con pasos */
+        .paso {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Indicador de grabación */
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Preview de imagen en modal */
+        #preview {
+            border: 2px solid #dee2e6;
+            max-height: 200px;
+            object-fit: cover;
+        }
+
+        /* Botones de navegación */
+        .modal-footer .btn {
+            min-width: 100px;
+        }
+
+        /* Flex utilities */
+        .flex-fill {
+            flex: 1 1 auto !important;
+        }
+
+        .gap-2 {
+            gap: 0.5rem !important;
+        }
+
+        /* Responsive images in cards */
+        @media (max-width: 575.98px) {
+            .card img {
+                max-height: 120px !important;
+            }
+        }
+
+        @media (min-width: 576px) and (max-width: 767.98px) {
+            .card img {
+                max-height: 140px !important;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .card img {
+                max-height: 160px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-4">
+        <h1 class="text-center mb-4">Sistema de Reparaciones IT</h1>
+
+        <div class="mb-4">
+            <div class="row g-3 mb-3">
+                <div class="col-12 col-lg-6">
+                    <button type="button" class="btn btn-primary btn-lg px-3 py-2 px-md-4 py-md-3 w-100" data-bs-toggle="modal" data-bs-target="#nuevaTarjetaModal">
+                        <i class="fas fa-plus-circle me-2"></i><span class="d-none d-sm-inline">Nueva Reparación</span><span class="d-sm-none">Nueva</span>
+                    </button>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" id="busquedaTarjetas" placeholder="Buscar por nombre, problema o WhatsApp..." onkeyup="filtrarTarjetas()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="kanban-column">
+                    <h3 class="text-center h5 h4-md">Ingresado</h3>
+                    <div id="ingresado" class="droppable-column"></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="kanban-column">
+                    <h3 class="text-center h5 h4-md">Diagnosticada</h3>
+                    <div id="diagnosticada" class="droppable-column"></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="kanban-column">
+                    <h3 class="text-center h5 h4-md">Para Entregar</h3>
+                    <div id="para_entregar" class="droppable-column"></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="kanban-column">
+                    <h3 class="text-center h5 h4-md">Listos</h3>
+                    <div id="listos" class="droppable-column"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para nueva tarjeta con IA -->
+    <div class="modal fade" id="nuevaTarjetaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nueva Reparación con IA</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Indicador de pasos -->
+                    <div class="mb-4">
+                        <div class="progress mb-3">
+                            <div class="progress-bar" id="progressBar" style="width: 25%"></div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">📷 Foto</small>
+                            <small class="text-muted">🤖 IA</small>
+                            <small class="text-muted">🎤 Voz</small>
+                            <small class="text-muted">✅ Crear</small>
+                        </div>
+                    </div>
+
+                    <!-- Paso 1: Captura de imagen -->
+                    <div id="paso1" class="paso">
+                        <h6 class="mb-3">📷 Paso 1: Toma una foto del recibo o ticket</h6>
+                        <div class="text-center mb-3">
+                            <video id="camera" class="d-none" style="width: 100%; max-width: 300px; border-radius: 8px;"></video>
+                            <canvas id="canvas" class="d-none" style="width: 100%; max-width: 300px; border-radius: 8px;"></canvas>
+                            <img id="preview" class="d-none" style="width: 100%; max-width: 300px; border-radius: 8px;">
+                        </div>
+                        <div class="d-flex justify-content-center gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-primary" id="btnCamera" onclick="iniciarCamara()">
+                                <i class="fas fa-camera"></i> Usar Cámara
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="seleccionarArchivo()">
+                                <i class="fas fa-folder-open"></i> Seleccionar Archivo
+                            </button>
+                        </div>
+                        <input type="file" id="fileInput" class="d-none" accept="image/*" onchange="procesarArchivoSeleccionado()">
+                        <div class="text-center">
+                            <button type="button" class="btn btn-success" id="btnTomarFoto" onclick="tomarFoto()" disabled>
+                                <i class="fas fa-camera-retro"></i> Tomar Foto
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Paso 2: Procesamiento con IA y verificación -->
+                    <div id="paso2" class="paso d-none">
+                        <h6 class="mb-3">🤖 Paso 2: Verifica la información extraída por IA</h6>
+                        <div id="loadingAI" class="text-center mb-3">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Procesando con IA...</span>
+                            </div>
+                            <p class="mt-2">Analizando imagen con IA...</p>
+                        </div>
+                        <form id="formVerificacion">
+                            <div class="mb-3">
+                                <label for="ai_nombre" class="form-label">Nombre del Cliente</label>
+                                <input type="text" class="form-control" id="ai_nombre" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ai_whatsapp" class="form-label">WhatsApp</label>
+                                <input type="text" class="form-control" id="ai_whatsapp" placeholder="Ej: +573001234567">
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="ai_cargador">
+                                    <label class="form-check-label" for="ai_cargador">
+                                        Incluye cargador
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Paso 3: Grabación de voz -->
+                    <div id="paso3" class="paso d-none">
+                        <h6 class="mb-3">🎤 Paso 3: Describe el problema (voz o texto)</h6>
+                        <div class="mb-3">
+                            <label for="problema_texto" class="form-label">Tipo de Problema</label>
+                            <div class="input-group mb-2">
+                                <textarea class="form-control" id="problema_texto" rows="3" placeholder="Describe el problema del equipo..."></textarea>
+                                <button class="btn btn-outline-primary" type="button" id="btnGrabar" onclick="toggleGrabacion()">
+                                    <i class="fas fa-microphone"></i> <span id="textoGrabar">Grabar</span>
+                                </button>
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> Presiona "Grabar" para dictar el problema o escribe directamente
+                            </small>
+                        </div>
+                        <div id="grabacionStatus" class="alert alert-info d-none">
+                            <i class="fas fa-circle text-danger blink"></i> Grabando... Presiona "Detener" cuando termines
+                        </div>
+                    </div>
+
+                    <!-- Paso 4: Fecha límite y confirmación -->
+                    <div id="paso4" class="paso d-none">
+                        <h6 class="mb-3">✅ Paso 4: Fecha límite y confirmación</h6>
+                        <div class="mb-3">
+                            <label for="fecha_limite_final" class="form-label">Fecha Límite</label>
+                            <input type="date" class="form-control" id="fecha_limite_final" required>
+                        </div>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6>Resumen de la reparación:</h6>
+                                <p><strong>Cliente:</strong> <span id="resumenNombre"></span></p>
+                                <p><strong>WhatsApp:</strong> <span id="resumenWhatsApp"></span></p>
+                                <p><strong>Cargador:</strong> <span id="resumenCargador"></span></p>
+                                <p><strong>Problema:</strong> <span id="resumenProblema"></span></p>
+                                <p><strong>Fecha límite:</strong> <span id="resumenFecha"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btnAnterior" onclick="pasoAnterior()" disabled>Atrás</button>
+                    <button type="button" class="btn btn-primary" id="btnSiguiente" onclick="pasoSiguiente()" disabled>Siguiente</button>
+                    <button type="button" class="btn btn-success d-none" id="btnCrear" onclick="crearTarjeta()">Crear Reparación</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar tarjeta -->
+    <div class="modal fade" id="editarTarjetaModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Reparación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarTarjetaForm">
+                        <input type="hidden" id="editar_tarjeta_id">
+                        <div class="mb-3">
+                            <label for="editar_nombre_propietario" class="form-label">Nombre del Propietario</label>
+                            <input type="text" class="form-control" id="editar_nombre_propietario" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editar_problema" class="form-label">Tipo de Problema</label>
+                            <textarea class="form-control" id="editar_problema" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editar_whatsapp" class="form-label">Número de WhatsApp</label>
+                            <input type="text" class="form-control" id="editar_whatsapp" placeholder="Ej: +573001234567" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editar_fecha_limite" class="form-label">Fecha Límite</label>
+                            <input type="date" class="form-control" id="editar_fecha_limite" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editar_imagen_url" class="form-label">URL de Imagen (opcional)</label>
+                            <input type="url" class="form-control" id="editar_imagen_url" placeholder="https://ejemplo.com/imagen.jpg">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="editar_tiene_cargador">
+                                <label class="form-check-label" for="editar_tiene_cargador">
+                                    Incluye cargador
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarEdicion()">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let draggedElement = null;
+        let todasLasTarjetas = []; // Almacenar todas las tarjetas para filtrado
+
+        // Cargar tarjetas al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarTarjetas();
+            configurarDragAndDrop();
+        });
+
+        function cargarTarjetas() {
+            fetch('/api/tarjetas')
+                .then(response => response.json())
+                .then(tarjetas => {
+                    todasLasTarjetas = tarjetas; // Almacenar todas las tarjetas
+
+                    // Limpiar columnas
+                    document.querySelectorAll('.droppable-column').forEach(col => col.innerHTML = '');
+
+                    // Agregar tarjetas a sus columnas
+                    tarjetas.forEach((tarjeta, index) => {
+                        console.log(`🎴 Creando tarjeta ${index + 1}: ID=${tarjeta.id}, columna=${tarjeta.columna}`);
+                        const columna = document.getElementById(tarjeta.columna);
+                        if (columna) {
+                            columna.appendChild(crearElementoTarjeta(tarjeta));
+                            console.log(`✅ Tarjeta ${tarjeta.id} agregada a columna ${tarjeta.columna}`);
+                        } else {
+                            console.log(`❌ Columna ${tarjeta.columna} no encontrada para tarjeta ${tarjeta.id}`);
+                        }
+                    });
+                });
+        }
+
+        function crearElementoTarjeta(tarjeta) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.draggable = true;
+            card.setAttribute('draggable', 'true');
+            card.dataset.id = tarjeta.id;
+
+            const fechaLimite = new Date(tarjeta.fecha_limite);
+            const hoy = new Date();
+            const claseFecha = fechaLimite < hoy ? 'fecha-vencida' : 'fecha-limite';
+
+            card.innerHTML = `
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong class="text-truncate flex-grow-1 me-2">${tarjeta.nombre_propietario}</strong>
+                    <button class="btn btn-success btn-sm px-2 py-1 whatsapp-btn-large" onclick="enviarWhatsApp('${tarjeta.whatsapp}')" title="WhatsApp">
+                        <i class="fab fa-whatsapp fa-lg me-1"></i><span class="d-none d-md-inline">WhatsApp</span>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <p class="card-text small mb-2">${tarjeta.problema}</p>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <small class="${claseFecha}">📅 ${tarjeta.fecha_limite}</small>
+                        ${tarjeta.tiene_cargador ? '<small class="text-success">🔌</small>' : '<small class="text-warning">⚠️</small>'}
+                    </div>
+                    <small class="text-muted d-block mb-1">📅 ${tarjeta.fecha_inicio}</small>
+                    ${tarjeta.fecha_diagnosticada ? '<small class="text-info d-block">🔍 ' + tarjeta.fecha_diagnosticada.split(' ')[0] + '</small>' : ''}
+                    ${tarjeta.fecha_para_entregar ? '<small class="text-primary d-block">📦 ' + tarjeta.fecha_para_entregar.split(' ')[0] + '</small>' : ''}
+                    ${tarjeta.fecha_entregada ? '<small class="text-success d-block">✅ ' + tarjeta.fecha_entregada.split(' ')[0] + '</small>' : ''}
+                    ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded w-100" alt="Imagen del dispositivo" style="height: auto; object-fit: cover; border: 1px solid #dee2e6;"></div>' : ''}
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <div class="d-flex justify-content-between gap-1">
+                        <button class="btn btn-outline-primary btn-sm flex-fill" onclick="editarTarjeta(${tarjeta.id})" title="Editar tarjeta">
+                            <i class="fas fa-edit me-1"></i>Editar
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm flex-fill" onclick="eliminarTarjeta(${tarjeta.id})" title="Eliminar tarjeta">
+                            <i class="fas fa-trash me-1"></i>Eliminar
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            card.addEventListener('dragstart', function(e) {
+                draggedElement = this;
+                this.style.opacity = '0.5';
+            });
+
+            card.addEventListener('dragend', function(e) {
+                this.style.opacity = '1';
+            });
+
+            return card;
+        }
+
+        function configurarDragAndDrop() {
+            // Configurar todas las columnas como droppable
+            document.querySelectorAll('.droppable-column').forEach(columna => {
+                columna.addEventListener('dragover', function(e) {
+                    e.preventDefault(); // CRUCIAL para permitir drop
+                    this.style.backgroundColor = '#e9ecef';
+                    this.style.borderColor = '#007bff';
+                    this.style.borderStyle = 'solid';
+                });
+
+                columna.addEventListener('dragleave', function(e) {
+                    this.style.backgroundColor = '';
+                    this.style.borderColor = 'transparent';
+                    this.style.borderStyle = 'dashed';
+                });
+
+                columna.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.style.backgroundColor = '';
+                    this.style.borderColor = 'transparent';
+                    this.style.borderStyle = 'dashed';
+
+                    if (draggedElement) {
+                        const nuevaColumna = this.id;
+                        const tarjetaId = draggedElement.dataset.id;
+
+                        // 1. Mover inmediatamente en DOM para mejor UX
+                        this.appendChild(draggedElement);
+
+                        // 2. Actualizar backend
+                        fetch(`/api/tarjetas/${tarjetaId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ columna: nuevaColumna })
+                        })
+                        .then(response => response.json())
+                        .then(tarjetaActualizada => {
+                            // Actualizar el estado en el array global
+                            const index = todasLasTarjetas.findIndex(t => t.id == tarjetaId);
+                            if (index !== -1) {
+                                todasLasTarjetas[index].columna = nuevaColumna;
+                            }
+                            console.log('✅ Tarjeta movida correctamente');
+                        })
+                        .catch(error => {
+                            console.error('❌ Error al guardar:', error);
+                            // Revertir movimiento si hay error
+                            if (draggedElement.parentNode) {
+                                draggedElement.remove();
+                            }
+                            alert('Error al guardar el movimiento. La tarjeta ha sido revertida.');
+                        })
+                        .finally(() => {
+                            draggedElement = null;
+                        });
+                    }
+                });
+            });
+        }
+
+        // Variables para el flujo con IA
+        let pasoActual = 1;
+        let imagenCapturada = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let stream = null;
+        let iaProcesada = false; // Para evitar procesamientos duplicados
+
+        // Función para mostrar un paso específico
+        function mostrarPaso(paso) {
+            // Ocultar todos los pasos
+            document.querySelectorAll('.paso').forEach(p => p.classList.add('d-none'));
+
+            // Mostrar el paso actual
+            document.getElementById(`paso${paso}`).classList.remove('d-none');
+
+            // Actualizar barra de progreso
+            const progreso = (paso / 4) * 100;
+            document.getElementById('progressBar').style.width = `${progreso}%`;
+
+            // Actualizar botones de navegación
+            document.getElementById('btnAnterior').disabled = paso === 1;
+            document.getElementById('btnSiguiente').disabled = paso === 4;
+
+            // Mostrar/ocultar botón crear
+            document.getElementById('btnCrear').classList.toggle('d-none', paso !== 4);
+
+            // Si se llega al paso 2 y hay imagen pero no se ha procesado, procesar automáticamente
+            if (paso === 2 && imagenCapturada && !iaProcesada) {
+                procesarConIA();
+            }
+
+            pasoActual = paso;
+        }
+
+        // Navegación entre pasos
+        function pasoSiguiente() {
+            if (pasoActual < 4) {
+                if (validarPasoActual()) {
+                    mostrarPaso(pasoActual + 1);
+                }
+            }
+        }
+
+        function pasoAnterior() {
+            if (pasoActual > 1) {
+                mostrarPaso(pasoActual - 1);
+            }
+        }
+
+        // Validación de pasos
+        function validarPasoActual() {
+            switch (pasoActual) {
+                case 1:
+                    if (imagenCapturada === null) {
+                        alert('Por favor capture o seleccione una imagen del dispositivo');
+                        return false;
+                    }
+                    return true;
+                case 2:
+                    // Paso 2 siempre válido - puede continuar con campos vacíos
+                    return true;
+                case 3:
+                    if (document.getElementById('problema_texto').value.trim() === '') {
+                        alert('Por favor describa el problema del dispositivo');
+                        return false;
+                    }
+                    return true;
+                case 4:
+                    if (document.getElementById('fecha_limite_final').value === '') {
+                        alert('Por favor seleccione una fecha límite para la reparación');
+                        return false;
+                    }
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // Paso 1: Captura de imagen
+        async function iniciarCamara() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' } // Cámara trasera en móviles
+                });
+
+                const video = document.getElementById('camera');
+                video.srcObject = stream;
+                video.classList.remove('d-none');
+                video.play();
+
+                document.getElementById('btnTomarFoto').disabled = false;
+                document.getElementById('btnCamera').disabled = true;
+            } catch (error) {
+                console.error('Error accediendo a la cámara:', error);
+                alert('No se pudo acceder a la cámara. Verifica los permisos.');
+            }
+        }
+
+        function seleccionarArchivo() {
+            document.getElementById('fileInput').click();
+        }
+
+        function procesarArchivoSeleccionado() {
+            const file = document.getElementById('fileInput').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    mostrarPreview(e.target.result);
+                    imagenCapturada = e.target.result;
+                    iaProcesada = false; // Nueva imagen, resetear flag
+
+                    // Avanzar automáticamente al paso 2 y procesar con IA
+                    setTimeout(() => {
+                        mostrarPaso(2);
+                    }, 500);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function tomarFoto() {
+            const video = document.getElementById('camera');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0);
+
+            const imageData = canvas.toDataURL('image/jpeg');
+            mostrarPreview(imageData);
+
+            // Detener la cámara
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            video.classList.add('d-none');
+            imagenCapturada = imageData;
+            iaProcesada = false; // Nueva imagen, resetear flag
+
+            // Avanzar automáticamente al paso 2
+            setTimeout(() => {
+                mostrarPaso(2);
+            }, 500);
+        }
+
+        function mostrarPreview(imageData) {
+            const preview = document.getElementById('preview');
+            preview.src = imageData;
+            preview.classList.remove('d-none');
+            document.getElementById('camera').classList.add('d-none');
+            document.getElementById('canvas').classList.add('d-none');
+        }
+
+        // Paso 2: Procesamiento con IA
+        function procesarConIA() {
+            if (!imagenCapturada) {
+                alert('Primero debes capturar una imagen');
+                return;
+            }
+
+            // Si ya se procesó esta imagen, no hacer nada
+            if (iaProcesada) {
+                return;
+            }
+
+            // Mostrar loading
+            document.getElementById('loadingAI').style.display = 'block';
+
+            fetch('/api/procesar-imagen', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: imagenCapturada })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Ocultar loading
+                document.getElementById('loadingAI').style.display = 'none';
+
+                if (data.error) {
+                    console.error('Error procesando la imagen:', data.error);
+                    alert('No se pudo procesar la imagen automáticamente. Complete los datos manualmente.');
+                    // Llenar con valores por defecto si hay error
+                    document.getElementById('ai_nombre').value = 'Cliente';
+                    document.getElementById('ai_whatsapp').value = '';
+                    document.getElementById('ai_cargador').checked = false;
+                } else {
+                    // Llenar campos con datos de IA
+                    document.getElementById('ai_nombre').value = data.nombre || 'Cliente';
+                    document.getElementById('ai_whatsapp').value = data.telefono || '';
+                    document.getElementById('ai_cargador').checked = data.tiene_cargador || false;
+                }
+
+                iaProcesada = true; // Marcar como procesada
+
+                // Actualizar resumen
+                actualizarResumen();
+
+                // Habilitar botón siguiente automáticamente
+                document.getElementById('btnSiguiente').disabled = false;
+            })
+            .catch(error => {
+                // Ocultar loading y mostrar error
+                document.getElementById('loadingAI').style.display = 'none';
+                console.error('Error:', error);
+
+                // Llenar con valores por defecto
+                document.getElementById('ai_nombre').value = 'Cliente';
+                document.getElementById('ai_whatsapp').value = '';
+                document.getElementById('ai_cargador').checked = false;
+
+                iaProcesada = true; // Marcar como procesada incluso con error
+
+                // Actualizar resumen
+                actualizarResumen();
+
+                // Habilitar botón siguiente
+                document.getElementById('btnSiguiente').disabled = false;
+
+                alert('Error conectando con el servicio de IA. Complete los datos manualmente y continúe.');
+            });
+        }
+
+        // Paso 3: Grabación de voz
+        async function toggleGrabacion() {
+            const btn = document.getElementById('btnGrabar');
+            const texto = document.getElementById('textoGrabar');
+            const status = document.getElementById('grabacionStatus');
+
+            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+                // Iniciar grabación
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        await transcribirAudio(audioBlob);
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    btn.classList.remove('btn-outline-primary');
+                    btn.classList.add('btn-danger');
+                    texto.textContent = 'Detener';
+                    status.classList.remove('d-none');
+
+                } catch (error) {
+                    console.error('Error accediendo al micrófono:', error);
+                    alert('No se pudo acceder al micrófono. Verifica los permisos.');
+                }
+            } else {
+                // Detener grabación
+                mediaRecorder.stop();
+                btn.classList.remove('btn-danger');
+                btn.classList.add('btn-outline-primary');
+                texto.textContent = 'Grabar';
+                status.classList.add('d-none');
+            }
+        }
+
+        async function transcribirAudio(audioBlob) {
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'grabacion.wav');
+
+            try {
+                const response = await fetch('/api/transcribir-audio', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Error transcribiendo audio: ' + data.error);
+                } else {
+                    document.getElementById('problema_texto').value = data.transcripcion;
+                    document.getElementById('btnSiguiente').disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error conectando con el servicio de transcripción');
+            }
+        }
+
+        // Paso 4: Creación final
+        function crearTarjeta() {
+            const nombre = document.getElementById('ai_nombre').value.trim();
+            const whatsapp = document.getElementById('ai_whatsapp').value.trim();
+            const tieneCargador = document.getElementById('ai_cargador').checked;
+            const problema = document.getElementById('problema_texto').value.trim();
+            const fechaLimite = document.getElementById('fecha_limite_final').value;
+
+            // Campos requeridos mínimos
+            if (!problema || !fechaLimite) {
+                alert('Los campos "Tipo de Problema" y "Fecha Límite" son obligatorios');
+                return;
+            }
+
+            // Advertencias para campos opcionales vacíos
+            let advertencias = [];
+            if (!nombre) advertencias.push('Nombre del cliente');
+            if (!whatsapp) advertencias.push('Número de WhatsApp');
+
+            if (advertencias.length > 0) {
+                const confirmar = confirm(
+                    `Los siguientes campos están vacíos: ${advertencias.join(', ')}\n\n¿Desea continuar de todos modos?`
+                );
+                if (!confirmar) return;
+            }
+
+            const data = {
+                nombre_propietario: nombre,
+                problema: problema,
+                whatsapp: whatsapp,
+                fecha_limite: fechaLimite,
+                imagen_url: imagenCapturada,
+                tiene_cargador: tieneCargador ? 'si' : 'no'
+            };
+
+            fetch('/api/tarjetas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(tarjeta => {
+                // Agregar la nueva tarjeta al array global
+                todasLasTarjetas.push(tarjeta);
+
+                const columna = document.getElementById('ingresado');
+                columna.appendChild(crearElementoTarjeta(tarjeta));
+
+                // Cerrar modal y resetear
+                const modalElement = document.getElementById('nuevaTarjetaModal');
+                const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+                modal.hide();
+                resetearModal();
+            })
+            .catch(error => {
+                console.error('Error creando tarjeta:', error);
+                alert('Error al crear la reparación');
+            });
+        }
+
+        // Resetear modal cuando se abre
+        document.getElementById('nuevaTarjetaModal').addEventListener('show.bs.modal', function() {
+            resetearModal();
+        });
+
+        // Resetear modal cuando se cierra
+        document.getElementById('nuevaTarjetaModal').addEventListener('hidden.bs.modal', function() {
+            resetearModal();
+            // Detener cámara si está activa
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        });
+
+        function resetearModal() {
+            pasoActual = 1;
+            imagenCapturada = null;
+            iaProcesada = false;
+            mostrarPaso(1);
+
+            // Resetear todos los campos
+            document.getElementById('camera').classList.add('d-none');
+            document.getElementById('canvas').classList.add('d-none');
+            document.getElementById('preview').classList.add('d-none');
+            document.getElementById('btnTomarFoto').disabled = true;
+            document.getElementById('btnCamera').disabled = false;
+
+            // Resetear loading de IA
+            document.getElementById('loadingAI').style.display = 'none';
+
+            // Limpiar formularios
+            document.getElementById('ai_nombre').value = '';
+            document.getElementById('ai_whatsapp').value = '';
+            document.getElementById('ai_cargador').checked = false;
+            document.getElementById('problema_texto').value = '';
+
+            // Establecer fecha límite por defecto: 2 días después de hoy
+            const hoy = new Date();
+            hoy.setDate(hoy.getDate() + 2);
+            const fechaDefault = hoy.toISOString().split('T')[0];
+            document.getElementById('fecha_limite_final').value = fechaDefault;
+
+            // Resetear grabación
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+            document.getElementById('btnGrabar').classList.remove('btn-danger');
+            document.getElementById('btnGrabar').classList.add('btn-outline-primary');
+            document.getElementById('textoGrabar').textContent = 'Grabar';
+            document.getElementById('grabacionStatus').classList.add('d-none');
+
+            // Limpiar resumen
+            actualizarResumen();
+        }
+
+        // Actualizar resumen en tiempo real
+        function actualizarResumen() {
+            document.getElementById('resumenNombre').textContent = document.getElementById('ai_nombre').value || 'No especificado';
+            document.getElementById('resumenWhatsApp').textContent = document.getElementById('ai_whatsapp').value || 'No especificado';
+            document.getElementById('resumenCargador').textContent = document.getElementById('ai_cargador').checked ? 'Sí incluye' : 'No incluye';
+            document.getElementById('resumenProblema').textContent = document.getElementById('problema_texto').value || 'No especificado';
+            document.getElementById('resumenFecha').textContent = document.getElementById('fecha_limite_final').value || 'No especificada';
+        }
+
+        // Event listeners para actualizar resumen
+        document.getElementById('ai_nombre').addEventListener('input', actualizarResumen);
+        document.getElementById('ai_whatsapp').addEventListener('input', actualizarResumen);
+        document.getElementById('ai_cargador').addEventListener('change', actualizarResumen);
+        document.getElementById('problema_texto').addEventListener('input', actualizarResumen);
+        document.getElementById('fecha_limite_final').addEventListener('input', actualizarResumen);
+
+        function enviarWhatsApp(numero) {
+            // Remover cualquier caracter que no sea número o +
+            const numeroLimpio = numero.replace(/[^\d+]/g, '');
+            const url = `https://wa.me/${numeroLimpio}`;
+            window.open(url, '_blank');
+        }
+
+
+        function filtrarTarjetas() {
+            const terminoBusqueda = document.getElementById('busquedaTarjetas').value.toLowerCase().trim();
+
+            // Limpiar todas las columnas
+            document.querySelectorAll('.droppable-column').forEach(col => col.innerHTML = '');
+
+            // Si no hay término de búsqueda, mostrar todas las tarjetas
+            if (terminoBusqueda === '') {
+                todasLasTarjetas.forEach(tarjeta => {
+                    const columna = document.getElementById(tarjeta.columna);
+                    if (columna) {
+                        columna.appendChild(crearElementoTarjeta(tarjeta));
+                    }
+                });
+                return;
+            }
+
+            // Filtrar tarjetas que coincidan con el término de búsqueda
+            const tarjetasFiltradas = todasLasTarjetas.filter(tarjeta => {
+                const nombre = tarjeta.nombre_propietario.toLowerCase();
+                const problema = tarjeta.problema.toLowerCase();
+                const whatsapp = tarjeta.whatsapp.toLowerCase();
+
+                return nombre.includes(terminoBusqueda) ||
+                       problema.includes(terminoBusqueda) ||
+                       whatsapp.includes(terminoBusqueda);
+            });
+
+            // Mostrar solo las tarjetas filtradas
+            tarjetasFiltradas.forEach(tarjeta => {
+                const columna = document.getElementById(tarjeta.columna);
+                if (columna) {
+                    columna.appendChild(crearElementoTarjeta(tarjeta));
+                }
+            });
+
+            console.log(`🔍 Filtradas ${tarjetasFiltradas.length} de ${todasLasTarjetas.length} tarjetas`);
+        }
+
+        function editarTarjeta(id) {
+            // Buscar la tarjeta en el array global
+            const tarjeta = todasLasTarjetas.find(t => t.id == id);
+            if (!tarjeta) {
+                alert('Tarjeta no encontrada');
+                return;
+            }
+
+            // Llenar el formulario de edición con los datos actuales
+            document.getElementById('editar_tarjeta_id').value = tarjeta.id;
+            document.getElementById('editar_nombre_propietario').value = tarjeta.nombre_propietario;
+            document.getElementById('editar_problema').value = tarjeta.problema;
+            document.getElementById('editar_whatsapp').value = tarjeta.whatsapp;
+            document.getElementById('editar_fecha_limite').value = tarjeta.fecha_limite;
+            document.getElementById('editar_imagen_url').value = tarjeta.imagen_url || '';
+            document.getElementById('editar_tiene_cargador').checked = tarjeta.tiene_cargador === 'si';
+
+            // Mostrar el modal
+            const modal = new bootstrap.Modal(document.getElementById('editarTarjetaModal'));
+            modal.show();
+        }
+
+        function guardarEdicion() {
+            const id = document.getElementById('editar_tarjeta_id').value;
+            const nombre = document.getElementById('editar_nombre_propietario').value;
+            const problema = document.getElementById('editar_problema').value;
+            const whatsapp = document.getElementById('editar_whatsapp').value;
+            const fechaLimite = document.getElementById('editar_fecha_limite').value;
+            const imagenUrl = document.getElementById('editar_imagen_url').value;
+            const tieneCargador = document.getElementById('editar_tiene_cargador').checked;
+
+            if (!nombre || !problema || !whatsapp || !fechaLimite) {
+                alert('Por favor complete todos los campos requeridos');
+                return;
+            }
+
+            const data = {
+                nombre_propietario: nombre,
+                problema: problema,
+                whatsapp: whatsapp,
+                fecha_limite: fechaLimite,
+                imagen_url: imagenUrl || null,
+                tiene_cargador: tieneCargador ? 'si' : 'no'
+            };
+
+            fetch(`/api/tarjetas/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(tarjetaActualizada => {
+                // Actualizar en el array global
+                const index = todasLasTarjetas.findIndex(t => t.id == id);
+                if (index !== -1) {
+                    todasLasTarjetas[index] = tarjetaActualizada;
+                }
+
+                // Recargar las tarjetas para mostrar los cambios
+                cargarTarjetas();
+
+                // Cerrar modal
+                const modal = new bootstrap.Modal(document.getElementById('editarTarjetaModal'));
+                modal.hide();
+
+                alert('Tarjeta actualizada correctamente');
+            })
+            .catch(error => {
+                console.error('Error al actualizar:', error);
+                alert('Error al actualizar la tarjeta');
+            });
+        }
+
+        function eliminarTarjeta(id) {
+            if (!confirm('¿Está seguro de que desea eliminar esta tarjeta? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            fetch(`/api/tarjetas/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Remover del array global
+                    todasLasTarjetas = todasLasTarjetas.filter(t => t.id != id);
+
+                    // Recargar las tarjetas
+                    cargarTarjetas();
+
+                    alert('Tarjeta eliminada correctamente');
+                } else {
+                    alert('Error al eliminar la tarjeta');
+                }
+            })
+            .catch(error => {
+                console.error('Error al eliminar:', error);
+                alert('Error al eliminar la tarjeta');
+            });
+        }
+
+    </script>
+</body>
+</html>
