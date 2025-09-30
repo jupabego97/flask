@@ -418,7 +418,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="ai_whatsapp" class="form-label">WhatsApp</label>
-                                <input type="text" class="form-control" id="ai_whatsapp" placeholder="Ej: +573001234567">
+                                <input type="text" class="form-control" id="ai_whatsapp" placeholder="Ej: 3001234567 (se agrega +57 automáticamente)">
                             </div>
                             <div class="mb-3">
                                 <div class="form-check">
@@ -500,7 +500,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="editar_whatsapp" class="form-label">Número de WhatsApp</label>
-                            <input type="text" class="form-control" id="editar_whatsapp" placeholder="Ej: +573001234567" required>
+                            <input type="text" class="form-control" id="editar_whatsapp" placeholder="Ej: 3001234567 (se agrega +57 automáticamente)" required>
                         </div>
                         <div class="mb-3">
                             <label for="editar_fecha_limite" class="form-label">Fecha Límite</label>
@@ -1112,18 +1112,70 @@
             document.getElementById('resumenFecha').textContent = document.getElementById('fecha_limite_final').value || 'No especificada';
         }
 
+        // Función para formatear números de WhatsApp
+        function formatearWhatsapp(event) {
+            const input = event.target;
+            let valor = input.value.replace(/[^\d+]/g, ''); // Solo números y +
+
+            // Agregar +57 si no tiene prefijo internacional
+            if (valor && !valor.startsWith('+')) {
+                valor = '+57' + valor;
+            }
+
+            input.value = valor;
+            actualizarResumen();
+        }
+
         // Event listeners para actualizar resumen
         document.getElementById('ai_nombre').addEventListener('input', actualizarResumen);
-        document.getElementById('ai_whatsapp').addEventListener('input', actualizarResumen);
+        document.getElementById('ai_whatsapp').addEventListener('input', formatearWhatsapp);
+        document.getElementById('ai_whatsapp').addEventListener('blur', formatearWhatsapp); // También al perder foco
         document.getElementById('ai_cargador').addEventListener('change', actualizarResumen);
         document.getElementById('problema_texto').addEventListener('input', actualizarResumen);
         document.getElementById('fecha_limite_final').addEventListener('input', actualizarResumen);
 
+        // Event listener para el campo de edición de WhatsApp
+        const editarWhatsappField = document.getElementById('editar_whatsapp');
+        if (editarWhatsappField) {
+            editarWhatsappField.addEventListener('input', formatearWhatsapp);
+            editarWhatsappField.addEventListener('blur', formatearWhatsapp);
+        }
+
         function enviarWhatsApp(numero) {
-            // Remover cualquier caracter que no sea número o +
-            const numeroLimpio = numero.replace(/[^\d+]/g, '');
-            const url = `https://wa.me/${numeroLimpio}`;
-            window.open(url, '_blank');
+            // Limpiar el número y agregar +57 si no lo tiene
+            let numeroLimpio = numero.replace(/[^\d+]/g, '');
+
+            // Agregar +57 si no tiene prefijo internacional
+            if (!numeroLimpio.startsWith('+')) {
+                numeroLimpio = '+57' + numeroLimpio;
+            } else if (numeroLimpio.startsWith('+57')) {
+                // Ya tiene +57, mantenerlo
+            } else {
+                // Tiene otro prefijo, mantenerlo pero asegurar formato correcto
+                numeroLimpio = numeroLimpio;
+            }
+
+            // Intentar abrir la aplicación nativa de WhatsApp
+            const appUrl = `whatsapp://send?phone=${numeroLimpio}`;
+
+            // Para móvil/desktop, intentar app primero, luego web
+            if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                // En móvil, intentar app primero
+                window.location.href = appUrl;
+                // Si no funciona, fallback a web después de 2 segundos
+                setTimeout(() => {
+                    window.open(`https://wa.me/${numeroLimpio.replace('+', '')}`, '_blank');
+                }, 2000);
+            } else {
+                // En desktop, intentar app primero (Windows/Mac)
+                const appWindow = window.open(appUrl, '_blank');
+                // Si no se abrió la app después de 1 segundo, usar web
+                setTimeout(() => {
+                    if (!appWindow || appWindow.closed) {
+                        window.open(`https://wa.me/${numeroLimpio.replace('+', '')}`, '_blank');
+                    }
+                }, 1000);
+            }
         }
 
         function abrirImagen(imagenUrl) {
