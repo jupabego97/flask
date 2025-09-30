@@ -519,10 +519,38 @@
                             </div>
                         </div>
                     </form>
+
+                    <!-- Información de fechas (solo lectura) -->
+                    <div class="mt-4">
+                        <h6 class="text-muted mb-3">Información de Fechas</h6>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <small class="text-muted d-block">📅 Fecha de Inicio</small>
+                                <span id="editar_fecha_inicio" class="fw-bold"></span>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-block">🔍 Diagnosticada</small>
+                                <span id="editar_fecha_diagnosticada" class="fw-bold"></span>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-block">📦 Para Entregar</small>
+                                <span id="editar_fecha_para_entregar" class="fw-bold"></span>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-block">✅ Entregada</small>
+                                <span id="editar_fecha_entregada" class="fw-bold"></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="guardarEdicion()">Guardar Cambios</button>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-danger" onclick="eliminarTarjetaDesdeModal()" title="Eliminar reparación">
+                        <i class="fas fa-trash me-1"></i>Eliminar
+                    </button>
+                    <div>
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" onclick="guardarEdicion()">Guardar Cambios</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -586,19 +614,12 @@
                         <small class="${claseFecha}">📅 ${tarjeta.fecha_limite}</small>
                         ${tarjeta.tiene_cargador ? '<small class="text-success">🔌</small>' : '<small class="text-warning">⚠️</small>'}
                     </div>
-                    <small class="text-muted d-block mb-1">📅 ${tarjeta.fecha_inicio}</small>
-                    ${tarjeta.fecha_diagnosticada ? '<small class="text-info d-block">🔍 ' + tarjeta.fecha_diagnosticada.split(' ')[0] + '</small>' : ''}
-                    ${tarjeta.fecha_para_entregar ? '<small class="text-primary d-block">📦 ' + tarjeta.fecha_para_entregar.split(' ')[0] + '</small>' : ''}
-                    ${tarjeta.fecha_entregada ? '<small class="text-success d-block">✅ ' + tarjeta.fecha_entregada.split(' ')[0] + '</small>' : ''}
-                    ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded w-100" alt="Imagen del dispositivo" style="height: auto; object-fit: cover; border: 1px solid #dee2e6;"></div>' : ''}
+                    ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded w-100" alt="Imagen del dispositivo" style="height: auto; object-fit: cover; border: 1px solid #dee2e6; cursor: pointer;" onclick="window.open(\'' + tarjeta.imagen_url + '\', \'_blank\')"></div>' : ''}
                 </div>
                 <div class="card-footer bg-transparent border-0 pt-0">
-                    <div class="d-flex justify-content-between gap-1">
-                        <button class="btn btn-outline-primary btn-sm flex-fill" onclick="editarTarjeta(${tarjeta.id})" title="Editar tarjeta">
-                            <i class="fas fa-edit me-1"></i>Editar
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm flex-fill" onclick="eliminarTarjeta(${tarjeta.id})" title="Eliminar tarjeta">
-                            <i class="fas fa-trash me-1"></i>Eliminar
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-outline-primary btn-sm px-2 py-1" onclick="editarTarjeta(${tarjeta.id})" title="Editar tarjeta">
+                            <i class="fas fa-edit"></i>
                         </button>
                     </div>
                 </div>
@@ -1162,6 +1183,12 @@
             document.getElementById('editar_imagen_url').value = tarjeta.imagen_url || '';
             document.getElementById('editar_tiene_cargador').checked = tarjeta.tiene_cargador === 'si';
 
+            // Llenar las fechas informativas
+            document.getElementById('editar_fecha_inicio').textContent = tarjeta.fecha_inicio || 'No disponible';
+            document.getElementById('editar_fecha_diagnosticada').textContent = tarjeta.fecha_diagnosticada ? tarjeta.fecha_diagnosticada.split(' ')[0] : 'Pendiente';
+            document.getElementById('editar_fecha_para_entregar').textContent = tarjeta.fecha_para_entregar ? tarjeta.fecha_para_entregar.split(' ')[0] : 'Pendiente';
+            document.getElementById('editar_fecha_entregada').textContent = tarjeta.fecha_entregada ? tarjeta.fecha_entregada.split(' ')[0] : 'Pendiente';
+
             // Mostrar el modal
             const modal = new bootstrap.Modal(document.getElementById('editarTarjetaModal'));
             modal.show();
@@ -1242,6 +1269,38 @@
             .catch(error => {
                 console.error('Error al eliminar:', error);
                 alert('Error al eliminar la tarjeta');
+            });
+        }
+
+        function eliminarTarjetaDesdeModal() {
+            const id = document.getElementById('editar_tarjeta_id').value;
+            if (!confirm('¿Está seguro de que desea eliminar esta reparación? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            fetch(`/api/tarjetas/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Remover del array global
+                    todasLasTarjetas = todasLasTarjetas.filter(t => t.id != id);
+
+                    // Cerrar el modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editarTarjetaModal'));
+                    modal.hide();
+
+                    // Recargar las tarjetas
+                    cargarTarjetas();
+
+                    alert('Reparación eliminada correctamente');
+                } else {
+                    alert('Error al eliminar la reparación');
+                }
+            })
+            .catch(error => {
+                console.error('Error al eliminar:', error);
+                alert('Error al eliminar la reparación');
             });
         }
 
