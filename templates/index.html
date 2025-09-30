@@ -614,7 +614,7 @@
                         <small class="${claseFecha}">📅 ${tarjeta.fecha_limite}</small>
                         ${tarjeta.tiene_cargador ? '<small class="text-success">🔌</small>' : '<small class="text-warning">⚠️</small>'}
                     </div>
-                    ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded w-100" alt="Imagen del dispositivo" style="height: auto; object-fit: cover; border: 1px solid #dee2e6; cursor: pointer;" onclick="window.open(\'' + tarjeta.imagen_url + '\', \'_blank\')"></div>' : ''}
+                    ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded w-100" alt="Imagen del dispositivo" style="height: auto; object-fit: cover; border: 1px solid #dee2e6; cursor: pointer;" onclick="abrirImagen(\'' + tarjeta.imagen_url.replace(/'/g, '\\\'') + '\')"></div>' : ''}
                 </div>
                 <div class="card-footer bg-transparent border-0 pt-0">
                     <div class="d-flex justify-content-end">
@@ -1124,6 +1124,46 @@
             const numeroLimpio = numero.replace(/[^\d+]/g, '');
             const url = `https://wa.me/${numeroLimpio}`;
             window.open(url, '_blank');
+        }
+
+        function abrirImagen(imagenUrl) {
+            // Si es un data URL (base64), crear una página temporal para mostrarla
+            if (imagenUrl.startsWith('data:image')) {
+                const nuevaVentana = window.open('', '_blank', 'width=800,height=600');
+                nuevaVentana.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Imagen del Dispositivo</title>
+                        <style>
+                            body {
+                                margin: 0;
+                                padding: 20px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                min-height: 100vh;
+                                background: #f8f9fa;
+                            }
+                            img {
+                                max-width: 100%;
+                                max-height: 100vh;
+                                object-fit: contain;
+                                border-radius: 8px;
+                                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <img src="${imagenUrl}" alt="Imagen del dispositivo" />
+                    </body>
+                    </html>
+                `);
+                nuevaVentana.document.close();
+            } else {
+                // Si es una URL normal, abrirla directamente
+                window.open(imagenUrl, '_blank');
+            }
         }
 
 
