@@ -60,27 +60,34 @@ GEMINI_API_KEY=tu_clave_aqui  # Opcional
 
 ## Alternativas de Build Commands
 
-### Opción 1: Build Simple
+### Opción 1: Build Básico (Sin IA - Más confiable)
 ```
 Build Command: pip install -r requirements.txt
 Start Command: gunicorn app:app --bind 0.0.0.0:$PORT
 ```
 
-### Opción 2: Build con Python directo
+### Opción 2: Build con IA (Completo)
+```
+Build Command: pip install -r requirements_ai.txt
+Start Command: gunicorn app:app --bind 0.0.0.0:$PORT
+```
+⚠️ **Advertencia:** Puede fallar si las dependencias de IA tienen problemas de compilación
+
+### Opción 3: Build con Python directo (Debugging)
 ```
 Build Command: pip install -r requirements.txt
 Start Command: python app.py
 ```
 
-### Opción 3: Build con requirements específicos
+### Opción 4: Build de Emergencia (Mínimo)
 ```bash
-# Si falla opencv, usar versión más simple:
-echo "Flask==3.0.0" > requirements_simple.txt
-echo "Flask-SQLAlchemy==3.1.1" >> requirements_simple.txt
-echo "psycopg2-binary==2.9.9" >> requirements_simple.txt
-echo "gunicorn==21.2.0" >> requirements_simple.txt
+# Crear requirements_emergency.txt con lo mínimo:
+echo "Flask==3.0.0" > requirements_emergency.txt
+echo "Flask-SQLAlchemy==3.1.1" >> requirements_emergency.txt
+echo "gunicorn==21.2.0" >> requirements_emergency.txt
 
-# Build Command: pip install -r requirements_simple.txt
+# Build Command: pip install -r requirements_emergency.txt
+# Start Command: python app.py
 ```
 
 ## Verificación de Logs

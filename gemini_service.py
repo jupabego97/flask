@@ -1,15 +1,28 @@
-import google.generativeai as genai
 import os
 import base64
 import io
-from PIL import Image
-import requests
-from dotenv import load_dotenv
+import re
 
-load_dotenv()
+# Imports opcionales para IA
+try:
+    import google.generativeai as genai
+    from PIL import Image
+    import requests
+    from dotenv import load_dotenv
+    GEMINI_AVAILABLE = True
+    load_dotenv()
+    print("🤖 Dependencias de IA disponibles")
+except ImportError as e:
+    GEMINI_AVAILABLE = False
+    print(f"⚠️ Dependencias de IA no disponibles: {e}")
+    print("La aplicación funcionará en modo básico sin IA")
 
 class GeminiService:
     def __init__(self):
+        if not GEMINI_AVAILABLE:
+            print("🔄 Modo básico: IA no disponible")
+            return
+
         api_key = os.getenv('GEMINI_API_KEY')
         if not api_key or api_key == 'your_gemini_api_key_here':
             raise ValueError("GEMINI_API_KEY no configurada")
@@ -18,6 +31,7 @@ class GeminiService:
             genai.configure(api_key=api_key)
             # Usar el mismo modelo para ambas funciones (visión y texto)
             self.model = genai.GenerativeModel('gemini-2.5-flash')
+            print("✅ Servicio de Gemini inicializado correctamente")
         except Exception as e:
             raise ValueError(f"Error configurando Gemini: {e}")
 
@@ -25,6 +39,9 @@ class GeminiService:
         """
         Extrae información del cliente desde una imagen usando Gemini
         """
+        if not GEMINI_AVAILABLE:
+            return {"nombre": "Cliente", "telefono": "", "tiene_cargador": False}
+
         try:
             # Convertir base64 a imagen PIL si es necesario
             if isinstance(image_data, str) and image_data.startswith('data:image'):
@@ -116,6 +133,9 @@ IMPORTANTE:
         """
         Transcribe audio usando Gemini
         """
+        if not GEMINI_AVAILABLE:
+            return "Transcripción no disponible - dependencias de IA faltantes"
+
         import tempfile
         import os
 
