@@ -1,0 +1,19 @@
+CONFIGURACIÓN DE GEMINI AI (OPCIONAL)
+====================================
+
+Para usar las funcionalidades de IA (OCR y transcripción de voz), necesitas:
+
+1. Crear una cuenta en Google AI Studio: https://makersuite.google.com/app/apikey
+
+2. Obtener una API Key gratuita
+
+3. Crear un archivo .env en la carpeta flask/ con el siguiente contenido:
+
+   GEMINI_API_KEY=tu_clave_api_aqui
+
+4. Reiniciar la aplicación
+
+Si no configuras la API key, la aplicación funcionará perfectamente sin funcionalidades de IA,
+solo necesitarás ingresar los datos manualmente.
+
+¡La aplicación ya está funcionando! Abre http://localhost:5000 en tu navegador.
