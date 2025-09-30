@@ -612,7 +612,7 @@
                     <p class="card-text small mb-2">${tarjeta.problema}</p>
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <small class="${claseFecha}">📅 ${tarjeta.fecha_limite}</small>
-                        ${tarjeta.tiene_cargador ? '<small class="text-success">🔌</small>' : '<small class="text-warning">⚠️</small>'}
+                        ${tarjeta.tiene_cargador === 'si' ? '<small class="text-success">🔌</small>' : ''}
                     </div>
                     ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded w-100" alt="Imagen del dispositivo" style="height: auto; object-fit: cover; border: 1px solid #dee2e6; cursor: pointer;" onclick="abrirImagen(\'' + tarjeta.imagen_url.replace(/'/g, '\\\'') + '\')"></div>' : ''}
                 </div>
