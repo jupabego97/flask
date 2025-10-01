@@ -115,6 +115,42 @@
             margin-right: 0.5rem;
         }
 
+        /* Botón Nueva Reparación grande */
+        .btn-nueva-large {
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 0.875rem 2rem;
+            min-height: 54px;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .btn-nueva-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px -5px rgb(99 102 241 / 0.4);
+        }
+
+        /* En móviles, el botón ocupa todo el ancho */
+        @media (max-width: 767.98px) {
+            .btn-nueva-large {
+                width: 100% !important;
+                margin-top: 1rem;
+            }
+
+            .app-header .row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .app-header .col-12 {
+                text-align: center;
+            }
+
+            .app-header .col-12:last-child .d-flex {
+                justify-content: center !important;
+            }
+        }
+
         /* Columnas Kanban profesionales */
             .kanban-column {
             background: white;
@@ -266,7 +302,7 @@
             font-weight: 600;
         }
 
-        /* Indicador de cargador */
+        /* Indicadores de cargador */
         .charger-indicator {
             display: inline-flex;
             align-items: center;
@@ -279,12 +315,42 @@
             font-weight: 500;
         }
 
+        .no-charger-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            color: #ea580c;
+            background: rgba(234, 88, 12, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        /* Imágenes más grandes en tarjetas */
+        .repair-card img {
+            max-height: 180px !important;
+            object-fit: cover;
+            border-radius: 6px;
+            transition: transform 0.3s ease;
+        }
+
+        .repair-card img:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 576px) {
+            .repair-card img {
+                max-height: 140px !important;
+            }
+        }
+
         /* Botones de acción */
         .btn-action {
             border: none;
             border-radius: 6px;
             padding: 0.375rem 0.75rem;
-            font-size: 0.8rem;
+                font-size: 0.8rem;
             font-weight: 500;
             transition: all 0.2s ease;
         }
@@ -582,8 +648,8 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="d-flex justify-content-end gap-3">
-                        <button type="button" class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#nuevaTarjetaModal">
-                            <i class="fas fa-plus-circle"></i><span class="d-none d-sm-inline ms-2">Nueva Reparación</span>
+                        <button type="button" class="btn btn-primary-custom btn-nueva-large" data-bs-toggle="modal" data-bs-target="#nuevaTarjetaModal">
+                            <i class="fas fa-plus-circle"></i><span class="ms-2">Nueva Reparación</span>
                     </button>
                 </div>
                 </div>
@@ -602,9 +668,6 @@
                         </span>
                         <input type="text" class="form-control border-start-0 ps-0" id="busquedaTarjetas"
                                placeholder="Buscar reparaciones..." onkeyup="filtrarTarjetas()">
-                        <span class="input-group-text bg-white d-none d-sm-inline">
-                            <kbd class="bg-light text-muted px-2 py-1 rounded small">⌘K</kbd>
-                        </span>
                     </div>
                 </div>
             </div>
@@ -890,7 +953,7 @@
                 document.querySelector('[data-bs-target="#nuevaTarjetaModal"]').click();
             }
 
-            // Ctrl/Cmd + K: Enfocar búsqueda
+            // Ctrl/Cmd + K: Enfocar búsqueda (sin indicador visual)
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
                 document.getElementById('busquedaTarjetas').focus();
@@ -1001,9 +1064,9 @@
                             <span class="${claseFecha}">${tarjeta.fecha_limite}</span>
                     </div>
 
-                        ${tarjeta.tiene_cargador === 'si' ? '<div class="charger-indicator"><i class="fas fa-plug"></i> Incluye cargador</div>' : ''}
+                        ${tarjeta.tiene_cargador === 'si' ? '<div class="charger-indicator"><i class="fas fa-plug"></i> Incluye cargador</div>' : '<div class="no-charger-indicator"><i class="fas fa-plug-circle-exclamation"></i> Sin cargador</div>'}
 
-                        ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded border-custom" alt="Imagen del dispositivo" style="cursor: pointer; max-height: 150px; object-fit: cover;" onclick="abrirImagen(\'' + tarjeta.imagen_url.replace(/'/g, '\\\'') + '\')"></div>' : ''}
+                        ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded border-custom" alt="Imagen del dispositivo" style="cursor: pointer;" onclick="abrirImagen(\'' + tarjeta.imagen_url.replace(/'/g, '\\\'') + '\')"></div>' : ''}
                 </div>
                 <div class="card-footer bg-transparent border-0 pt-0">
                     <div class="d-flex justify-content-end">
