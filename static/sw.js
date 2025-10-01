@@ -1,8 +1,8 @@
-// Service Worker para PWA de Reparaciones IT
-const CACHE_NAME = 'reparaciones-it-v2.0.0';
-const STATIC_CACHE = 'static-v2.0.0';
-const DYNAMIC_CACHE = 'dynamic-v2.0.0';
-const IMAGES_CACHE = 'images-v2.0.0';
+// Service Worker para Nano - PWA de Reparaciones IT
+const CACHE_NAME = 'nano-reparaciones-v3.0.0';
+const STATIC_CACHE = 'nano-static-v3.0.0';
+const DYNAMIC_CACHE = 'nano-dynamic-v3.0.0';
+const IMAGES_CACHE = 'nano-images-v3.0.0';
 
 // Recursos a cachear inicialmente (críticos para primera carga)
 const STATIC_ASSETS = [
@@ -25,7 +25,9 @@ const ADDITIONAL_CACHE = [
     '/static/icons/icon-152.png',
     '/static/icons/icon-192.png',
     '/static/icons/icon-384.png',
-    '/static/icons/icon-512.png'
+    '/static/icons/icon-512.png',
+    '/static/icons/nano-logo.svg',
+    '/static/icons/nano-icon-circle.svg'
 ];
 
 // Recursos dinámicos a cachear
@@ -35,26 +37,32 @@ const DYNAMIC_ASSETS = [
 
 // Instalación del Service Worker
 self.addEventListener('install', (event) => {
-    console.log('📦 Service Worker: Instalando versión 2.0.0...');
+    console.log('📦 Nano Service Worker: Instalando versión 3.0.0...');
     event.waitUntil(
         Promise.all([
             // Cache básico crítico
             caches.open(STATIC_CACHE).then((cache) => {
-                console.log('📦 Service Worker: Cacheando recursos críticos...');
-                return cache.addAll(STATIC_ASSETS);
+                console.log('📦 Nano: Cacheando recursos críticos...');
+                return cache.addAll(STATIC_ASSETS).catch(err => {
+                    console.warn('⚠️ Algunos recursos no pudieron cachearse:', err);
+                    return Promise.resolve();
+                });
             }),
-            // Cache agresivo de iconos
+            // Cache agresivo de iconos y logos
             caches.open(IMAGES_CACHE).then((cache) => {
-                console.log('📦 Service Worker: Cacheando iconos PWA...');
-                return cache.addAll(ADDITIONAL_CACHE);
+                console.log('📦 Nano: Cacheando iconos y logos PWA...');
+                return cache.addAll(ADDITIONAL_CACHE).catch(err => {
+                    console.warn('⚠️ Algunos iconos no pudieron cachearse:', err);
+                    return Promise.resolve();
+                });
             })
         ])
         .then(() => {
-            console.log('📦 Service Worker: Instalación completada');
+            console.log('✅ Nano Service Worker: Instalación completada');
             return self.skipWaiting();
         })
         .catch((error) => {
-            console.error('❌ Service Worker: Error en instalación:', error);
+            console.error('❌ Nano Service Worker: Error en instalación:', error);
         })
     );
 });

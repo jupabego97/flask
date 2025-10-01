@@ -3,37 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Reparaciones IT</title>
+    <title>Nano - Sistema de Reparaciones NANO</title>
 
     <!-- PWA Meta Tags para máxima compatibilidad -->
-    <meta name="theme-color" content="#25d366">
-    <meta name="description" content="Sistema de gestión de reparaciones de dispositivos electrónicos con IA integrada">
+    <meta name="theme-color" content="#00ACC1">
+    <meta name="description" content="Nano - Sistema de gestión de reparaciones de dispositivos electrónicos con IA integrada">
 
     <!-- iOS Safari -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Reparaciones IT">
+    <meta name="apple-mobile-web-app-title" content="Nano">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/icon-192.png">
 
     <!-- Android Chrome -->
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Reparaciones IT">
+    <meta name="application-name" content="Nano">
     <link rel="icon" type="image/png" sizes="196x196" href="/static/icons/icon-192.png">
 
     <!-- Windows -->
-    <meta name="msapplication-TileColor" content="#25d366">
+    <meta name="msapplication-TileColor" content="#00ACC1">
     <meta name="msapplication-TileImage" content="/static/icons/icon-144.png">
     <meta name="msapplication-config" content="/static/browserconfig.xml">
 
-    <!-- Chrome en Android -->
-    <meta name="color-scheme" content="light dark">
+    <!-- Chrome en Android - Optimizaciones adicionales -->
+    <meta name="color-scheme" content="light">
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="MobileOptimized" content="width">
     <link rel="canonical" href="/">
 
+    <!-- Splash Screen para Android -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#00ACC1">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#00838F">
+    
     <!-- PWA Icons -->
     <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/static/icons/icon-512.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/icon-192.png">
     <link rel="manifest" href="/static/manifest.json">
+    
+    <!-- Splash Screens para diferentes dispositivos -->
+    <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="/static/splash/splash-640x1136.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/static/splash/splash-750x1334.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/static/splash/splash-1125x2436.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/static/splash/splash-1242x2208.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" href="/static/splash/splash-1536x2048.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" href="/static/splash/splash-1668x2388.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" href="/static/splash/splash-2048x2732.png">
 
     <!-- Google Fonts - Tipografía profesional -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,10 +61,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #6366f1;
-            --primary-dark: #4f46e5;
+            --primary-color: #00ACC1;
+            --primary-dark: #00838F;
             --secondary-color: #f8fafc;
-            --accent-color: #10b981;
+            --accent-color: #4DD0E1;
             --danger-color: #ef4444;
             --warning-color: #f59e0b;
             --text-primary: #1e293b;
@@ -57,7 +73,7 @@
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-primary: linear-gradient(135deg, #4DD0E1 0%, #00ACC1 100%);
         }
 
         * {
@@ -80,6 +96,14 @@
             box-shadow: var(--shadow-sm);
             padding: 1rem 0;
             margin-bottom: 2rem;
+        }
+
+        .nano-logo {
+            transition: transform 0.3s ease;
+        }
+
+        .nano-logo:hover {
+            transform: scale(1.05);
         }
 
         .app-title {
@@ -602,12 +626,53 @@
         }
 
         .pwa-loading p {
-            opacity: 0.8;
+            opacity: 0.7;
             font-size: 0.9rem;
+            color: #64748b;
         }
 
         .pwa-loading.hidden {
             display: none;
+        }
+        
+        /* Optimizaciones específicas para Android PWA */
+        @media screen and (max-width: 768px) {
+            /* Mejorar experiencia táctil */
+            * {
+                -webkit-tap-highlight-color: rgba(0, 172, 193, 0.1);
+                touch-action: manipulation;
+            }
+            
+            /* Prevenir zoom accidental en inputs */
+            input, select, textarea {
+                font-size: 16px !important;
+            }
+            
+            /* Scroll suave en Android */
+            body {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Ajustar header en móvil */
+            .app-header {
+                padding: 0.75rem 0;
+            }
+            
+            .nano-logo {
+                height: 35px !important;
+            }
+        }
+        
+        /* Soporte para notch en dispositivos modernos */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+            
+            .app-header {
+                padding-top: max(1rem, env(safe-area-inset-top));
+            }
         }
 
         /* Utilidades adicionales */
@@ -628,23 +693,26 @@
     </style>
 </head>
 <body>
-    <!-- PWA Loading Screen -->
+    <!-- PWA Loading Screen con Logo Nano -->
     <div id="pwaLoading" class="pwa-loading">
         <div class="text-center">
-            <div class="spinner-border text-success mb-3" role="status" style="width: 3rem; height: 3rem;">
+            <img src="/static/icons/nano-logo.svg" alt="Nano" style="max-width: 200px; margin-bottom: 2rem;">
+            <div class="spinner-border mb-3" role="status" style="width: 3rem; height: 3rem; color: #00ACC1;">
                 <span class="visually-hidden">Cargando...</span>
             </div>
-            <h5 class="text-success">Reparaciones IT</h5>
             <p class="text-muted">Cargando aplicación...</p>
         </div>
     </div>
 
-    <!-- Header Profesional -->
+    <!-- Header Profesional con Logo Nano -->
     <header class="app-header">
         <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-12 col-md-6">
-                    <h1 class="app-title">Sistema de Reparaciones IT</h1>
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="/static/icons/nano-logo.svg" alt="Nano" class="nano-logo" style="height: 45px; width: auto;">
+                        <span class="text-muted" style="font-size: 0.9rem;">Sistema de Reparaciones IT</span>
+                    </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="d-flex justify-content-end gap-3">
