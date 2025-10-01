@@ -564,102 +564,6 @@
             animation: slideUp 0.4s ease-out;
         }
 
-        /* Toast personalizado */
-        .toast-container {
-            z-index: 1060;
-        }
-
-        .toast-success-custom {
-            background: linear-gradient(135deg, #198754 0%, #20c997 100%) !important;
-            border: none !important;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        }
-
-        /* Optimizaciones específicas para móviles (99% de uso) */
-        @media (max-width: 767.98px) {
-            .btn-xl {
-                font-size: 1.25rem !important;
-                padding: 1rem 2rem !important;
-                border-radius: 12px !important;
-            }
-
-            .form-control-lg {
-                font-size: 1.1rem !important;
-                padding: 0.75rem 1rem !important;
-                border-radius: 8px !important;
-                min-height: 48px !important; /* Mejor toque */
-            }
-
-            .form-check-lg .form-check-input {
-                width: 1.5em !important;
-                height: 1.5em !important;
-                margin-top: 0.25em !important;
-            }
-
-            .form-check-lg .form-check-label {
-                font-size: 1.1rem !important;
-                padding-left: 0.5rem !important;
-            }
-
-            /* Cards más compactas en móviles */
-            .card-body {
-                padding: 1rem !important;
-            }
-
-            /* Mejor espaciado táctil */
-            .mb-3 {
-                margin-bottom: 1.5rem !important;
-            }
-
-            /* Botones más grandes */
-            .btn-lg {
-                padding: 0.75rem 1.5rem !important;
-                font-size: 1.1rem !important;
-                min-height: 48px !important;
-            }
-
-            /* Inputs con mejor foco */
-            .form-control:focus {
-                border-color: var(--primary-color) !important;
-                box-shadow: 0 0 0 0.2rem rgba(0, 172, 193, 0.25) !important;
-                transform: scale(1.01);
-                transition: all 0.2s ease;
-            }
-
-            /* Mejor contraste para móviles */
-            .text-muted {
-                color: #6c757d !important;
-            }
-
-            /* Indicadores de estado más visibles */
-            .ai-indicator {
-                font-size: 0.85rem !important;
-                padding: 0.2rem 0.5rem !important;
-            }
-        }
-
-        /* Validación visual en tiempo real */
-        .campo-valido {
-            border-color: #198754 !important;
-            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
-        }
-
-        .campo-invalido {
-            border-color: #dc3545 !important;
-            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
-        }
-
-        /* Botón crear animado cuando está listo */
-        .btn-crear-listo {
-            animation: pulseSuccess 2s infinite;
-            transform: scale(1.02);
-        }
-
-        @keyframes pulseSuccess {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.9; }
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -821,21 +725,17 @@
                     <!-- Indicador de pasos -->
                     <div class="mb-4">
                         <div class="progress mb-3">
-                            <div class="progress-bar" id="progressBar" style="width: 33%"></div>
+                            <div class="progress-bar" id="progressBar" style="width: 50%"></div>
                         </div>
                         <div class="d-flex justify-content-between">
                             <small class="text-muted">📷 Foto</small>
-                            <small class="text-muted">🤖 Datos + Problema</small>
-                            <small class="text-muted">✅ Crear</small>
+                            <small class="text-muted">🤖 Procesar & Crear</small>
                         </div>
                     </div>
 
                     <!-- Paso 1: Captura de imagen -->
                     <div id="paso1" class="paso">
-                        <h6 class="mb-3">📷 Paso 1: Toma una foto del recibo o ticket
-                            <small id="autoCameraNote" class="text-muted d-none">(Activando cámara...)</small>
-                            <small id="cameraReadyNote" class="text-success fw-bold d-none">✅ Cámara lista</small>
-                        </h6>
+                        <h6 class="mb-3">📷 Paso 1: Toma una foto del recibo o ticket <small id="autoCameraNote" class="text-muted d-none">(En móviles se abre automáticamente)</small></h6>
                         <div class="text-center mb-3">
                             <video id="camera" class="d-none" style="width: 100%; max-width: 300px; border-radius: 8px;"></video>
                             <canvas id="canvas" class="d-none" style="width: 100%; max-width: 300px; border-radius: 8px;"></canvas>
@@ -857,9 +757,9 @@
                         </div>
                     </div>
 
-                    <!-- Paso 2: Procesamiento IA + Descripción del problema -->
+                    <!-- Paso 2: Procesamiento combinado IA + Voz + Fecha -->
                     <div id="paso2" class="paso d-none">
-                        <h6 class="mb-3">🤖 Paso 2: Verifica datos y describe el problema</h6>
+                        <h6 class="mb-3">🤖 Paso 2: Completa la información</h6>
 
                         <!-- Indicador de procesamiento IA -->
                         <div id="loadingAI" class="text-center mb-3 d-none">
@@ -869,102 +769,62 @@
                             <p class="mt-2">Analizando imagen con IA...</p>
                         </div>
 
-                        <!-- Formulario optimizado para móviles -->
+                        <!-- Formulario combinado -->
                         <div class="row">
-                            <!-- En móviles: apilado verticalmente. En tablets/desktop: 2 columnas -->
-                            <div class="col-12 col-lg-6 order-1 order-lg-1">
-                                <!-- Datos del cliente (IA) - Primera en móviles -->
-                                <div class="card border-0 shadow-sm mb-4">
-                                    <div class="card-header bg-primary text-white">
-                                        <h6 class="mb-0"><i class="fas fa-user"></i> Datos del Cliente</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="formVerificacion">
-                                            <div class="mb-3">
-                                                <label for="ai_nombre" class="form-label fw-bold">Nombre del Cliente</label>
-                                                <input type="text" class="form-control form-control-lg" id="ai_nombre" placeholder="Cliente" required autocapitalize="words" autocomplete="name">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="ai_whatsapp" class="form-label fw-bold">WhatsApp</label>
-                                                <input type="tel" class="form-control form-control-lg" id="ai_whatsapp" placeholder="3001234567" inputmode="tel" autocomplete="tel">
-                                                <small class="text-muted">Se agrega +57 automáticamente</small>
-                                            </div>
-                                            <div class="mb-3">
-                                                <div class="form-check form-check-lg">
-                                                    <input class="form-check-input" type="checkbox" id="ai_cargador" style="width: 1.2em; height: 1.2em;">
-                                                    <label class="form-check-label fw-bold fs-6" for="ai_cargador">
-                                                        Incluye cargador
-                                                        <small class="ai-indicator ms-2" id="cargadorStatus" style="display: none;">
-                                                            <i class="fas fa-robot"></i> Detectado por IA
-                                                        </small>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="fecha_limite_final" class="form-label fw-bold">Fecha Límite</label>
-                                                <input type="date" class="form-control form-control-lg" id="fecha_limite_final" required>
-                                                <small class="text-muted"><i class="fas fa-calendar-check"></i> Por defecto: 3 días hábiles</small>
-                                            </div>
-                                        </form>
-                                    </div>
+                            <!-- Columna izquierda: Información del cliente -->
+                            <div class="col-12 col-md-6 mb-3">
+                                <h6 class="mb-3">👤 Información del Cliente</h6>
+                                <div class="mb-3">
+                                    <label for="ai_nombre" class="form-label">Nombre del Cliente</label>
+                                    <input type="text" class="form-control" id="ai_nombre" placeholder="Se completa automáticamente">
                                 </div>
-                            </div>
-
-                            <div class="col-12 col-lg-6 order-2 order-lg-2">
-                                <!-- Descripción del problema - Segunda en móviles -->
-                                <div class="card border-0 shadow-sm mb-4">
-                                    <div class="card-header bg-primary text-white">
-                                        <h6 class="mb-0"><i class="fas fa-tools"></i> Descripción del Problema</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="problema_texto" class="form-label fw-bold">Tipo de Problema</label>
-                                            <div class="input-group mb-3">
-                                                <textarea class="form-control form-control-lg" id="problema_texto" rows="3" placeholder="Describe el problema del equipo..." required autocapitalize="sentences"></textarea>
-                                                <button class="btn btn-outline-primary btn-lg d-flex flex-column align-items-center justify-content-center" type="button" id="btnGrabar" onclick="toggleGrabacion()" style="min-width: 140px; min-height: 80px;">
-                                                    <i class="fas fa-microphone fa-2x mb-1" id="iconoGrabar"></i>
-                                                    <span id="textoGrabar" class="small fw-bold">Grabar</span>
-                                                </button>
-                                            </div>
-                                            <small class="text-muted">
-                                                <i class="fas fa-info-circle"></i> Presiona "Grabar" para dictar o escribe directamente
+                                <div class="mb-3">
+                                    <label for="ai_whatsapp" class="form-label">WhatsApp</label>
+                                    <input type="text" class="form-control" id="ai_whatsapp" placeholder="Ej: 3001234567 (se agrega +57)">
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="ai_cargador">
+                                        <label class="form-check-label" for="ai_cargador">
+                                            Incluye cargador
+                                            <small class="ai-indicator ms-2" id="cargadorStatus" style="display: none;">
+                                                <i class="fas fa-robot"></i> Detectado por IA
                                             </small>
-                                        </div>
-                                        <div id="grabacionStatus" class="alert alert-info d-none">
-                                            <i class="fas fa-circle text-danger blink me-2"></i>
-                                            <strong>Grabando...</strong> Presiona "Detener" cuando termines
-                                        </div>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Botón crear ultra-prominente para móviles -->
-                        <div class="text-center mt-4 mb-4">
-                            <button type="button" class="btn btn-success btn-xl w-100 py-4 fw-bold fs-5" id="btnCrear" onclick="crearTarjeta()" disabled>
-                                <i class="fas fa-rocket fa-2x me-3"></i>
-                                <span>¡Crear Reparación!</span>
-                                <div class="mt-1 small opacity-75" id="btnCrearSubtext">Completa los campos requeridos</div>
-                            </button>
-                            <small class="text-muted mt-2 d-block">
-                                <i class="fas fa-info-circle"></i> Campos requeridos: Nombre y Problema
-                            </small>
+                            <!-- Columna derecha: Problema y fecha -->
+                            <div class="col-12 col-md-6 mb-3">
+                                <h6 class="mb-3">🔧 Problema del Equipo</h6>
+                                <div class="mb-3">
+                                    <label for="problema_texto" class="form-label">Tipo de Problema</label>
+                                    <div class="input-group mb-2">
+                                        <textarea class="form-control" id="problema_texto" rows="3" placeholder="Describe el problema..." required></textarea>
+                                        <button class="btn btn-outline-primary" type="button" id="btnGrabar" onclick="toggleGrabacion()">
+                                            <i class="fas fa-microphone"></i> <span id="textoGrabar">Grabar</span>
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle"></i> Presiona "Grabar" para dictar o escribe directamente
+                                    </small>
+                                </div>
+                                <div id="grabacionStatus" class="alert alert-info d-none mb-3">
+                                    <i class="fas fa-circle text-danger blink"></i> Grabando... Presiona "Detener" cuando termines
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fecha_limite_final" class="form-label">Fecha Límite</label>
+                                    <input type="date" class="form-control" id="fecha_limite_final" required>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- Footer eliminado - los controles están dentro del formulario -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast de notificaciones -->
-    <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body" id="toastMessage">
-                    Mensaje de éxito
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btnAnterior" onclick="pasoAnterior()" disabled>Atrás</button>
+                    <button type="button" class="btn btn-success" id="btnCrear" onclick="crearTarjeta()">Crear Reparación</button>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>
@@ -1324,30 +1184,6 @@
         let stream = null;
         let iaProcesada = false; // Para evitar procesamientos duplicados
 
-        // Función para mostrar notificación de éxito (sin requerir click)
-        function mostrarNotificacionExito(mensaje) {
-            const toastElement = document.getElementById('successToast');
-            const toastMessage = document.getElementById('toastMessage');
-
-            if (toastElement && toastMessage) {
-                toastMessage.textContent = mensaje;
-                toastElement.classList.add('toast-success-custom');
-
-                const toast = new bootstrap.Toast(toastElement, {
-                    delay: 3000, // 3 segundos
-                    autohide: true
-                });
-
-                toast.show();
-
-                // Log en consola para desarrolladores
-                console.log('✅', mensaje);
-            } else {
-                // Fallback al alert si el toast no funciona
-                alert(mensaje);
-            }
-        }
-
         // Función para mostrar un paso específico
         function mostrarPaso(paso) {
             // Ocultar todos los pasos
@@ -1356,23 +1192,17 @@
             // Mostrar el paso actual
             document.getElementById(`paso${paso}`).classList.remove('d-none');
 
-            // Actualizar barra de progreso (3 pasos)
-            const progreso = (paso / 3) * 100;
+            // Actualizar barra de progreso (ahora solo 2 pasos)
+            const progreso = (paso / 2) * 100;
             document.getElementById('progressBar').style.width = `${progreso}%`;
 
             // Actualizar botones de navegación
             document.getElementById('btnAnterior').disabled = paso === 1;
-            document.getElementById('btnSiguiente').disabled = paso === 3; // Solo deshabilitar en paso 3 (confirmación final)
+            // El botón "Crear" siempre está visible en paso 2
 
             // Si se llega al paso 2 y hay imagen pero no se ha procesado, procesar automáticamente
             if (paso === 2 && imagenCapturada && !iaProcesada) {
                 procesarConIA();
-            }
-
-            // Si se llega al paso 2, inicializar validaciones móviles
-            if (paso === 2) {
-                aplicarFechaPorDefecto();
-                validarCamposEnTiempoReal(); // Iniciar validación en tiempo real
             }
 
             pasoActual = paso;
@@ -1380,7 +1210,7 @@
 
         // Navegación entre pasos
         function pasoSiguiente() {
-            if (pasoActual < 3) {
+            if (pasoActual < 2) {
                 if (validarPasoActual()) {
                     mostrarPaso(pasoActual + 1);
                 }
@@ -1403,18 +1233,15 @@
                     }
                     return true;
                 case 2:
-                    // Paso 2 siempre válido - puede continuar con campos vacíos
-                    return true;
-                case 3:
-                    // Paso 3: Validar problema Y fecha límite
+                    // Paso 2: Validar que al menos tenga problema y fecha límite
                     const problema = document.getElementById('problema_texto').value.trim();
-                    const fecha = document.getElementById('fecha_limite_final').value;
+                    const fechaLimite = document.getElementById('fecha_limite_final').value;
 
-                    if (problema === '') {
+                    if (!problema) {
                         alert('Por favor describa el problema del dispositivo');
                         return false;
                     }
-                    if (fecha === '') {
+                    if (!fechaLimite) {
                         alert('Por favor seleccione una fecha límite para la reparación');
                         return false;
                     }
@@ -1424,44 +1251,9 @@
             }
         }
 
-        // Función para aplicar fecha por defecto (3 días hábiles)
-        function aplicarFechaPorDefecto() {
-            if (!document.getElementById('fecha_limite_final').value) {
-                const hoy = new Date();
-                let diasHabiles = 3;
-
-                // Avanzar 3 días hábiles (saltando fines de semana)
-                while (diasHabiles > 0) {
-                    hoy.setDate(hoy.getDate() + 1);
-                    // 0 = Domingo, 6 = Sábado
-                    if (hoy.getDay() !== 0 && hoy.getDay() !== 6) {
-                        diasHabiles--;
-                    }
-                }
-
-                const fechaFormateada = hoy.toISOString().split('T')[0];
-                document.getElementById('fecha_limite_final').value = fechaFormateada;
-            }
-        }
-
-        // Marcar cuando el usuario toca el checkbox del cargador
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkboxCargador = document.getElementById('ai_cargador');
-            if (checkboxCargador) {
-                checkboxCargador.addEventListener('change', function() {
-                    this.setAttribute('data-touched', 'true');
-                });
-            }
-        });
-
         // Paso 1: Captura de imagen
         async function iniciarCamara() {
             try {
-                // Mostrar indicador de carga
-                const autoCameraNote = document.getElementById('autoCameraNote');
-                autoCameraNote.textContent = '(Activando cámara...)';
-                autoCameraNote.classList.remove('d-none');
-
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: { facingMode: 'environment' } // Cámara trasera en móviles
                 });
@@ -1469,32 +1261,12 @@
                 const video = document.getElementById('camera');
                 video.srcObject = stream;
                 video.classList.remove('d-none');
+                video.play();
 
-                // Esperar a que el video esté listo
-                await new Promise((resolve) => {
-                    video.onloadedmetadata = () => {
-                        video.play();
-                        resolve();
-                    };
-                });
-
-                // Actualizar indicadores visuales
-                autoCameraNote.classList.add('d-none');
-                document.getElementById('cameraReadyNote').classList.remove('d-none');
-
-                // Habilitar controles
                 document.getElementById('btnTomarFoto').disabled = false;
                 document.getElementById('btnCamera').disabled = true;
-
-                // Ocultar indicador de "cámara lista" después de 2 segundos
-                setTimeout(() => {
-                    document.getElementById('cameraReadyNote').classList.add('d-none');
-                }, 2000);
-
             } catch (error) {
                 console.error('Error accediendo a la cámara:', error);
-                document.getElementById('autoCameraNote').textContent = '(Error al activar cámara)';
-                document.getElementById('autoCameraNote').classList.add('text-danger');
                 alert('No se pudo acceder a la cámara. Verifica los permisos.');
             }
         }
@@ -1567,7 +1339,7 @@
                 return;
             }
 
-            // Mostrar loading sutil (procesamiento en paralelo)
+            // Mostrar loading
             document.getElementById('loadingAI').classList.remove('d-none');
 
             fetch('/api/procesar-imagen', {
@@ -1582,59 +1354,39 @@
 
                 if (data.error) {
                     console.error('Error procesando la imagen:', data.error);
-                    // No mostrar alert - permitir edición manual silenciosamente
-                    // Solo llenar valores por defecto si los campos están vacíos
-                    if (!document.getElementById('ai_nombre').value.trim()) {
-                        document.getElementById('ai_nombre').value = 'Cliente';
-                    }
+                    // En caso de error, no mostramos alerta, solo continuamos con campos vacíos
+                    console.log('IA no disponible, continuar con campos manuales');
                 } else {
-                    // Solo llenar campos si están vacíos (no sobreescribir edición manual)
-                    if (!document.getElementById('ai_nombre').value.trim()) {
-                        document.getElementById('ai_nombre').value = data.nombre || 'Cliente';
-                    }
-                    if (!document.getElementById('ai_whatsapp').value.trim()) {
-                        document.getElementById('ai_whatsapp').value = data.telefono || '';
-                    }
-                    // Para el checkbox, solo marcar si no ha sido tocado
-                    if (!document.getElementById('ai_cargador').hasAttribute('data-touched')) {
-                        document.getElementById('ai_cargador').checked = data.tiene_cargador || false;
-                        if (data.tiene_cargador) {
-                            document.getElementById('cargadorStatus').style.display = 'inline';
-                        }
+                    // Llenar campos con datos de IA
+                    document.getElementById('ai_nombre').value = data.nombre || '';
+                    document.getElementById('ai_whatsapp').value = data.telefono || '';
+                    document.getElementById('ai_cargador').checked = data.tiene_cargador || false;
+
+                    // Mostrar indicador si la IA detectó cargador
+                    const cargadorStatus = document.getElementById('cargadorStatus');
+                    if (data.tiene_cargador) {
+                        cargadorStatus.style.display = 'inline';
+                        // Ocultar después de 4 segundos
+                        setTimeout(() => {
+                            cargadorStatus.style.display = 'none';
+                        }, 4000);
                     }
                 }
 
                 iaProcesada = true; // Marcar como procesada
-
-                // Actualizar validaciones después de que IA termine (con verificación de seguridad)
-                setTimeout(() => {
-                    if (document.getElementById('nuevaTarjetaModal')?.classList.contains('show')) {
-                        validarCamposEnTiempoReal();
-                    }
-                }, 100);
             })
             .catch(error => {
-                console.error('Error en IA:', error);
+                // Ocultar loading en caso de error
                 document.getElementById('loadingAI').classList.add('d-none');
-                iaProcesada = true; // Marcar como procesado para evitar reintentos
-
-                // Actualizar validaciones incluso con error (con verificación de seguridad)
-                setTimeout(() => {
-                    if (document.getElementById('nuevaTarjetaModal')?.classList.contains('show')) {
-                        validarCamposEnTiempoReal();
-                    }
-                }, 100);
+                console.error('Error en procesamiento IA:', error);
+                iaProcesada = true; // Marcar como procesada para evitar reintentos
             });
-
-            // Ya no necesitamos actualizarResumen() ni habilitar botón siguiente
-            // El usuario puede crear directamente desde el paso 2
         }
 
         // Paso 3: Grabación de voz
         async function toggleGrabacion() {
             const btn = document.getElementById('btnGrabar');
             const texto = document.getElementById('textoGrabar');
-            const icono = document.getElementById('iconoGrabar');
             const status = document.getElementById('grabacionStatus');
 
             if (!mediaRecorder || mediaRecorder.state === 'inactive') {
@@ -1657,15 +1409,8 @@
                     mediaRecorder.start();
                     btn.classList.remove('btn-outline-primary');
                     btn.classList.add('btn-danger');
-                    icono.classList.remove('fa-microphone');
-                    icono.classList.add('fa-stop-circle');
                     texto.textContent = 'Detener';
                     status.classList.remove('d-none');
-
-                    // Feedback háptico en móviles si está disponible
-                    if (navigator.vibrate) {
-                        navigator.vibrate(50);
-                    }
 
                 } catch (error) {
                     console.error('Error accediendo al micrófono:', error);
@@ -1675,34 +1420,15 @@
                 // Detener grabación
                 mediaRecorder.stop();
                 btn.classList.remove('btn-danger');
-                btn.classList.add('btn-outline-primary', 'btn-success');
-                icono.classList.remove('fa-stop-circle');
-                icono.classList.add('fa-check-circle');
-                texto.textContent = 'Procesando...';
-                status.innerHTML = '<i class="fas fa-circle text-warning blink me-2"></i><strong>Procesando audio...</strong> Transcribiendo con IA';
-
-                // Feedback háptico en móviles si está disponible
-                if (navigator.vibrate) {
-                    navigator.vibrate([50, 50, 50]);
-                }
-
-                // Resetear ícono después de procesar
-                setTimeout(() => {
-                    icono.classList.remove('fa-check-circle');
-                    icono.classList.add('fa-microphone');
-                    btn.classList.remove('btn-success');
-                    texto.textContent = 'Grabar';
-                }, 3000);
+                btn.classList.add('btn-outline-primary');
+                texto.textContent = 'Grabar';
+                status.classList.add('d-none');
             }
         }
 
         async function transcribirAudio(audioBlob) {
             const formData = new FormData();
             formData.append('audio', audioBlob, 'grabacion.wav');
-
-            // Actualizar UI durante procesamiento
-            document.getElementById('grabacionStatus').innerHTML = '<i class="fas fa-circle text-warning blink me-2"></i><strong>Procesando audio...</strong> Transcribiendo con IA';
-            document.getElementById('btnGrabar').disabled = true;
 
             try {
                 const response = await fetch('/api/transcribir-audio', {
@@ -1713,44 +1439,14 @@
                 const data = await response.json();
 
                 if (data.error) {
-                    throw new Error(data.error);
+                    alert('Error transcribiendo audio: ' + data.error);
                 } else {
-                    const transcripcion = data.transcripcion || '';
-                    document.getElementById('problema_texto').value = transcripcion;
-
-                    // Feedback de éxito
-                    document.getElementById('grabacionStatus').innerHTML = '<i class="fas fa-check-circle text-success fa-lg me-2"></i><strong>¡Transcripción completada!</strong>';
-                    document.getElementById('btnGrabar').classList.remove('btn-outline-primary', 'btn-success');
-                    document.getElementById('btnGrabar').classList.add('btn-success');
-
-                    // Validar campos después de transcripción (con verificación de seguridad)
-                    if (document.getElementById('nuevaTarjetaModal')?.classList.contains('show')) {
-                        validarCamposEnTiempoReal();
-                    }
-
-                    // Ocultar mensaje después de 3 segundos
-                    setTimeout(() => {
-                        document.getElementById('grabacionStatus').classList.add('d-none');
-                        document.getElementById('btnGrabar').disabled = false;
-                        document.getElementById('btnGrabar').classList.remove('btn-success');
-                        document.getElementById('btnGrabar').classList.add('btn-outline-primary');
-                    }, 3000);
+                    document.getElementById('problema_texto').value = data.transcripcion;
+                    document.getElementById('btnSiguiente').disabled = false;
                 }
             } catch (error) {
-                console.error('Error transcribiendo audio:', error);
-
-                // Feedback de error
-                document.getElementById('grabacionStatus').innerHTML = '<i class="fas fa-exclamation-triangle text-danger fa-lg me-2"></i><strong>Error en transcripción</strong><br><small class="text-muted">Intenta escribir manualmente</small>';
-                document.getElementById('btnGrabar').classList.remove('btn-outline-primary', 'btn-success');
-                document.getElementById('btnGrabar').classList.add('btn-warning');
-
-                // Ocultar mensaje después de 5 segundos
-                setTimeout(() => {
-                    document.getElementById('grabacionStatus').classList.add('d-none');
-                    document.getElementById('btnGrabar').disabled = false;
-                    document.getElementById('btnGrabar').classList.remove('btn-warning');
-                    document.getElementById('btnGrabar').classList.add('btn-outline-primary');
-                }, 5000);
+                console.error('Error:', error);
+                alert('Error conectando con el servicio de transcripción');
             }
         }
 
@@ -1789,23 +1485,12 @@
                 tiene_cargador: tieneCargador ? 'si' : 'no'
             };
 
-            // Debug: mostrar datos que se envían
-            console.log('📤 Enviando datos:', data);
-
             fetch('/api/tarjetas', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             })
-            .then(response => {
-                if (!response.ok) {
-                    // Si la respuesta no es exitosa, intentar obtener el mensaje de error
-                    return response.text().then(text => {
-                        throw new Error(`Error ${response.status}: ${text || response.statusText}`);
-                    });
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(tarjeta => {
                 // Agregar la nueva tarjeta al array global
                 todasLasTarjetas.push(tarjeta);
@@ -1818,13 +1503,10 @@
                 const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
                 modal.hide();
                 resetearModal();
-
-                // Mostrar notificación de éxito (sin requerir click)
-                mostrarNotificacionExito('✅ Reparación creada exitosamente');
             })
             .catch(error => {
                 console.error('Error creando tarjeta:', error);
-                alert(`❌ Error al crear la reparación:\n${error.message}`);
+                alert('Error al crear la reparación');
             });
         }
 
@@ -1832,15 +1514,13 @@
         document.getElementById('nuevaTarjetaModal').addEventListener('show.bs.modal', function() {
             resetearModal();
 
-            // Si es dispositivo móvil, abrir automáticamente la cámara lo más rápido posible
+            // Si es dispositivo móvil, abrir automáticamente la cámara
             if (esDispositivoMovil()) {
                 document.getElementById('autoCameraNote').classList.remove('d-none');
                 document.getElementById('cameraButtons').classList.add('d-none'); // Ocultar botones de selección
-
-                // Activar cámara inmediatamente para máxima velocidad
-                requestAnimationFrame(() => {
+                setTimeout(() => {
                     iniciarCamara();
-                });
+                }, 500); // Pequeño delay para asegurar que el modal esté listo
             } else {
                 document.getElementById('autoCameraNote').classList.add('d-none');
                 document.getElementById('cameraButtons').classList.remove('d-none'); // Mostrar botones en desktop
@@ -1871,29 +1551,29 @@
 
             // Resetear visibilidad de elementos de cámara
             document.getElementById('autoCameraNote').classList.add('d-none');
-            document.getElementById('autoCameraNote').classList.remove('text-danger');
-            document.getElementById('autoCameraNote').textContent = '(En móviles se abre automáticamente)';
-            document.getElementById('cameraReadyNote').classList.add('d-none');
-
             if (esDispositivoMovil()) {
                 document.getElementById('cameraButtons').classList.add('d-none');
             } else {
                 document.getElementById('cameraButtons').classList.remove('d-none');
             }
 
-            // Resetear loading de IA
+            // Resetear loading de IA (oculto inicialmente)
             document.getElementById('loadingAI').classList.add('d-none');
 
             // Limpiar formularios
             document.getElementById('ai_nombre').value = '';
             document.getElementById('ai_whatsapp').value = '';
             document.getElementById('ai_cargador').checked = false;
-            document.getElementById('ai_cargador').removeAttribute('data-touched'); // Quitar marca de tocado
 
             // Ocultar indicador de IA
             document.getElementById('cargadorStatus').style.display = 'none';
             document.getElementById('problema_texto').value = '';
-            document.getElementById('fecha_limite_final').value = ''; // Se establecerá automáticamente en mostrarPaso(2)
+
+            // Establecer fecha límite por defecto: 2 días después de hoy
+            const hoy = new Date();
+            hoy.setDate(hoy.getDate() + 2);
+            const fechaDefault = hoy.toISOString().split('T')[0];
+            document.getElementById('fecha_limite_final').value = fechaDefault;
 
             // Resetear grabación
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
@@ -1903,18 +1583,8 @@
             document.getElementById('btnGrabar').classList.add('btn-outline-primary');
             document.getElementById('textoGrabar').textContent = 'Grabar';
             document.getElementById('grabacionStatus').classList.add('d-none');
-
-            // Ya no hay resumen visible que limpiar
         }
 
-        // Actualizar resumen en tiempo real
-        function actualizarResumen() {
-            document.getElementById('resumenNombre').textContent = document.getElementById('ai_nombre').value || 'No especificado';
-            document.getElementById('resumenWhatsApp').textContent = document.getElementById('ai_whatsapp').value || 'No especificado';
-            document.getElementById('resumenCargador').textContent = document.getElementById('ai_cargador').checked ? 'Sí incluye' : 'No incluye';
-            document.getElementById('resumenProblema').textContent = document.getElementById('problema_texto').value || 'No especificado';
-            document.getElementById('resumenFecha').textContent = document.getElementById('fecha_limite_final').value || 'No especificada';
-        }
 
         // Función para formatear números de WhatsApp
         function formatearWhatsapp(event) {
@@ -1927,7 +1597,6 @@
             }
 
             input.value = valor;
-            actualizarResumen();
         }
 
         // Función para detectar si es dispositivo móvil
@@ -1936,99 +1605,9 @@
                    (window.innerWidth <= 768 && window.innerHeight <= 1024);
         }
 
-        // Validación en tiempo real y auto-habilitación del botón crear
-        function validarCamposEnTiempoReal() {
-            // Verificar que los elementos existan antes de acceder a ellos
-            const aiNombre = document.getElementById('ai_nombre');
-            const problemaTexto = document.getElementById('problema_texto');
-            const btnCrear = document.getElementById('btnCrear');
-            const btnSubtext = document.getElementById('btnCrearSubtext');
-
-            // Si los elementos no existen (modal cerrado), salir
-            if (!aiNombre || !problemaTexto || !btnCrear || !btnSubtext) {
-                return;
-            }
-
-            const nombre = aiNombre.value.trim();
-            const problema = problemaTexto.value.trim();
-            const fecha = document.getElementById('fecha_limite_final')?.value || '';
-
-            // Validar campos individuales con feedback visual
-            validarCampoIndividual('ai_nombre', nombre.length >= 2);
-            validarCampoIndividual('problema_texto', problema.length >= 5);
-
-            // Lógica del botón crear
-            const camposRequeridosCompletos = nombre.length >= 2 && problema.length >= 5;
-
-            if (camposRequeridosCompletos) {
-                btnCrear.disabled = false;
-                btnCrear.classList.add('btn-crear-listo');
-                btnSubtext.textContent = '¡Todo listo para crear!';
-                btnSubtext.style.color = '#198754';
-            } else {
-                btnCrear.disabled = true;
-                btnCrear.classList.remove('btn-crear-listo');
-                btnSubtext.textContent = 'Completa los campos requeridos';
-                btnSubtext.style.color = '';
-            }
-
-            // Auto-formateo de WhatsApp en móviles
-            if (esDispositivoMovil()) {
-                formatearWhatsappAuto();
-            }
-        }
-
-        // Validación visual de campos individuales
-        function validarCampoIndividual(campoId, esValido) {
-            const campo = document.getElementById(campoId);
-            if (!campo) return; // Si el campo no existe, salir
-
-            campo.classList.remove('campo-valido', 'campo-invalido');
-
-            if (campo.value.trim() !== '') { // Solo validar si tiene contenido
-                if (esValido) {
-                    campo.classList.add('campo-valido');
-                } else {
-                    campo.classList.add('campo-invalido');
-                }
-            }
-        }
-
-        // Formateo automático de WhatsApp mejorado para móviles
-        function formatearWhatsappAuto() {
-            const input = document.getElementById('ai_whatsapp');
-            if (!input) return; // Si el input no existe, salir
-
-            let valor = input.value.replace(/[^\d]/g, ''); // Solo números
-
-            if (valor && !valor.startsWith('57') && valor.length <= 10) {
-                // Agregar código de Colombia si no lo tiene
-                valor = '57' + valor;
-            }
-
-            if (valor !== input.value) {
-                input.value = valor;
-            }
-        }
-
-        // Event listeners mejorados para móviles (con verificación de existencia)
-        const aiNombre = document.getElementById('ai_nombre');
-        const aiWhatsapp = document.getElementById('ai_whatsapp');
-        const problemaTexto = document.getElementById('problema_texto');
-        const fechaLimite = document.getElementById('fecha_limite_final');
-
-        if (aiNombre) aiNombre.addEventListener('input', validarCamposEnTiempoReal);
-        if (aiWhatsapp) {
-            aiWhatsapp.addEventListener('input', validarCamposEnTiempoReal);
-            aiWhatsapp.addEventListener('blur', formatearWhatsappAuto);
-        }
-        if (problemaTexto) problemaTexto.addEventListener('input', validarCamposEnTiempoReal);
-        if (fechaLimite) fechaLimite.addEventListener('change', validarCamposEnTiempoReal);
-
-        // Auto-enfoque inteligente en móviles
-        if (esDispositivoMovil() && aiNombre) {
-            aiNombre.focus();
-        }
+        // Event listeners para formatear WhatsApp
+        document.getElementById('ai_whatsapp').addEventListener('input', formatearWhatsapp);
+        document.getElementById('ai_whatsapp').addEventListener('blur', formatearWhatsapp); // También al perder foco
 
         // Event listener para el campo de edición de WhatsApp
         const editarWhatsappField = document.getElementById('editar_whatsapp');
@@ -2295,4 +1874,3 @@
     </script>
 </body>
 </html>
-

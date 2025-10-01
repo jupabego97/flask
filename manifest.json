@@ -3,17 +3,13 @@
   "short_name": "Nano",
   "description": "Nano - Sistema profesional de gestión de reparaciones de dispositivos electrónicos con IA integrada",
   "start_url": "/",
-  "id": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#00ACC1",
-  "orientation": "any",
+  "orientation": "portrait-primary",
   "scope": "/",
   "lang": "es-ES",
-  "dir": "ltr",
-  "prefer_related_applications": false,
-  "categories": ["productivity", "business", "utilities"],
-  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "categories": ["productivity", "business"],
   "icons": [
     {
       "src": "/static/icons/icon-72.png",
@@ -69,13 +65,41 @@
       "name": "Nueva Reparación",
       "short_name": "Nueva",
       "description": "Crear una nueva reparación con IA",
-      "url": "/",
+      "url": "/#nueva",
       "icons": [
         {
           "src": "/static/icons/icon-96.png",
           "sizes": "96x96"
         }
       ]
+    },
+    {
+      "name": "Buscar Reparaciones",
+      "short_name": "Buscar",
+      "description": "Buscar reparaciones existentes",
+      "url": "/#buscar",
+      "icons": [
+        {
+          "src": "/static/icons/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/static/screenshots/mobile-main.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Vista principal del sistema de reparaciones"
+    },
+    {
+      "src": "/static/screenshots/mobile-new.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Crear nueva reparación con IA"
     }
   ]
 }
