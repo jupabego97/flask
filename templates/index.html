@@ -1436,28 +1436,51 @@
                     body: formData
                 });
 
+                // Verificar si la respuesta es exitosa
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
                 const data = await response.json();
 
                 if (data.error) {
-                    // Solo mostrar alerta si hay un error real de transcripción
-                    console.warn('Error en transcripción:', data.error);
-                    // No mostrar alerta intrusiva, solo log en consola
-                    document.getElementById('problema_texto').value = 'Error en transcripción - intenta de nuevo';
-                } else {
+                    // Error del backend (IA no disponible, etc.)
+                    console.warn('Error del servidor en transcripción:', data.error);
+                    if (data.error === 'Servicio de IA no disponible') {
+                        document.getElementById('problema_texto').value = 'Servicio de IA no disponible - escribe manualmente';
+                    } else {
+                        document.getElementById('problema_texto').value = 'Error en transcripción - escribe manualmente';
+                    }
+                } else if (data.transcripcion) {
+                    // Transcripción exitosa
                     document.getElementById('problema_texto').value = data.transcripcion;
                     document.getElementById('btnSiguiente').disabled = false;
-                }
-            } catch (error) {
-                // Solo mostrar alerta para errores de conexión reales, no para errores menores
-                console.error('Error de conexión en transcripción:', error);
-
-                // Verificar si es un error de red/conexión real
-                if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                    alert('Error conectando con el servicio de transcripción. Verifica tu conexión a internet.');
+                    console.log('Transcripción exitosa:', data.transcripcion.substring(0, 50) + '...');
                 } else {
-                    // Para otros errores, solo log y mensaje no intrusivo
-                    console.log('Error procesando transcripción, pero puede funcionar normalmente');
-                    document.getElementById('problema_texto').value = 'Error procesando audio - intenta de nuevo';
+                    // Respuesta vacía o inesperada
+                    console.warn('Respuesta inesperada del servidor:', data);
+                    document.getElementById('problema_texto').value = 'No se pudo transcribir - escribe manualmente';
+                }
+
+            } catch (error) {
+                // Error de red, parsing JSON, o respuesta HTTP no exitosa
+                console.error('Error en transcripción:', error);
+
+                // Mostrar información de debugging en la consola
+                if (error.message.includes('fetch')) {
+                    console.error('Error de red - verifica tu conexión a internet');
+                    document.getElementById('problema_texto').value = 'Error de conexión - verifica internet';
+                } else if (error.message.includes('HTTP')) {
+                    console.error('Error del servidor:', error.message);
+                    document.getElementById('problema_texto').value = 'Error del servidor - intenta de nuevo';
+                } else {
+                    console.error('Error desconocido:', error);
+                    document.getElementById('problema_texto').value = 'Error desconocido - escribe manualmente';
+                }
+
+                // Solo mostrar alerta para errores críticos
+                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                    alert('Error de conexión. Verifica tu conexión a internet.');
                 }
             }
         }
