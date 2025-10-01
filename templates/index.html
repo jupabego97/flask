@@ -832,7 +832,10 @@
 
                     <!-- Paso 1: Captura de imagen -->
                     <div id="paso1" class="paso">
-                        <h6 class="mb-3">📷 Paso 1: Toma una foto del recibo o ticket <small id="autoCameraNote" class="text-muted d-none">(En móviles se abre automáticamente)</small></h6>
+                        <h6 class="mb-3">📷 Paso 1: Toma una foto del recibo o ticket
+                            <small id="autoCameraNote" class="text-muted d-none">(Activando cámara...)</small>
+                            <small id="cameraReadyNote" class="text-success fw-bold d-none">✅ Cámara lista</small>
+                        </h6>
                         <div class="text-center mb-3">
                             <video id="camera" class="d-none" style="width: 100%; max-width: 300px; border-radius: 8px;"></video>
                             <canvas id="canvas" class="d-none" style="width: 100%; max-width: 300px; border-radius: 8px;"></canvas>
@@ -1454,6 +1457,11 @@
         // Paso 1: Captura de imagen
         async function iniciarCamara() {
             try {
+                // Mostrar indicador de carga
+                const autoCameraNote = document.getElementById('autoCameraNote');
+                autoCameraNote.textContent = '(Activando cámara...)';
+                autoCameraNote.classList.remove('d-none');
+
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: { facingMode: 'environment' } // Cámara trasera en móviles
                 });
@@ -1461,12 +1469,32 @@
                 const video = document.getElementById('camera');
                 video.srcObject = stream;
                 video.classList.remove('d-none');
-                video.play();
 
+                // Esperar a que el video esté listo
+                await new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        resolve();
+                    };
+                });
+
+                // Actualizar indicadores visuales
+                autoCameraNote.classList.add('d-none');
+                document.getElementById('cameraReadyNote').classList.remove('d-none');
+
+                // Habilitar controles
                 document.getElementById('btnTomarFoto').disabled = false;
                 document.getElementById('btnCamera').disabled = true;
+
+                // Ocultar indicador de "cámara lista" después de 2 segundos
+                setTimeout(() => {
+                    document.getElementById('cameraReadyNote').classList.add('d-none');
+                }, 2000);
+
             } catch (error) {
                 console.error('Error accediendo a la cámara:', error);
+                document.getElementById('autoCameraNote').textContent = '(Error al activar cámara)';
+                document.getElementById('autoCameraNote').classList.add('text-danger');
                 alert('No se pudo acceder a la cámara. Verifica los permisos.');
             }
         }
@@ -1804,13 +1832,15 @@
         document.getElementById('nuevaTarjetaModal').addEventListener('show.bs.modal', function() {
             resetearModal();
 
-            // Si es dispositivo móvil, abrir automáticamente la cámara
+            // Si es dispositivo móvil, abrir automáticamente la cámara lo más rápido posible
             if (esDispositivoMovil()) {
                 document.getElementById('autoCameraNote').classList.remove('d-none');
                 document.getElementById('cameraButtons').classList.add('d-none'); // Ocultar botones de selección
-                setTimeout(() => {
+
+                // Activar cámara inmediatamente para máxima velocidad
+                requestAnimationFrame(() => {
                     iniciarCamara();
-                }, 500); // Pequeño delay para asegurar que el modal esté listo
+                });
             } else {
                 document.getElementById('autoCameraNote').classList.add('d-none');
                 document.getElementById('cameraButtons').classList.remove('d-none'); // Mostrar botones en desktop
@@ -1841,6 +1871,10 @@
 
             // Resetear visibilidad de elementos de cámara
             document.getElementById('autoCameraNote').classList.add('d-none');
+            document.getElementById('autoCameraNote').classList.remove('text-danger');
+            document.getElementById('autoCameraNote').textContent = '(En móviles se abre automáticamente)';
+            document.getElementById('cameraReadyNote').classList.add('d-none');
+
             if (esDispositivoMovil()) {
                 document.getElementById('cameraButtons').classList.add('d-none');
             } else {
