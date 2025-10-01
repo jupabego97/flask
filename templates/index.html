@@ -1195,7 +1195,13 @@
             const progreso = (paso / 2) * 100;
             document.getElementById('progressBar').style.width = `${progreso}%`;
 
-            // El botón "Crear" siempre está visible en paso 2 (botón "Atrás" eliminado)
+            // Controlar visibilidad del botón "Crear" - solo visible en paso 2
+            const btnCrear = document.getElementById('btnCrear');
+            if (paso === 1) {
+                btnCrear.style.display = 'none';
+            } else {
+                btnCrear.style.display = 'block';
+            }
 
             // Si se llega al paso 2 y hay imagen pero no se ha procesado, procesar automáticamente
             if (paso === 2 && imagenCapturada && !iaProcesada) {
