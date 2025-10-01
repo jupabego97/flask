@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Reparaciones IT</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#25d366">
+    <meta name="description" content="Sistema de gestión de reparaciones de dispositivos electrónicos con IA integrada">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Reparaciones IT">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileColor" content="#25d366">
+    <meta name="msapplication-config" content="/static/browserconfig.xml">
+
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/static/icons/icon-512.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/icon-192.png">
+    <link rel="manifest" href="/static/manifest.json">
+
+    <!-- Bootstrap y Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -561,6 +579,33 @@
         let draggedElement = null;
         let todasLasTarjetas = []; // Almacenar todas las tarjetas para filtrado
 
+        // PWA: Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/static/sw.js')
+                    .then(function(registration) {
+                        console.log('✅ Service Worker registrado correctamente:', registration.scope);
+
+                        // Escuchar por actualizaciones del service worker
+                        registration.addEventListener('updatefound', function() {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', function() {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Nueva versión disponible
+                                    if (confirm('Nueva versión disponible. ¿Deseas actualizar?')) {
+                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch(function(error) {
+                        console.log('❌ Error al registrar Service Worker:', error);
+                    });
+            });
+        }
+
         // Cargar tarjetas al iniciar
         document.addEventListener('DOMContentLoaded', function() {
             cargarTarjetas();
@@ -601,29 +646,49 @@
             const hoy = new Date();
             const claseFecha = fechaLimite < hoy ? 'fecha-vencida' : 'fecha-limite';
 
-            card.innerHTML = `
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <strong class="text-truncate flex-grow-1 me-2">${tarjeta.nombre_propietario}</strong>
-                    <button class="btn btn-success btn-sm px-2 py-1 whatsapp-btn-large" onclick="enviarWhatsApp('${tarjeta.whatsapp}')" title="WhatsApp">
-                        <i class="fab fa-whatsapp fa-lg me-1"></i><span class="d-none d-md-inline">WhatsApp</span>
-                    </button>
-                </div>
-                <div class="card-body">
-                    <p class="card-text small mb-2">${tarjeta.problema}</p>
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <small class="${claseFecha}">📅 ${tarjeta.fecha_limite}</small>
-                        ${tarjeta.tiene_cargador === 'si' ? '<small class="text-success">🔌</small>' : ''}
+            // Si la tarjeta está en la columna "listos", mostrar versión compacta
+            if (tarjeta.columna === 'listos') {
+                card.innerHTML = `
+                    <div class="card-body py-2 px-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong class="text-truncate flex-grow-1 me-2 mb-0 small">${tarjeta.nombre_propietario}</strong>
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-outline-primary btn-sm px-2 py-1" onclick="editarTarjeta(${tarjeta.id})" title="Ver detalles y editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-success btn-sm px-2 py-1 whatsapp-btn" onclick="enviarWhatsApp('${tarjeta.whatsapp}')" title="WhatsApp">
+                                    <i class="fab fa-whatsapp fa-lg"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded w-100" alt="Imagen del dispositivo" style="height: auto; object-fit: cover; border: 1px solid #dee2e6; cursor: pointer;" onclick="abrirImagen(\'' + tarjeta.imagen_url.replace(/'/g, '\\\'') + '\')"></div>' : ''}
-                </div>
-                <div class="card-footer bg-transparent border-0 pt-0">
-                    <div class="d-flex justify-content-end">
-                        <button class="btn btn-outline-primary btn-sm px-2 py-1" onclick="editarTarjeta(${tarjeta.id})" title="Editar tarjeta">
-                            <i class="fas fa-edit"></i>
+                `;
+            } else {
+                // Versión normal para otras columnas
+                card.innerHTML = `
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <strong class="text-truncate flex-grow-1 me-2">${tarjeta.nombre_propietario}</strong>
+                        <button class="btn btn-success btn-sm px-2 py-1 whatsapp-btn-large" onclick="enviarWhatsApp('${tarjeta.whatsapp}')" title="WhatsApp">
+                            <i class="fab fa-whatsapp fa-lg me-1"></i><span class="d-none d-md-inline">WhatsApp</span>
                         </button>
                     </div>
-                </div>
-            `;
+                    <div class="card-body">
+                        <p class="card-text small mb-2">${tarjeta.problema}</p>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="${claseFecha}">📅 ${tarjeta.fecha_limite}</small>
+                            ${tarjeta.tiene_cargador === 'si' ? '<small class="text-success">🔌</small>' : ''}
+                        </div>
+                        ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded w-100" alt="Imagen del dispositivo" style="height: auto; object-fit: cover; border: 1px solid #dee2e6; cursor: pointer;" onclick="abrirImagen(\'' + tarjeta.imagen_url.replace(/'/g, '\\\'') + '\')"></div>' : ''}
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pt-0">
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-outline-primary btn-sm px-2 py-1" onclick="editarTarjeta(${tarjeta.id})" title="Editar tarjeta">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
 
             card.addEventListener('dragstart', function(e) {
                 draggedElement = this;

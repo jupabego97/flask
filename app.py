@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
@@ -62,6 +62,19 @@ class TarjetaReparacion(db.Model):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+# Rutas PWA para archivos estáticos
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory('static', filename)
+
+@app.route('/static/manifest.json')
+def manifest():
+    return send_from_directory('static', 'manifest.json')
+
+@app.route('/static/browserconfig.xml')
+def browserconfig():
+    return send_from_directory('static', 'browserconfig.xml')
 
 @app.route('/api/tarjetas', methods=['GET'])
 def get_tarjetas():
