@@ -5,15 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Reparaciones IT</title>
 
-    <!-- PWA Meta Tags -->
+    <!-- PWA Meta Tags para máxima compatibilidad -->
     <meta name="theme-color" content="#25d366">
     <meta name="description" content="Sistema de gestión de reparaciones de dispositivos electrónicos con IA integrada">
+
+    <!-- iOS Safari -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Reparaciones IT">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/icon-192.png">
+
+    <!-- Android Chrome -->
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Reparaciones IT">
+    <link rel="icon" type="image/png" sizes="196x196" href="/static/icons/icon-192.png">
+
+    <!-- Windows -->
     <meta name="msapplication-TileColor" content="#25d366">
+    <meta name="msapplication-TileImage" content="/static/icons/icon-144.png">
     <meta name="msapplication-config" content="/static/browserconfig.xml">
+
+    <!-- Chrome en Android -->
+    <meta name="color-scheme" content="light dark">
+    <link rel="canonical" href="/">
 
     <!-- PWA Icons -->
     <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192.png">
@@ -324,9 +338,77 @@
                 max-height: 160px !important;
             }
         }
+
+        /* PWA Splash Screen optimizaciones para Android */
+        @media (display-mode: standalone) {
+            body {
+                /* Evitar bounce scroll en iOS */
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+
+            /* Mejor manejo de viewport en PWA */
+            .container-fluid {
+                height: 100vh;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        /* Android Chrome bottom navigation safe area */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            body {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+
+        /* Mejor experiencia táctil en Android */
+        @media (pointer: coarse) {
+            .btn {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            .card {
+                margin-bottom: 12px;
+            }
+        }
+
+        /* Loading spinner para PWA */
+        .pwa-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .pwa-loading.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <!-- PWA Loading Screen -->
+    <div id="pwaLoading" class="pwa-loading">
+        <div class="text-center">
+            <div class="spinner-border text-success mb-3" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <h5 class="text-success">Reparaciones IT</h5>
+            <p class="text-muted">Cargando aplicación...</p>
+        </div>
+    </div>
+
     <div class="container-fluid mt-4">
         <h1 class="text-center mb-4">Sistema de Reparaciones IT</h1>
 
@@ -606,11 +688,32 @@
             });
         }
 
+        // Ocultar loading screen cuando esté listo
+        function hideLoadingScreen() {
+            const loading = document.getElementById('pwaLoading');
+            if (loading) {
+                loading.classList.add('hidden');
+            }
+        }
+
         // Cargar tarjetas al iniciar
         document.addEventListener('DOMContentLoaded', function() {
+            // Ocultar loading después de un pequeño delay para mejor UX
+            setTimeout(() => {
+                hideLoadingScreen();
+            }, 1000);
+
             cargarTarjetas();
             configurarDragAndDrop();
         });
+
+        // También ocultar si la app ya está cacheada
+        if ('serviceWorker' in navigator && window.navigator.onLine === false) {
+            // Si estamos offline, probablemente ya está cacheado
+            setTimeout(() => {
+                hideLoadingScreen();
+            }, 500);
+        }
 
         function cargarTarjetas() {
             fetch('/api/tarjetas')

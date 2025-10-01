@@ -14,20 +14,48 @@ Esta aplicación ahora incluye soporte completo para **Progressive Web App (PWA)
 
 ### 📱 Instalación en Dispositivos Móviles
 
-#### Android Chrome
-1. Abre la aplicación en Chrome
-2. Toca el menú (⋮) → "Agregar a pantalla de inicio"
-3. Confirma la instalación
+### ⚡ Android (Método Recomendado)
 
-#### iOS Safari
-1. Abre la aplicación en Safari
-2. Toca el botón compartir → "Agregar a pantalla de inicio"
-3. Confirma la instalación
+#### Opción 1: Chrome para Android (Más Compatible)
+1. **Abre Chrome** y navega a la aplicación
+2. **Espera** a que aparezca el banner "Agregar a pantalla de inicio" en la parte inferior
+3. **Toca "Agregar"** o ve al menú (⋮) → "Agregar a pantalla de inicio"
+4. **Confirma** el nombre de la app y toca "Agregar"
+5. **¡Listo!** La app aparecerá en tu pantalla de inicio
 
-#### Desktop (Chrome/Edge)
-1. Abre la aplicación en el navegador
-2. Haz clic en el botón de instalación en la barra de direcciones
-3. Confirma la instalación
+#### Opción 2: Chrome Desktop (para desarrollo)
+1. Abre Chrome y habilita "Modo dispositivo" en DevTools
+2. Navega a la aplicación
+3. El banner de instalación aparecerá automáticamente
+
+#### Opción 3: Otros navegadores Android
+- **Firefox**: Menú → "Instalar esta aplicación"
+- **Samsung Internet**: Menú → "Agregar página a" → "Pantalla de inicio"
+- **Edge**: Menú → "Agregar a teléfono" (sincroniza con tu teléfono)
+
+### 🍎 iOS Safari
+1. **Abre Safari** y navega a la aplicación
+2. **Toca el botón compartir** (cuadrado con flecha hacia arriba)
+3. **Selecciona "Agregar a pantalla de inicio"**
+4. **Confirma** el nombre y toca "Agregar"
+5. **¡Listo!** La app aparecerá en tu pantalla de inicio
+
+### 💻 Desktop (Chrome/Edge)
+1. **Abre la aplicación** en Chrome o Edge
+2. **Busca el botón de instalación** en la barra de direcciones (ícono de descarga)
+3. **Haz clic en "Instalar"**
+4. **Confirma** la instalación
+5. **¡Listo!** La app se instalará como aplicación nativa
+
+## 🔧 Verificación de Instalación Exitosa
+
+Después de instalar, verifica que:
+
+- ✅ **Icono aparece** en pantalla de inicio
+- ✅ **Splash screen** muestra al abrir
+- ✅ **Tema WhatsApp** se mantiene (verde)
+- ✅ **Funciona offline** (cache inteligente)
+- ✅ **Actualizaciones automáticas** funcionan
 
 ## 📂 Archivos PWA Creados
 
