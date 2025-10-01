@@ -525,6 +525,9 @@
                                     <input class="form-check-input" type="checkbox" id="ai_cargador">
                                     <label class="form-check-label" for="ai_cargador">
                                         Incluye cargador
+                                        <small class="text-muted ms-2" id="cargadorStatus" style="display: none;">
+                                            <i class="fas fa-robot text-success"></i> Detectado por IA
+                                        </small>
                                     </label>
                                 </div>
                             </div>
@@ -1057,6 +1060,16 @@
                     document.getElementById('ai_nombre').value = data.nombre || 'Cliente';
                     document.getElementById('ai_whatsapp').value = data.telefono || '';
                     document.getElementById('ai_cargador').checked = data.tiene_cargador || false;
+
+                    // Mostrar indicador si la IA detectó cargador
+                    const cargadorStatus = document.getElementById('cargadorStatus');
+                    if (data.tiene_cargador) {
+                        cargadorStatus.style.display = 'inline';
+                        // Ocultar después de 3 segundos
+                        setTimeout(() => {
+                            cargadorStatus.style.display = 'none';
+                        }, 3000);
+                    }
                 }
 
                 iaProcesada = true; // Marcar como procesada
@@ -1270,6 +1283,9 @@
             document.getElementById('ai_nombre').value = '';
             document.getElementById('ai_whatsapp').value = '';
             document.getElementById('ai_cargador').checked = false;
+
+            // Ocultar indicador de IA
+            document.getElementById('cargadorStatus').style.display = 'none';
             document.getElementById('problema_texto').value = '';
 
             // Establecer fecha límite por defecto: 2 días después de hoy

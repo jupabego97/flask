@@ -40,25 +40,36 @@ class GeminiService:
 
             # Crear prompt para extracción de información
             prompt = """
-Analiza esta imagen de un equipo electrónico (laptop, computadora, tablet, etc.) y extrae la siguiente información si está visible:
+Analiza esta imagen de un equipo electrónico y extrae información específica:
 
-1. NOMBRE DEL CLIENTE: Busca cualquier etiqueta, sticker, papel o texto que indique el nombre del propietario
-2. NÚMERO DE WHATSAPP: Busca números de teléfono con formato +57, +1, etc. o números de 10 dígitos
-3. CARGADOR: Determina si hay un cargador visible en la imagen (cable de alimentación, adaptador de corriente)
-4. TIPO DE EQUIPO: Identifica qué tipo de dispositivo es (laptop, PC, tablet, etc.)
-5. MARCA Y MODELO: Si es posible identificar la marca y modelo del equipo
+1. NOMBRE DEL CLIENTE: Busca etiquetas, stickers, papeles o cualquier texto que indique el nombre del propietario del equipo.
 
-IMPORTANTE: 
-- Si no puedes encontrar información específica, responde "NO_ENCONTRADO"
-- Para el cargador, responde solo "SÍ" o "NO"
-- Para números de WhatsApp, incluye el código de país si está visible
+2. NÚMERO DE WHATSAPP/TELÉFONO: Busca números de teléfono visibles, especialmente con códigos de país como +57, +1, etc.
 
-            Responde ÚNICAMENTE con un JSON válido en este formato exacto:
-            {
-                "nombre": "Nombre del cliente",
-                "telefono": "número de teléfono",
-                "tiene_cargador": true/false
-            }
+3. CARGADOR: ES MUY IMPORTANTE detectar si hay un cargador o adaptador de corriente visible en la imagen.
+   - Busca cables de alimentación, adaptadores, cargadores USB, transformadores
+   - Si ves cualquier tipo de cable o dispositivo de carga conectado al equipo, marca como SÍ
+   - Si no hay ningún elemento de carga visible, marca como NO
+   - Considera también si hay referencias escritas a "cargador incluido" o "sin cargador"
+
+INSTRUCCIONES ESPECÍFICAS PARA CARGADOR:
+- Si hay un cable negro/gris conectado al equipo → SÍ
+- Si hay un adaptador rectangular (de pared) → SÍ
+- Si hay un cargador USB visible → SÍ
+- Si NO hay ningún elemento de carga visible → NO
+- Si hay duda, pero parece que podría haber un cargador parcialmente visible → SÍ
+
+IMPORTANTE:
+- Para "tiene_cargador" usa solo true (SÍ) o false (NO)
+- Si no encuentras nombre, usa "Cliente"
+- Si no encuentras teléfono, deja vacío ""
+
+Responde ÚNICAMENTE con JSON válido:
+{
+    "nombre": "Nombre encontrado o 'Cliente'",
+    "telefono": "número encontrado o vacío",
+    "tiene_cargador": true/false
+}
             """
 
             # Enviar a Gemini
@@ -95,12 +106,56 @@ IMPORTANTE:
                 # Limpiar teléfono (quitar espacios, mantener números y +)
                 telefono = re.sub(r'[^\d+\-\s]', '', telefono).strip()
 
-                # Extraer información del cargador
-                tiene_cargador = bool(re.search(r'(?:cargador|charger).*?(?:sí|si|yes|tiene|incluye)', text, re.IGNORECASE))
+                # Extraer información del cargador con lógica más robusta
+                tiene_cargador = False
 
-                # Si menciona "sin cargador" o "no incluye", marcar como false
-                if re.search(r'(?:sin cargador|no incluye|no tiene)', text, re.IGNORECASE):
-                    tiene_cargador = False
+                # Buscar indicadores positivos de cargador
+                indicadores_cargador = [
+                    r'(?:cargador|charger|adaptador).*?(?:sí|si|yes|true|incluye|tiene|presente|visible)',
+                    r'(?:cable|cord).*?(?:alimentación|power|energía)',
+                    r'(?:usb).*?(?:charger|cargador)',
+                    r'(?:power).*?(?:supply|adapter|cable)',
+                    r'(?:con cargador|incluye cargador|cargador incluido)',
+                    r'(?:sí.*cargador|cargador.*sí)',
+                    r'(?:true|cargador.*true)',
+                    r'(?:cable.*conectado|cable.*visible)',
+                    r'(?:adaptador.*visible|transformador.*visible)',
+                    r'(?:fuente.*alimentación|power.*source)'
+                ]
+
+                # Buscar indicadores negativos de cargador
+                indicadores_sin_cargador = [
+                    r'(?:sin cargador|no incluye|no tiene)',
+                    r'(?:cargador.*no|cargador.*false)',
+                    r'(?:false.*cargador)',
+                    r'(?:no.*cargador|cargador.*no)',
+                    r'(?:sin.*cable|no.*cable)',
+                    r'(?:falta.*cargador|cargador.*falta)'
+                ]
+
+                # Verificar indicadores positivos
+                for patron in indicadores_cargador:
+                    if re.search(patron, text, re.IGNORECASE):
+                        tiene_cargador = True
+                        break
+
+                # Si hay indicadores positivos pero también negativos, priorizar negativo
+                for patron in indicadores_sin_cargador:
+                    if re.search(patron, text, re.IGNORECASE):
+                        tiene_cargador = False
+                        break
+
+                # Si no hay indicadores claros, buscar palabras clave relacionadas con cargadores
+                if not any(re.search(patron, text, re.IGNORECASE) for patron in indicadores_cargador + indicadores_sin_cargador):
+                    # Buscar palabras sueltas relacionadas con cargadores
+                    palabras_cargador = ['cable', 'adaptador', 'transformador', 'charger', 'power', 'usb', 'alimentación']
+                    if any(palabra in text for palabra in palabras_cargador):
+                        # Si encuentra palabras relacionadas, asumir que hay cargador
+                        tiene_cargador = True
+
+                # Log para debugging (solo en desarrollo)
+                print(f"🤖 IA procesó: nombre='{nombre}', telefono='{telefono}', tiene_cargador={tiene_cargador}")
+                print(f"   Texto completo de IA: {text[:200]}...")  # Primeros 200 caracteres
 
                 return {
                     "nombre": nombre,

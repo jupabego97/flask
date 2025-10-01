@@ -9,6 +9,8 @@ Esta aplicación ahora incluye soporte completo para **Progressive Web App (PWA)
 - **Instalación nativa** en Android, iOS y Desktop
 - **Funcionamiento offline** básico con cache inteligente
 - **Interfaz adaptativa** optimizada para móviles
+- **IA integrada** para procesamiento automático de imágenes
+- **Detección automática de cargadores** en fotos de equipos
 - **Notificaciones push** (preparado para futuras implementaciones)
 - **Tema consistente** con colores de WhatsApp
 
@@ -107,7 +109,27 @@ flask/
 ### Funcionalidad Mejorada
 - **Cámara integrada** para capturar fotos de dispositivos
 - **Interfaz táctil optimizada** con drag & drop
+- **IA inteligente** para extracción automática de datos
+- **Detección automática de cargadores** en imágenes
 - **Notificaciones** (preparado para futuras versiones)
+
+## 🤖 IA y Detección de Cargadores
+
+### Cómo Funciona la IA
+1. **Captura la imagen** del equipo electrónico
+2. **IA analiza automáticamente** el contenido
+3. **Extrae información**: nombre, teléfono, cargador
+4. **Llena automáticamente** los campos del formulario
+
+### Detección de Cargadores
+La IA está entrenada para detectar:
+- ✅ **Cables de alimentación** conectados al equipo
+- ✅ **Adaptadores de corriente** (rectangulares)
+- ✅ **Cargadores USB** visibles
+- ✅ **Referencias escritas** a "cargador incluido"
+- ✅ **Cables power/energía** de cualquier tipo
+
+**Indicador visual**: Cuando la IA detecta un cargador, aparece un ícono verde 🤖 "Detectado por IA" junto a la casilla.
 
 ## 🛠️ Desarrollo y Testing
 
