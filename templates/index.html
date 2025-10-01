@@ -35,365 +35,529 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/icon-192.png">
     <link rel="manifest" href="/static/manifest.json">
 
-    <!-- Bootstrap y Font Awesome -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts - Tipografía profesional -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5.3+ y Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <style>
-        .kanban-column {
-            min-height: 300px;
-            background-color: #f8f9fa;
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #f8fafc;
+            --accent-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Header profesional */
+        .app-header {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .app-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Botones principales */
+        .btn-primary-custom {
+            background: var(--gradient-primary);
+            border: none;
             border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 15px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: var(--gradient-primary);
+        }
+
+        .btn-primary-custom i {
+            margin-right: 0.5rem;
+        }
+
+        /* Columnas Kanban profesionales */
+            .kanban-column {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
             position: relative;
+            overflow: hidden;
         }
 
-        /* Responsive heights */
-        @media (min-width: 576px) {
-            .kanban-column {
-                min-height: 400px;
-                padding: 12px;
-            }
+        .kanban-column::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
         }
 
-        @media (min-width: 768px) {
-            .kanban-column {
-                min-height: 500px;
-                padding: 15px;
-            }
+        .kanban-column:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
-        @media (min-width: 992px) {
-            .kanban-column {
-                min-height: 600px;
-            }
+        .kanban-column h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
         }
 
-        .droppable-column {
-            min-height: 250px;
-            border: 2px dashed transparent;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-            position: relative;
+        .kanban-column h3::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            margin-right: 0.5rem;
         }
 
-        /* Responsive droppable heights */
-        @media (min-width: 576px) {
+        /* Área droppable mejorada */
             .droppable-column {
                 min-height: 300px;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .droppable-column {
-                min-height: 400px;
-            }
-        }
-
-        @media (min-width: 992px) {
-            .droppable-column {
-                min-height: 500px;
-            }
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(248, 250, 252, 0.5);
+            position: relative;
         }
 
         .droppable-column:hover {
-            border-color: #dee2e6;
-            background-color: #f8f9fa;
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.05);
         }
 
-        .card {
-            margin-bottom: 8px;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            cursor: move;
-            transition: opacity 0.2s;
-            font-size: 0.9rem;
+        .droppable-column.drag-over {
+            border-color: var(--accent-color);
+            background: rgba(16, 185, 129, 0.1);
+            transform: scale(1.02);
         }
 
-        /* Responsive card margins */
-        @media (min-width: 768px) {
-            .card {
-                margin-bottom: 10px;
-                font-size: 1rem;
-            }
+        /* Tarjetas profesionales */
+        .repair-card {
+            background: white;
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 0.75rem;
+            cursor: grab;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border-left: 4px solid var(--primary-color);
         }
 
-        .card:hover {
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .repair-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
-        .card-header {
-            background-color: #e9ecef;
-            padding: 6px 8px;
-            font-size: 0.85rem;
+        .repair-card:active {
+            cursor: grabbing;
         }
 
-        /* Responsive card header */
-        @media (min-width: 768px) {
-            .card-header {
-                padding: 8px 12px;
+        .repair-card.dragging {
+            opacity: 0.5;
+            transform: rotate(2deg);
+        }
+
+        /* Estados de las tarjetas */
+        .repair-card[data-status="ingresado"] {
+            border-left-color: var(--primary-color);
+        }
+
+        .repair-card[data-status="diagnosticada"] {
+            border-left-color: var(--warning-color);
+        }
+
+        .repair-card[data-status="para_entregar"] {
+            border-left-color: #8b5cf6;
+        }
+
+        .repair-card[data-status="listos"] {
+            border-left-color: var(--accent-color);
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        /* Header de tarjeta */
+        .repair-card .card-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Body de tarjeta */
+        .repair-card .card-body {
+            padding: 1rem;
+        }
+
+        .repair-card .card-text {
+            color: var(--text-secondary);
                 font-size: 0.9rem;
-            }
+            margin-bottom: 0.5rem;
         }
 
-        .card-body {
-            padding: 8px;
+        /* Información de fechas */
+        .date-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
         }
 
-        /* Responsive card body */
-        @media (min-width: 768px) {
-            .card-body {
-                padding: 10px 12px;
-            }
+        .date-info i {
+            width: 14px;
         }
 
-        .whatsapp-btn {
-            background-color: #25d366;
-            border-color: #25d366;
-            color: white;
-            padding: 2px 6px;
-            font-size: 0.75rem;
+        .date-overdue {
+            color: var(--danger-color);
+            font-weight: 600;
         }
 
-        /* Botón WhatsApp más grande en header */
-        .whatsapp-btn-large {
-            background-color: #25d366 !important;
-            border-color: #25d366 !important;
-            color: white !important;
-            padding: 6px 12px !important;
-            font-size: 0.85rem !important;
+        /* Indicador de cargador */
+        .charger-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
             font-weight: 500;
+        }
+
+        /* Botones de acción */
+        .btn-action {
+            border: none;
             border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(37, 211, 102, 0.3);
-        }
-
-        .whatsapp-btn-large:hover {
-            background-color: #128c7e !important;
-            border-color: #128c7e !important;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(37, 211, 102, 0.4);
-        }
-
-        /* Responsive WhatsApp button */
-        @media (min-width: 768px) {
-            .whatsapp-btn {
-                padding: 4px 8px;
-                font-size: 0.8rem;
-            }
-
-            .whatsapp-btn-large {
-                padding: 8px 16px !important;
-                font-size: 0.9rem !important;
-            }
-        }
-
-        .whatsapp-btn:hover {
-            background-color: #128c7e;
-            border-color: #128c7e;
-        }
-
-        .fecha-limite {
-            font-size: 0.75rem;
-            color: #6c757d;
-        }
-
-        .fecha-vencida {
-            color: #dc3545;
-            font-weight: bold;
-        }
-
-        /* Responsive title */
-        h1 {
-            font-size: 1.5rem;
-        }
-
-        @media (min-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-        }
-
-        /* Responsive container */
-        .container-fluid {
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-
-        @media (min-width: 576px) {
-            .container-fluid {
-                padding-left: 15px;
-                padding-right: 15px;
-            }
-        }
-
-        /* Hide/show elements responsively */
-        .d-none {
-            display: none !important;
-        }
-
-        .d-sm-inline {
-            display: inline !important;
-        }
-
-        .d-sm-none {
-            display: none !important;
-        }
-
-        .d-md-none {
-            display: none !important;
-        }
-
-        @media (min-width: 576px) {
-            .d-sm-inline {
-                display: inline !important;
-            }
-            .d-sm-none {
-                display: none !important;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .d-md-none {
-                display: none !important;
-            }
-        }
-
-        /* Card footer styling */
-        .card-footer {
-            padding: 8px 12px 12px 12px !important;
-        }
-
-        /* Responsive card footer */
-        @media (min-width: 768px) {
-            .card-footer {
-                padding: 10px 15px 15px 15px !important;
-            }
-        }
-
-        /* Action buttons in footer */
-        .card-footer .btn {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 500;
             transition: all 0.2s ease;
         }
 
-        .card-footer .btn:hover {
+        .btn-whatsapp {
+            background: #25d366;
+            color: white;
+        }
+
+        .btn-whatsapp:hover {
+            background: #128c7e;
             transform: translateY(-1px);
         }
 
-        /* Modal con pasos */
-        .paso {
-            animation: fadeIn 0.3s ease-in-out;
+        .btn-edit {
+            background: var(--primary-color);
+            color: white;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .btn-edit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
         }
 
-        /* Indicador de grabación */
-        .blink {
-            animation: blink 1s infinite;
+        /* Modal mejorado */
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
         }
 
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+        .modal-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 12px 12px 0 0;
         }
 
-        /* Preview de imagen en modal */
-        #preview {
-            border: 2px solid #dee2e6;
-            max-height: 200px;
-            object-fit: cover;
+        .modal-title {
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        /* Botones de navegación */
-        .modal-footer .btn {
-            min-width: 100px;
+        /* Formulario mejorado */
+        .form-control {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
         }
 
-        /* Flex utilities */
-        .flex-fill {
-            flex: 1 1 auto !important;
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
-        .gap-2 {
-            gap: 0.5rem !important;
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
         }
 
-        /* Responsive images in cards */
-        @media (max-width: 575.98px) {
-            .card img {
-                max-height: 120px !important;
+        /* Indicador de IA */
+        .ai-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            animation: fadeInScale 0.3s ease;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
             }
         }
 
-        @media (min-width: 576px) and (max-width: 767.98px) {
-            .card img {
-                max-height: 140px !important;
+        /* Barra de progreso */
+        .progress {
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border-color);
+        }
+
+        .progress-bar {
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        /* Estados de los pasos */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .step-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-item::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            right: -50%;
+            height: 2px;
+            background: var(--border-color);
+        }
+
+        .step-item:last-child::after {
+            display: none;
+        }
+
+        .step-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--border-color);
+            margin: 0 auto 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-item.active .step-dot {
+            background: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .step-item.completed .step-dot {
+            background: var(--accent-color);
+        }
+
+        /* Loading de IA */
+        .ai-loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .ai-loading .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: var(--primary-color);
+        }
+
+        /* Preview de imagen */
+        #preview {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            max-height: 250px;
+            object-fit: cover;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Responsive design */
+        @media (max-width: 576px) {
+            .app-title {
+                font-size: 1.5rem;
+            }
+
+            .kanban-column {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .repair-card .card-body {
+                padding: 0.75rem;
+            }
+
+            .btn-action {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
             }
         }
 
         @media (min-width: 768px) {
-            .card img {
-                max-height: 160px !important;
+            .kanban-column {
+                padding: 2rem;
+            }
+
+            .repair-card {
+                margin-bottom: 1rem;
             }
         }
 
-        /* PWA Splash Screen optimizaciones para Android */
-        @media (display-mode: standalone) {
-            body {
-                /* Evitar bounce scroll en iOS */
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
-            }
+        /* Animaciones de carga */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
 
-            /* Mejor manejo de viewport en PWA */
-            .container-fluid {
-                height: 100vh;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
+        .slide-up {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        /* Android Chrome bottom navigation safe area */
-        @supports (padding-bottom: env(safe-area-inset-bottom)) {
-            body {
-                padding-bottom: env(safe-area-inset-bottom);
-            }
-        }
-
-        /* Mejor experiencia táctil en Android */
-        @media (pointer: coarse) {
-            .btn {
-                min-height: 44px;
-                min-width: 44px;
-            }
-
-            .card {
-                margin-bottom: 12px;
-            }
-        }
-
-        /* Loading spinner para PWA */
+        /* PWA Splash Screen */
         .pwa-loading {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #ffffff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
+            color: white;
+        }
+
+        .pwa-loading .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-color: rgba(255, 255, 255, 0.3);
+            border-right-color: white;
+            margin-bottom: 1rem;
+        }
+
+        .pwa-loading h5 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .pwa-loading p {
+            opacity: 0.8;
+            font-size: 0.9rem;
         }
 
         .pwa-loading.hidden {
             display: none;
+        }
+
+        /* Utilidades adicionales */
+        .text-gradient {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .shadow-custom {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .border-custom {
+            border: 1px solid var(--border-color);
         }
     </style>
 </head>
@@ -409,47 +573,66 @@
         </div>
     </div>
 
-    <div class="container-fluid mt-4">
-        <h1 class="text-center mb-4">Sistema de Reparaciones IT</h1>
-
-        <div class="mb-4">
-            <div class="row g-3 mb-3">
-                <div class="col-12 col-lg-6">
-                    <button type="button" class="btn btn-primary btn-lg px-3 py-2 px-md-4 py-md-3 w-100" data-bs-toggle="modal" data-bs-target="#nuevaTarjetaModal">
-                        <i class="fas fa-plus-circle me-2"></i><span class="d-none d-sm-inline">Nueva Reparación</span><span class="d-sm-none">Nueva</span>
+    <!-- Header Profesional -->
+    <header class="app-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-12 col-md-6">
+                    <h1 class="app-title">Sistema de Reparaciones IT</h1>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="d-flex justify-content-end gap-3">
+                        <button type="button" class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#nuevaTarjetaModal">
+                            <i class="fas fa-plus-circle"></i><span class="d-none d-sm-inline ms-2">Nueva Reparación</span>
                     </button>
                 </div>
-                <div class="col-12 col-lg-6">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" class="form-control" id="busquedaTarjetas" placeholder="Buscar por nombre, problema o WhatsApp..." onkeyup="filtrarTarjetas()">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <!-- Barra de búsqueda profesional -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-center">
+                    <div class="input-group" style="max-width: 500px;">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control border-start-0 ps-0" id="busquedaTarjetas"
+                               placeholder="Buscar reparaciones..." onkeyup="filtrarTarjetas()">
+                        <span class="input-group-text bg-white d-none d-sm-inline">
+                            <kbd class="bg-light text-muted px-2 py-1 rounded small">⌘K</kbd>
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row g-3">
+        <!-- Columnas Kanban Profesionales -->
+        <div class="row g-4">
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kanban-column">
-                    <h3 class="text-center h5 h4-md">Ingresado</h3>
+                <div class="kanban-column fade-in">
+                    <h3>Ingresado</h3>
                     <div id="ingresado" class="droppable-column"></div>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kanban-column">
-                    <h3 class="text-center h5 h4-md">Diagnosticada</h3>
+                <div class="kanban-column fade-in" style="animation-delay: 0.1s;">
+                    <h3>En Diagnóstico</h3>
                     <div id="diagnosticada" class="droppable-column"></div>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kanban-column">
-                    <h3 class="text-center h5 h4-md">Para Entregar</h3>
+                <div class="kanban-column fade-in" style="animation-delay: 0.2s;">
+                    <h3>Listos para Entregar</h3>
                     <div id="para_entregar" class="droppable-column"></div>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kanban-column">
-                    <h3 class="text-center h5 h4-md">Listos</h3>
+                <div class="kanban-column fade-in" style="animation-delay: 0.3s;">
+                    <h3>Completados</h3>
                     <div id="listos" class="droppable-column"></div>
                 </div>
             </div>
@@ -525,8 +708,8 @@
                                     <input class="form-check-input" type="checkbox" id="ai_cargador">
                                     <label class="form-check-label" for="ai_cargador">
                                         Incluye cargador
-                                        <small class="text-muted ms-2" id="cargadorStatus" style="display: none;">
-                                            <i class="fas fa-robot text-success"></i> Detectado por IA
+                                        <small class="ai-indicator ms-2" id="cargadorStatus" style="display: none;">
+                                            <i class="fas fa-robot"></i> Detectado por IA
                                         </small>
                                     </label>
                                 </div>
@@ -659,7 +842,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let draggedElement = null;
         let todasLasTarjetas = []; // Almacenar todas las tarjetas para filtrado
@@ -699,6 +882,32 @@
             }
         }
 
+        // Atajos de teclado
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + N: Nueva reparación
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                document.querySelector('[data-bs-target="#nuevaTarjetaModal"]').click();
+            }
+
+            // Ctrl/Cmd + K: Enfocar búsqueda
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('busquedaTarjetas').focus();
+                document.getElementById('busquedaTarjetas').select();
+            }
+
+            // Escape: Limpiar búsqueda
+            if (e.key === 'Escape') {
+                const searchInput = document.getElementById('busquedaTarjetas');
+                if (searchInput === document.activeElement) {
+                    searchInput.value = '';
+                    filtrarTarjetas();
+                    searchInput.blur();
+                }
+            }
+        });
+
         // Cargar tarjetas al iniciar
         document.addEventListener('DOMContentLoaded', function() {
             // Ocultar loading después de un pequeño delay para mejor UX
@@ -708,6 +917,11 @@
 
             cargarTarjetas();
             configurarDragAndDrop();
+
+            // Mostrar tooltip de ayuda al inicio
+            setTimeout(() => {
+                mostrarNotificacion('💡 <strong>Pro tip:</strong> Usa Ctrl+N para nueva reparación, Ctrl+K para buscar', 'info');
+            }, 2000);
         });
 
         // También ocultar si la app ya está cacheada
@@ -743,66 +957,74 @@
 
         function crearElementoTarjeta(tarjeta) {
             const card = document.createElement('div');
-            card.className = 'card';
+            card.className = 'repair-card slide-up';
             card.draggable = true;
             card.setAttribute('draggable', 'true');
             card.dataset.id = tarjeta.id;
+            card.setAttribute('data-status', tarjeta.columna);
 
             const fechaLimite = new Date(tarjeta.fecha_limite);
             const hoy = new Date();
-            const claseFecha = fechaLimite < hoy ? 'fecha-vencida' : 'fecha-limite';
+            const claseFecha = fechaLimite < hoy ? 'date-overdue' : '';
 
             // Si la tarjeta está en la columna "listos", mostrar versión compacta
             if (tarjeta.columna === 'listos') {
                 card.innerHTML = `
                     <div class="card-body py-2 px-3">
                         <div class="d-flex justify-content-between align-items-center">
-                            <strong class="text-truncate flex-grow-1 me-2 mb-0 small">${tarjeta.nombre_propietario}</strong>
+                            <strong class="text-truncate flex-grow-1 me-2 mb-0">${tarjeta.nombre_propietario}</strong>
                             <div class="d-flex gap-1">
-                                <button class="btn btn-outline-primary btn-sm px-2 py-1" onclick="editarTarjeta(${tarjeta.id})" title="Ver detalles y editar">
+                                <button class="btn btn-edit btn-action" onclick="editarTarjeta(${tarjeta.id})" title="Ver detalles y editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-success btn-sm px-2 py-1 whatsapp-btn" onclick="enviarWhatsApp('${tarjeta.whatsapp}')" title="WhatsApp">
-                                    <i class="fab fa-whatsapp fa-lg"></i>
+                                <button class="btn btn-whatsapp btn-action" onclick="enviarWhatsApp('${tarjeta.whatsapp}')" title="WhatsApp">
+                                    <i class="fab fa-whatsapp"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
                 `;
             } else {
-                // Versión normal para otras columnas
-                card.innerHTML = `
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <strong class="text-truncate flex-grow-1 me-2">${tarjeta.nombre_propietario}</strong>
-                        <button class="btn btn-success btn-sm px-2 py-1 whatsapp-btn-large" onclick="enviarWhatsApp('${tarjeta.whatsapp}')" title="WhatsApp">
-                            <i class="fab fa-whatsapp fa-lg me-1"></i><span class="d-none d-md-inline">WhatsApp</span>
+                // Versión completa para otras columnas
+            card.innerHTML = `
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong class="text-truncate flex-grow-1 me-2">${tarjeta.nombre_propietario}</strong>
+                        <button class="btn btn-whatsapp btn-action" onclick="enviarWhatsApp('${tarjeta.whatsapp}')" title="WhatsApp">
+                            <i class="fab fa-whatsapp me-1"></i><span class="d-none d-md-inline">WhatsApp</span>
+                    </button>
+                </div>
+                <div class="card-body">
+                        <p class="card-text">${tarjeta.problema}</p>
+
+                        <div class="date-info">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span class="${claseFecha}">${tarjeta.fecha_limite}</span>
+                    </div>
+
+                        ${tarjeta.tiene_cargador === 'si' ? '<div class="charger-indicator"><i class="fas fa-plug"></i> Incluye cargador</div>' : ''}
+
+                        ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded border-custom" alt="Imagen del dispositivo" style="cursor: pointer; max-height: 150px; object-fit: cover;" onclick="abrirImagen(\'' + tarjeta.imagen_url.replace(/'/g, '\\\'') + '\')"></div>' : ''}
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <div class="d-flex justify-content-end">
+                            <button class="btn btn-edit btn-action" onclick="editarTarjeta(${tarjeta.id})" title="Editar reparación">
+                                <i class="fas fa-edit me-1"></i><span class="d-none d-sm-inline">Editar</span>
                         </button>
                     </div>
-                    <div class="card-body">
-                        <p class="card-text small mb-2">${tarjeta.problema}</p>
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <small class="${claseFecha}">📅 ${tarjeta.fecha_limite}</small>
-                            ${tarjeta.tiene_cargador === 'si' ? '<small class="text-success">🔌</small>' : ''}
-                        </div>
-                        ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded w-100" alt="Imagen del dispositivo" style="height: auto; object-fit: cover; border: 1px solid #dee2e6; cursor: pointer;" onclick="abrirImagen(\'' + tarjeta.imagen_url.replace(/'/g, '\\\'') + '\')"></div>' : ''}
-                    </div>
-                    <div class="card-footer bg-transparent border-0 pt-0">
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-outline-primary btn-sm px-2 py-1" onclick="editarTarjeta(${tarjeta.id})" title="Editar tarjeta">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
+                </div>
+            `;
             }
 
+            // Eventos de drag and drop mejorados
             card.addEventListener('dragstart', function(e) {
                 draggedElement = this;
-                this.style.opacity = '0.5';
+                this.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
             });
 
             card.addEventListener('dragend', function(e) {
-                this.style.opacity = '1';
+                this.classList.remove('dragging');
+                draggedElement = null;
             });
 
             return card;
@@ -813,26 +1035,29 @@
             document.querySelectorAll('.droppable-column').forEach(columna => {
                 columna.addEventListener('dragover', function(e) {
                     e.preventDefault(); // CRUCIAL para permitir drop
-                    this.style.backgroundColor = '#e9ecef';
-                    this.style.borderColor = '#007bff';
-                    this.style.borderStyle = 'solid';
+                    this.classList.add('drag-over');
                 });
 
                 columna.addEventListener('dragleave', function(e) {
-                    this.style.backgroundColor = '';
-                    this.style.borderColor = 'transparent';
-                    this.style.borderStyle = 'dashed';
+                    // Solo remover si el mouse realmente salió de la columna (no de un elemento hijo)
+                    if (!this.contains(e.relatedTarget)) {
+                        this.classList.remove('drag-over');
+                    }
                 });
 
                 columna.addEventListener('drop', function(e) {
                     e.preventDefault();
-                    this.style.backgroundColor = '';
-                    this.style.borderColor = 'transparent';
-                    this.style.borderStyle = 'dashed';
+                    this.classList.remove('drag-over');
 
                     if (draggedElement) {
                         const nuevaColumna = this.id;
                         const tarjetaId = draggedElement.dataset.id;
+
+                        // Agregar animación de movimiento
+                        draggedElement.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            draggedElement.style.transform = '';
+                        }, 200);
 
                         // 1. Mover inmediatamente en DOM para mejor UX
                         this.appendChild(draggedElement);
@@ -849,6 +1074,8 @@
                             const index = todasLasTarjetas.findIndex(t => t.id == tarjetaId);
                             if (index !== -1) {
                                 todasLasTarjetas[index].columna = nuevaColumna;
+                                // Actualizar el atributo data-status para los estilos
+                                draggedElement.setAttribute('data-status', nuevaColumna);
                             }
                             console.log('✅ Tarjeta movida correctamente');
                         })
@@ -858,7 +1085,8 @@
                             if (draggedElement.parentNode) {
                                 draggedElement.remove();
                             }
-                            alert('Error al guardar el movimiento. La tarjeta ha sido revertida.');
+                            // Mostrar notificación de error moderna
+                            mostrarNotificacion('Error al guardar el movimiento. La tarjeta ha sido revertida.', 'danger');
                         })
                         .finally(() => {
                             draggedElement = null;
@@ -866,6 +1094,27 @@
                     }
                 });
             });
+        }
+
+        // Función para mostrar notificaciones modernas
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            // Crear elemento de notificación
+            const notif = document.createElement('div');
+            notif.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
+            notif.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; box-shadow: var(--shadow-lg);';
+            notif.innerHTML = `
+                ${mensaje}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            document.body.appendChild(notif);
+
+            // Auto-remover después de 5 segundos
+            setTimeout(() => {
+                if (notif.parentNode) {
+                    notif.remove();
+                }
+            }, 5000);
         }
 
         // Variables para el flujo con IA
@@ -1065,10 +1314,10 @@
                     const cargadorStatus = document.getElementById('cargadorStatus');
                     if (data.tiene_cargador) {
                         cargadorStatus.style.display = 'inline';
-                        // Ocultar después de 3 segundos
+                        // Ocultar después de 4 segundos
                         setTimeout(() => {
                             cargadorStatus.style.display = 'none';
-                        }, 3000);
+                        }, 4000);
                     }
                 }
 

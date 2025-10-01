@@ -64,8 +64,20 @@
     {
       "name": "Nueva Reparación",
       "short_name": "Nueva",
-      "description": "Crear una nueva reparación",
+      "description": "Crear una nueva reparación con IA",
       "url": "/#nueva",
+      "icons": [
+        {
+          "src": "/static/icons/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Buscar Reparaciones",
+      "short_name": "Buscar",
+      "description": "Buscar reparaciones existentes",
+      "url": "/#buscar",
       "icons": [
         {
           "src": "/static/icons/icon-96.png",
