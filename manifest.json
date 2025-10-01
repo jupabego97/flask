@@ -69,41 +69,13 @@
       "name": "Nueva Reparación",
       "short_name": "Nueva",
       "description": "Crear una nueva reparación con IA",
-      "url": "/#nueva",
+      "url": "/",
       "icons": [
         {
           "src": "/static/icons/icon-96.png",
           "sizes": "96x96"
         }
       ]
-    },
-    {
-      "name": "Buscar Reparaciones",
-      "short_name": "Buscar",
-      "description": "Buscar reparaciones existentes",
-      "url": "/#buscar",
-      "icons": [
-        {
-          "src": "/static/icons/icon-96.png",
-          "sizes": "96x96"
-        }
-      ]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/static/screenshots/mobile-main.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Vista principal del sistema de reparaciones"
-    },
-    {
-      "src": "/static/screenshots/mobile-new.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Crear nueva reparación con IA"
     }
   ]
 }

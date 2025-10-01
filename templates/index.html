@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nano - Sistema de Reparaciones NANO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <title>Nano - Sistema de Reparaciones IT</title>
 
     <!-- PWA Meta Tags para máxima compatibilidad -->
     <meta name="theme-color" content="#00ACC1">
@@ -596,6 +596,17 @@
             }
         }
 
+        @keyframes slideDown {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
         /* PWA Splash Screen */
         .pwa-loading {
             position: fixed;
@@ -978,12 +989,14 @@
         let draggedElement = null;
         let todasLasTarjetas = []; // Almacenar todas las tarjetas para filtrado
 
-        // PWA: Registrar Service Worker
+        // PWA: Registrar Service Worker y manejar instalación
+        let deferredPrompt;
+        
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/static/sw.js')
                     .then(function(registration) {
-                        console.log('✅ Service Worker registrado correctamente:', registration.scope);
+                        console.log('✅ Nano Service Worker registrado:', registration.scope);
 
                         // Escuchar por actualizaciones del service worker
                         registration.addEventListener('updatefound', function() {
@@ -991,7 +1004,7 @@
                             newWorker.addEventListener('statechange', function() {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                     // Nueva versión disponible
-                                    if (confirm('Nueva versión disponible. ¿Deseas actualizar?')) {
+                                    if (confirm('Nueva versión de Nano disponible. ¿Actualizar ahora?')) {
                                         newWorker.postMessage({ type: 'SKIP_WAITING' });
                                         window.location.reload();
                                     }
@@ -1000,10 +1013,92 @@
                         });
                     })
                     .catch(function(error) {
-                        console.log('❌ Error al registrar Service Worker:', error);
+                        console.error('❌ Error al registrar Service Worker:', error);
                     });
             });
         }
+
+        // Capturar el evento de instalación PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('🔔 Evento beforeinstallprompt capturado');
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Mostrar banner de instalación personalizado
+            mostrarBannerInstalacion();
+        });
+
+        // Mostrar banner de instalación
+        function mostrarBannerInstalacion() {
+            const banner = document.createElement('div');
+            banner.id = 'installBanner';
+            banner.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                max-width: 90%;
+                animation: slideUp 0.3s ease-out;
+            `;
+            
+            banner.innerHTML = `
+                <img src="/static/icons/icon-72.png" style="width: 40px; height: 40px; border-radius: 8px;">
+                <div style="flex: 1;">
+                    <strong style="color: #00ACC1;">Instalar Nano</strong>
+                    <p style="margin: 0; font-size: 0.9rem; color: #64748b;">Accede rápido desde tu pantalla de inicio</p>
+                </div>
+                <button onclick="instalarPWA()" style="background: #00ACC1; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    Instalar
+                </button>
+                <button onclick="cerrarBannerInstalacion()" style="background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 1.2rem;">
+                    ×
+                </button>
+            `;
+            
+            document.body.appendChild(banner);
+        }
+
+        // Instalar PWA
+        function instalarPWA() {
+            if (!deferredPrompt) {
+                console.warn('No hay evento de instalación disponible');
+                return;
+            }
+            
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('✅ Usuario aceptó instalar Nano');
+                } else {
+                    console.log('❌ Usuario rechazó instalar Nano');
+                }
+                deferredPrompt = null;
+                cerrarBannerInstalacion();
+            });
+        }
+
+        // Cerrar banner de instalación
+        function cerrarBannerInstalacion() {
+            const banner = document.getElementById('installBanner');
+            if (banner) {
+                banner.style.animation = 'slideDown 0.3s ease-out';
+                setTimeout(() => banner.remove(), 300);
+            }
+        }
+
+        // Detectar si ya está instalada
+        window.addEventListener('appinstalled', () => {
+            console.log('✅ Nano instalada exitosamente');
+            cerrarBannerInstalacion();
+        });
 
         // Ocultar loading screen cuando esté listo
         function hideLoadingScreen() {
