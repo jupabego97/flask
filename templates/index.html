@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nano - Sistema de Reparaciones IT</title>
 
     <!-- PWA Meta Tags para máxima compatibilidad -->
@@ -25,31 +25,15 @@
     <meta name="msapplication-TileImage" content="/static/icons/icon-144.png">
     <meta name="msapplication-config" content="/static/browserconfig.xml">
 
-    <!-- Chrome en Android - Optimizaciones adicionales -->
-    <meta name="color-scheme" content="light">
-    <meta name="format-detection" content="telephone=yes">
-    <meta name="HandheldFriendly" content="true">
-    <meta name="MobileOptimized" content="width">
+    <!-- Chrome en Android -->
+    <meta name="color-scheme" content="light dark">
     <link rel="canonical" href="/">
 
-    <!-- Splash Screen para Android -->
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#00ACC1">
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#00838F">
-    
     <!-- PWA Icons -->
     <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/static/icons/icon-512.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/icon-192.png">
     <link rel="manifest" href="/static/manifest.json">
-    
-    <!-- Splash Screens para diferentes dispositivos -->
-    <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="/static/splash/splash-640x1136.png">
-    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/static/splash/splash-750x1334.png">
-    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/static/splash/splash-1125x2436.png">
-    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/static/splash/splash-1242x2208.png">
-    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" href="/static/splash/splash-1536x2048.png">
-    <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" href="/static/splash/splash-1668x2388.png">
-    <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" href="/static/splash/splash-2048x2732.png">
 
     <!-- Google Fonts - Tipografía profesional -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -580,6 +564,102 @@
             animation: slideUp 0.4s ease-out;
         }
 
+        /* Toast personalizado */
+        .toast-container {
+            z-index: 1060;
+        }
+
+        .toast-success-custom {
+            background: linear-gradient(135deg, #198754 0%, #20c997 100%) !important;
+            border: none !important;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+
+        /* Optimizaciones específicas para móviles (99% de uso) */
+        @media (max-width: 767.98px) {
+            .btn-xl {
+                font-size: 1.25rem !important;
+                padding: 1rem 2rem !important;
+                border-radius: 12px !important;
+            }
+
+            .form-control-lg {
+                font-size: 1.1rem !important;
+                padding: 0.75rem 1rem !important;
+                border-radius: 8px !important;
+                min-height: 48px !important; /* Mejor toque */
+            }
+
+            .form-check-lg .form-check-input {
+                width: 1.5em !important;
+                height: 1.5em !important;
+                margin-top: 0.25em !important;
+            }
+
+            .form-check-lg .form-check-label {
+                font-size: 1.1rem !important;
+                padding-left: 0.5rem !important;
+            }
+
+            /* Cards más compactas en móviles */
+            .card-body {
+                padding: 1rem !important;
+            }
+
+            /* Mejor espaciado táctil */
+            .mb-3 {
+                margin-bottom: 1.5rem !important;
+            }
+
+            /* Botones más grandes */
+            .btn-lg {
+                padding: 0.75rem 1.5rem !important;
+                font-size: 1.1rem !important;
+                min-height: 48px !important;
+            }
+
+            /* Inputs con mejor foco */
+            .form-control:focus {
+                border-color: var(--primary-color) !important;
+                box-shadow: 0 0 0 0.2rem rgba(0, 172, 193, 0.25) !important;
+                transform: scale(1.01);
+                transition: all 0.2s ease;
+            }
+
+            /* Mejor contraste para móviles */
+            .text-muted {
+                color: #6c757d !important;
+            }
+
+            /* Indicadores de estado más visibles */
+            .ai-indicator {
+                font-size: 0.85rem !important;
+                padding: 0.2rem 0.5rem !important;
+            }
+        }
+
+        /* Validación visual en tiempo real */
+        .campo-valido {
+            border-color: #198754 !important;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+        }
+
+        .campo-invalido {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+
+        /* Botón crear animado cuando está listo */
+        .btn-crear-listo {
+            animation: pulseSuccess 2s infinite;
+            transform: scale(1.02);
+        }
+
+        @keyframes pulseSuccess {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -593,17 +673,6 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
-            }
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(20px);
             }
         }
 
@@ -637,53 +706,12 @@
         }
 
         .pwa-loading p {
-            opacity: 0.7;
+            opacity: 0.8;
             font-size: 0.9rem;
-            color: #64748b;
         }
 
         .pwa-loading.hidden {
             display: none;
-        }
-        
-        /* Optimizaciones específicas para Android PWA */
-        @media screen and (max-width: 768px) {
-            /* Mejorar experiencia táctil */
-            * {
-                -webkit-tap-highlight-color: rgba(0, 172, 193, 0.1);
-                touch-action: manipulation;
-            }
-            
-            /* Prevenir zoom accidental en inputs */
-            input, select, textarea {
-                font-size: 16px !important;
-            }
-            
-            /* Scroll suave en Android */
-            body {
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            /* Ajustar header en móvil */
-            .app-header {
-                padding: 0.75rem 0;
-            }
-            
-            .nano-logo {
-                height: 35px !important;
-            }
-        }
-        
-        /* Soporte para notch en dispositivos modernos */
-        @supports (padding: max(0px)) {
-            body {
-                padding-left: max(0px, env(safe-area-inset-left));
-                padding-right: max(0px, env(safe-area-inset-right));
-            }
-            
-            .app-header {
-                padding-top: max(1rem, env(safe-area-inset-top));
-            }
         }
 
         /* Utilidades adicionales */
@@ -793,12 +821,11 @@
                     <!-- Indicador de pasos -->
                     <div class="mb-4">
                         <div class="progress mb-3">
-                            <div class="progress-bar" id="progressBar" style="width: 25%"></div>
+                            <div class="progress-bar" id="progressBar" style="width: 33%"></div>
                         </div>
                         <div class="d-flex justify-content-between">
                             <small class="text-muted">📷 Foto</small>
-                            <small class="text-muted">🤖 IA</small>
-                            <small class="text-muted">🎤 Voz</small>
+                            <small class="text-muted">🤖 Datos + Problema</small>
                             <small class="text-muted">✅ Crear</small>
                         </div>
                     </div>
@@ -827,82 +854,114 @@
                         </div>
                     </div>
 
-                    <!-- Paso 2: Procesamiento con IA y verificación -->
+                    <!-- Paso 2: Procesamiento IA + Descripción del problema -->
                     <div id="paso2" class="paso d-none">
-                        <h6 class="mb-3">🤖 Paso 2: Verifica la información extraída por IA</h6>
-                        <div id="loadingAI" class="text-center mb-3">
+                        <h6 class="mb-3">🤖 Paso 2: Verifica datos y describe el problema</h6>
+
+                        <!-- Indicador de procesamiento IA -->
+                        <div id="loadingAI" class="text-center mb-3 d-none">
                             <div class="spinner-border text-primary" role="status">
                                 <span class="visually-hidden">Procesando con IA...</span>
                             </div>
                             <p class="mt-2">Analizando imagen con IA...</p>
                         </div>
-                        <form id="formVerificacion">
-                            <div class="mb-3">
-                                <label for="ai_nombre" class="form-label">Nombre del Cliente</label>
-                                <input type="text" class="form-control" id="ai_nombre" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="ai_whatsapp" class="form-label">WhatsApp</label>
-                                <input type="text" class="form-control" id="ai_whatsapp" placeholder="Ej: 3001234567 (se agrega +57 automáticamente)">
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="ai_cargador">
-                                    <label class="form-check-label" for="ai_cargador">
-                                        Incluye cargador
-                                        <small class="ai-indicator ms-2" id="cargadorStatus" style="display: none;">
-                                            <i class="fas fa-robot"></i> Detectado por IA
-                                        </small>
-                                    </label>
+
+                        <!-- Formulario optimizado para móviles -->
+                        <div class="row">
+                            <!-- En móviles: apilado verticalmente. En tablets/desktop: 2 columnas -->
+                            <div class="col-12 col-lg-6 order-1 order-lg-1">
+                                <!-- Datos del cliente (IA) - Primera en móviles -->
+                                <div class="card border-0 shadow-sm mb-4">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0"><i class="fas fa-user"></i> Datos del Cliente</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="formVerificacion">
+                                            <div class="mb-3">
+                                                <label for="ai_nombre" class="form-label fw-bold">Nombre del Cliente</label>
+                                                <input type="text" class="form-control form-control-lg" id="ai_nombre" placeholder="Cliente" required autocapitalize="words" autocomplete="name">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="ai_whatsapp" class="form-label fw-bold">WhatsApp</label>
+                                                <input type="tel" class="form-control form-control-lg" id="ai_whatsapp" placeholder="3001234567" inputmode="tel" autocomplete="tel">
+                                                <small class="text-muted">Se agrega +57 automáticamente</small>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="form-check form-check-lg">
+                                                    <input class="form-check-input" type="checkbox" id="ai_cargador" style="width: 1.2em; height: 1.2em;">
+                                                    <label class="form-check-label fw-bold fs-6" for="ai_cargador">
+                                                        Incluye cargador
+                                                        <small class="ai-indicator ms-2" id="cargadorStatus" style="display: none;">
+                                                            <i class="fas fa-robot"></i> Detectado por IA
+                                                        </small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="fecha_limite_final" class="form-label fw-bold">Fecha Límite</label>
+                                                <input type="date" class="form-control form-control-lg" id="fecha_limite_final" required>
+                                                <small class="text-muted"><i class="fas fa-calendar-check"></i> Por defecto: 3 días hábiles</small>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </form>
-                    </div>
 
-                    <!-- Paso 3: Grabación de voz -->
-                    <div id="paso3" class="paso d-none">
-                        <h6 class="mb-3">🎤 Paso 3: Describe el problema (voz o texto)</h6>
-                        <div class="mb-3">
-                            <label for="problema_texto" class="form-label">Tipo de Problema</label>
-                            <div class="input-group mb-2">
-                                <textarea class="form-control" id="problema_texto" rows="3" placeholder="Describe el problema del equipo..."></textarea>
-                                <button class="btn btn-outline-primary" type="button" id="btnGrabar" onclick="toggleGrabacion()">
-                                    <i class="fas fa-microphone"></i> <span id="textoGrabar">Grabar</span>
-                                </button>
+                            <div class="col-12 col-lg-6 order-2 order-lg-2">
+                                <!-- Descripción del problema - Segunda en móviles -->
+                                <div class="card border-0 shadow-sm mb-4">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0"><i class="fas fa-tools"></i> Descripción del Problema</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="problema_texto" class="form-label fw-bold">Tipo de Problema</label>
+                                            <div class="input-group mb-3">
+                                                <textarea class="form-control form-control-lg" id="problema_texto" rows="3" placeholder="Describe el problema del equipo..." required autocapitalize="sentences"></textarea>
+                                                <button class="btn btn-outline-primary btn-lg d-flex flex-column align-items-center justify-content-center" type="button" id="btnGrabar" onclick="toggleGrabacion()" style="min-width: 140px; min-height: 80px;">
+                                                    <i class="fas fa-microphone fa-2x mb-1" id="iconoGrabar"></i>
+                                                    <span id="textoGrabar" class="small fw-bold">Grabar</span>
+                                                </button>
+                                            </div>
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle"></i> Presiona "Grabar" para dictar o escribe directamente
+                                            </small>
+                                        </div>
+                                        <div id="grabacionStatus" class="alert alert-info d-none">
+                                            <i class="fas fa-circle text-danger blink me-2"></i>
+                                            <strong>Grabando...</strong> Presiona "Detener" cuando termines
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle"></i> Presiona "Grabar" para dictar el problema o escribe directamente
+                        </div>
+
+                        <!-- Botón crear ultra-prominente para móviles -->
+                        <div class="text-center mt-4 mb-4">
+                            <button type="button" class="btn btn-success btn-xl w-100 py-4 fw-bold fs-5" id="btnCrear" onclick="crearTarjeta()" disabled>
+                                <i class="fas fa-rocket fa-2x me-3"></i>
+                                <span>¡Crear Reparación!</span>
+                                <div class="mt-1 small opacity-75" id="btnCrearSubtext">Completa los campos requeridos</div>
+                            </button>
+                            <small class="text-muted mt-2 d-block">
+                                <i class="fas fa-info-circle"></i> Campos requeridos: Nombre y Problema
                             </small>
                         </div>
-                        <div id="grabacionStatus" class="alert alert-info d-none">
-                            <i class="fas fa-circle text-danger blink"></i> Grabando... Presiona "Detener" cuando termines
-                        </div>
                     </div>
+                </div>
+                <!-- Footer eliminado - los controles están dentro del formulario -->
+            </div>
+        </div>
+    </div>
 
-                    <!-- Paso 4: Fecha límite y confirmación -->
-                    <div id="paso4" class="paso d-none">
-                        <h6 class="mb-3">✅ Paso 4: Fecha límite y confirmación</h6>
-                        <div class="mb-3">
-                            <label for="fecha_limite_final" class="form-label">Fecha Límite</label>
-                            <input type="date" class="form-control" id="fecha_limite_final" required>
-                        </div>
-                        <div class="card bg-light">
-                            <div class="card-body">
-                                <h6>Resumen de la reparación:</h6>
-                                <p><strong>Cliente:</strong> <span id="resumenNombre"></span></p>
-                                <p><strong>WhatsApp:</strong> <span id="resumenWhatsApp"></span></p>
-                                <p><strong>Cargador:</strong> <span id="resumenCargador"></span></p>
-                                <p><strong>Problema:</strong> <span id="resumenProblema"></span></p>
-                                <p><strong>Fecha límite:</strong> <span id="resumenFecha"></span></p>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Toast de notificaciones -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">
+                    Mensaje de éxito
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btnAnterior" onclick="pasoAnterior()" disabled>Atrás</button>
-                    <button type="button" class="btn btn-primary" id="btnSiguiente" onclick="pasoSiguiente()" disabled>Siguiente</button>
-                    <button type="button" class="btn btn-success d-none" id="btnCrear" onclick="crearTarjeta()">Crear Reparación</button>
-                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>
@@ -989,14 +1048,12 @@
         let draggedElement = null;
         let todasLasTarjetas = []; // Almacenar todas las tarjetas para filtrado
 
-        // PWA: Registrar Service Worker y manejar instalación
-        let deferredPrompt;
-        
+        // PWA: Registrar Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/static/sw.js')
                     .then(function(registration) {
-                        console.log('✅ Nano Service Worker registrado:', registration.scope);
+                        console.log('✅ Service Worker registrado correctamente:', registration.scope);
 
                         // Escuchar por actualizaciones del service worker
                         registration.addEventListener('updatefound', function() {
@@ -1004,7 +1061,7 @@
                             newWorker.addEventListener('statechange', function() {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                     // Nueva versión disponible
-                                    if (confirm('Nueva versión de Nano disponible. ¿Actualizar ahora?')) {
+                                    if (confirm('Nueva versión disponible. ¿Deseas actualizar?')) {
                                         newWorker.postMessage({ type: 'SKIP_WAITING' });
                                         window.location.reload();
                                     }
@@ -1013,92 +1070,10 @@
                         });
                     })
                     .catch(function(error) {
-                        console.error('❌ Error al registrar Service Worker:', error);
+                        console.log('❌ Error al registrar Service Worker:', error);
                     });
             });
         }
-
-        // Capturar el evento de instalación PWA
-        window.addEventListener('beforeinstallprompt', (e) => {
-            console.log('🔔 Evento beforeinstallprompt capturado');
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Mostrar banner de instalación personalizado
-            mostrarBannerInstalacion();
-        });
-
-        // Mostrar banner de instalación
-        function mostrarBannerInstalacion() {
-            const banner = document.createElement('div');
-            banner.id = 'installBanner';
-            banner.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: white;
-                padding: 1rem 1.5rem;
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 10000;
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                max-width: 90%;
-                animation: slideUp 0.3s ease-out;
-            `;
-            
-            banner.innerHTML = `
-                <img src="/static/icons/icon-72.png" style="width: 40px; height: 40px; border-radius: 8px;">
-                <div style="flex: 1;">
-                    <strong style="color: #00ACC1;">Instalar Nano</strong>
-                    <p style="margin: 0; font-size: 0.9rem; color: #64748b;">Accede rápido desde tu pantalla de inicio</p>
-                </div>
-                <button onclick="instalarPWA()" style="background: #00ACC1; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                    Instalar
-                </button>
-                <button onclick="cerrarBannerInstalacion()" style="background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 1.2rem;">
-                    ×
-                </button>
-            `;
-            
-            document.body.appendChild(banner);
-        }
-
-        // Instalar PWA
-        function instalarPWA() {
-            if (!deferredPrompt) {
-                console.warn('No hay evento de instalación disponible');
-                return;
-            }
-            
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('✅ Usuario aceptó instalar Nano');
-                } else {
-                    console.log('❌ Usuario rechazó instalar Nano');
-                }
-                deferredPrompt = null;
-                cerrarBannerInstalacion();
-            });
-        }
-
-        // Cerrar banner de instalación
-        function cerrarBannerInstalacion() {
-            const banner = document.getElementById('installBanner');
-            if (banner) {
-                banner.style.animation = 'slideDown 0.3s ease-out';
-                setTimeout(() => banner.remove(), 300);
-            }
-        }
-
-        // Detectar si ya está instalada
-        window.addEventListener('appinstalled', () => {
-            console.log('✅ Nano instalada exitosamente');
-            cerrarBannerInstalacion();
-        });
 
         // Ocultar loading screen cuando esté listo
         function hideLoadingScreen() {
@@ -1346,6 +1321,30 @@
         let stream = null;
         let iaProcesada = false; // Para evitar procesamientos duplicados
 
+        // Función para mostrar notificación de éxito (sin requerir click)
+        function mostrarNotificacionExito(mensaje) {
+            const toastElement = document.getElementById('successToast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            if (toastElement && toastMessage) {
+                toastMessage.textContent = mensaje;
+                toastElement.classList.add('toast-success-custom');
+
+                const toast = new bootstrap.Toast(toastElement, {
+                    delay: 3000, // 3 segundos
+                    autohide: true
+                });
+
+                toast.show();
+
+                // Log en consola para desarrolladores
+                console.log('✅', mensaje);
+            } else {
+                // Fallback al alert si el toast no funciona
+                alert(mensaje);
+            }
+        }
+
         // Función para mostrar un paso específico
         function mostrarPaso(paso) {
             // Ocultar todos los pasos
@@ -1354,20 +1353,23 @@
             // Mostrar el paso actual
             document.getElementById(`paso${paso}`).classList.remove('d-none');
 
-            // Actualizar barra de progreso
-            const progreso = (paso / 4) * 100;
+            // Actualizar barra de progreso (3 pasos)
+            const progreso = (paso / 3) * 100;
             document.getElementById('progressBar').style.width = `${progreso}%`;
 
             // Actualizar botones de navegación
             document.getElementById('btnAnterior').disabled = paso === 1;
-            document.getElementById('btnSiguiente').disabled = paso === 4;
-
-            // Mostrar/ocultar botón crear
-            document.getElementById('btnCrear').classList.toggle('d-none', paso !== 4);
+            document.getElementById('btnSiguiente').disabled = paso === 3; // Solo deshabilitar en paso 3 (confirmación final)
 
             // Si se llega al paso 2 y hay imagen pero no se ha procesado, procesar automáticamente
             if (paso === 2 && imagenCapturada && !iaProcesada) {
                 procesarConIA();
+            }
+
+            // Si se llega al paso 2, inicializar validaciones móviles
+            if (paso === 2) {
+                aplicarFechaPorDefecto();
+                validarCamposEnTiempoReal(); // Iniciar validación en tiempo real
             }
 
             pasoActual = paso;
@@ -1375,7 +1377,7 @@
 
         // Navegación entre pasos
         function pasoSiguiente() {
-            if (pasoActual < 4) {
+            if (pasoActual < 3) {
                 if (validarPasoActual()) {
                     mostrarPaso(pasoActual + 1);
                 }
@@ -1401,13 +1403,15 @@
                     // Paso 2 siempre válido - puede continuar con campos vacíos
                     return true;
                 case 3:
-                    if (document.getElementById('problema_texto').value.trim() === '') {
+                    // Paso 3: Validar problema Y fecha límite
+                    const problema = document.getElementById('problema_texto').value.trim();
+                    const fecha = document.getElementById('fecha_limite_final').value;
+
+                    if (problema === '') {
                         alert('Por favor describa el problema del dispositivo');
                         return false;
                     }
-                    return true;
-                case 4:
-                    if (document.getElementById('fecha_limite_final').value === '') {
+                    if (fecha === '') {
                         alert('Por favor seleccione una fecha límite para la reparación');
                         return false;
                     }
@@ -1416,6 +1420,36 @@
                     return false;
             }
         }
+
+        // Función para aplicar fecha por defecto (3 días hábiles)
+        function aplicarFechaPorDefecto() {
+            if (!document.getElementById('fecha_limite_final').value) {
+                const hoy = new Date();
+                let diasHabiles = 3;
+
+                // Avanzar 3 días hábiles (saltando fines de semana)
+                while (diasHabiles > 0) {
+                    hoy.setDate(hoy.getDate() + 1);
+                    // 0 = Domingo, 6 = Sábado
+                    if (hoy.getDay() !== 0 && hoy.getDay() !== 6) {
+                        diasHabiles--;
+                    }
+                }
+
+                const fechaFormateada = hoy.toISOString().split('T')[0];
+                document.getElementById('fecha_limite_final').value = fechaFormateada;
+            }
+        }
+
+        // Marcar cuando el usuario toca el checkbox del cargador
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxCargador = document.getElementById('ai_cargador');
+            if (checkboxCargador) {
+                checkboxCargador.addEventListener('change', function() {
+                    this.setAttribute('data-touched', 'true');
+                });
+            }
+        });
 
         // Paso 1: Captura de imagen
         async function iniciarCamara() {
@@ -1505,8 +1539,8 @@
                 return;
             }
 
-            // Mostrar loading
-            document.getElementById('loadingAI').style.display = 'block';
+            // Mostrar loading sutil (procesamiento en paralelo)
+            document.getElementById('loadingAI').classList.remove('d-none');
 
             fetch('/api/procesar-imagen', {
                 method: 'POST',
@@ -1516,66 +1550,63 @@
             .then(response => response.json())
             .then(data => {
                 // Ocultar loading
-                document.getElementById('loadingAI').style.display = 'none';
+                document.getElementById('loadingAI').classList.add('d-none');
 
                 if (data.error) {
                     console.error('Error procesando la imagen:', data.error);
-                    alert('No se pudo procesar la imagen automáticamente. Complete los datos manualmente.');
-                    // Llenar con valores por defecto si hay error
-                    document.getElementById('ai_nombre').value = 'Cliente';
-                    document.getElementById('ai_whatsapp').value = '';
-                    document.getElementById('ai_cargador').checked = false;
+                    // No mostrar alert - permitir edición manual silenciosamente
+                    // Solo llenar valores por defecto si los campos están vacíos
+                    if (!document.getElementById('ai_nombre').value.trim()) {
+                        document.getElementById('ai_nombre').value = 'Cliente';
+                    }
                 } else {
-                    // Llenar campos con datos de IA
-                    document.getElementById('ai_nombre').value = data.nombre || 'Cliente';
-                    document.getElementById('ai_whatsapp').value = data.telefono || '';
-                    document.getElementById('ai_cargador').checked = data.tiene_cargador || false;
-
-                    // Mostrar indicador si la IA detectó cargador
-                    const cargadorStatus = document.getElementById('cargadorStatus');
-                    if (data.tiene_cargador) {
-                        cargadorStatus.style.display = 'inline';
-                        // Ocultar después de 4 segundos
-                        setTimeout(() => {
-                            cargadorStatus.style.display = 'none';
-                        }, 4000);
+                    // Solo llenar campos si están vacíos (no sobreescribir edición manual)
+                    if (!document.getElementById('ai_nombre').value.trim()) {
+                        document.getElementById('ai_nombre').value = data.nombre || 'Cliente';
+                    }
+                    if (!document.getElementById('ai_whatsapp').value.trim()) {
+                        document.getElementById('ai_whatsapp').value = data.telefono || '';
+                    }
+                    // Para el checkbox, solo marcar si no ha sido tocado
+                    if (!document.getElementById('ai_cargador').hasAttribute('data-touched')) {
+                        document.getElementById('ai_cargador').checked = data.tiene_cargador || false;
+                        if (data.tiene_cargador) {
+                            document.getElementById('cargadorStatus').style.display = 'inline';
+                        }
                     }
                 }
 
                 iaProcesada = true; // Marcar como procesada
 
-                // Actualizar resumen
-                actualizarResumen();
-
-                // Habilitar botón siguiente automáticamente
-                document.getElementById('btnSiguiente').disabled = false;
+                // Actualizar validaciones después de que IA termine (con verificación de seguridad)
+                setTimeout(() => {
+                    if (document.getElementById('nuevaTarjetaModal')?.classList.contains('show')) {
+                        validarCamposEnTiempoReal();
+                    }
+                }, 100);
             })
             .catch(error => {
-                // Ocultar loading y mostrar error
-                document.getElementById('loadingAI').style.display = 'none';
-                console.error('Error:', error);
+                console.error('Error en IA:', error);
+                document.getElementById('loadingAI').classList.add('d-none');
+                iaProcesada = true; // Marcar como procesado para evitar reintentos
 
-                // Llenar con valores por defecto
-                document.getElementById('ai_nombre').value = 'Cliente';
-                document.getElementById('ai_whatsapp').value = '';
-                document.getElementById('ai_cargador').checked = false;
-
-                iaProcesada = true; // Marcar como procesada incluso con error
-
-                // Actualizar resumen
-                actualizarResumen();
-
-                // Habilitar botón siguiente
-                document.getElementById('btnSiguiente').disabled = false;
-
-                alert('Error conectando con el servicio de IA. Complete los datos manualmente y continúe.');
+                // Actualizar validaciones incluso con error (con verificación de seguridad)
+                setTimeout(() => {
+                    if (document.getElementById('nuevaTarjetaModal')?.classList.contains('show')) {
+                        validarCamposEnTiempoReal();
+                    }
+                }, 100);
             });
+
+            // Ya no necesitamos actualizarResumen() ni habilitar botón siguiente
+            // El usuario puede crear directamente desde el paso 2
         }
 
         // Paso 3: Grabación de voz
         async function toggleGrabacion() {
             const btn = document.getElementById('btnGrabar');
             const texto = document.getElementById('textoGrabar');
+            const icono = document.getElementById('iconoGrabar');
             const status = document.getElementById('grabacionStatus');
 
             if (!mediaRecorder || mediaRecorder.state === 'inactive') {
@@ -1598,8 +1629,15 @@
                     mediaRecorder.start();
                     btn.classList.remove('btn-outline-primary');
                     btn.classList.add('btn-danger');
+                    icono.classList.remove('fa-microphone');
+                    icono.classList.add('fa-stop-circle');
                     texto.textContent = 'Detener';
                     status.classList.remove('d-none');
+
+                    // Feedback háptico en móviles si está disponible
+                    if (navigator.vibrate) {
+                        navigator.vibrate(50);
+                    }
 
                 } catch (error) {
                     console.error('Error accediendo al micrófono:', error);
@@ -1609,15 +1647,34 @@
                 // Detener grabación
                 mediaRecorder.stop();
                 btn.classList.remove('btn-danger');
-                btn.classList.add('btn-outline-primary');
-                texto.textContent = 'Grabar';
-                status.classList.add('d-none');
+                btn.classList.add('btn-outline-primary', 'btn-success');
+                icono.classList.remove('fa-stop-circle');
+                icono.classList.add('fa-check-circle');
+                texto.textContent = 'Procesando...';
+                status.innerHTML = '<i class="fas fa-circle text-warning blink me-2"></i><strong>Procesando audio...</strong> Transcribiendo con IA';
+
+                // Feedback háptico en móviles si está disponible
+                if (navigator.vibrate) {
+                    navigator.vibrate([50, 50, 50]);
+                }
+
+                // Resetear ícono después de procesar
+                setTimeout(() => {
+                    icono.classList.remove('fa-check-circle');
+                    icono.classList.add('fa-microphone');
+                    btn.classList.remove('btn-success');
+                    texto.textContent = 'Grabar';
+                }, 3000);
             }
         }
 
         async function transcribirAudio(audioBlob) {
             const formData = new FormData();
             formData.append('audio', audioBlob, 'grabacion.wav');
+
+            // Actualizar UI durante procesamiento
+            document.getElementById('grabacionStatus').innerHTML = '<i class="fas fa-circle text-warning blink me-2"></i><strong>Procesando audio...</strong> Transcribiendo con IA';
+            document.getElementById('btnGrabar').disabled = true;
 
             try {
                 const response = await fetch('/api/transcribir-audio', {
@@ -1628,14 +1685,44 @@
                 const data = await response.json();
 
                 if (data.error) {
-                    alert('Error transcribiendo audio: ' + data.error);
+                    throw new Error(data.error);
                 } else {
-                    document.getElementById('problema_texto').value = data.transcripcion;
-                    document.getElementById('btnSiguiente').disabled = false;
+                    const transcripcion = data.transcripcion || '';
+                    document.getElementById('problema_texto').value = transcripcion;
+
+                    // Feedback de éxito
+                    document.getElementById('grabacionStatus').innerHTML = '<i class="fas fa-check-circle text-success fa-lg me-2"></i><strong>¡Transcripción completada!</strong>';
+                    document.getElementById('btnGrabar').classList.remove('btn-outline-primary', 'btn-success');
+                    document.getElementById('btnGrabar').classList.add('btn-success');
+
+                    // Validar campos después de transcripción (con verificación de seguridad)
+                    if (document.getElementById('nuevaTarjetaModal')?.classList.contains('show')) {
+                        validarCamposEnTiempoReal();
+                    }
+
+                    // Ocultar mensaje después de 3 segundos
+                    setTimeout(() => {
+                        document.getElementById('grabacionStatus').classList.add('d-none');
+                        document.getElementById('btnGrabar').disabled = false;
+                        document.getElementById('btnGrabar').classList.remove('btn-success');
+                        document.getElementById('btnGrabar').classList.add('btn-outline-primary');
+                    }, 3000);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error conectando con el servicio de transcripción');
+                console.error('Error transcribiendo audio:', error);
+
+                // Feedback de error
+                document.getElementById('grabacionStatus').innerHTML = '<i class="fas fa-exclamation-triangle text-danger fa-lg me-2"></i><strong>Error en transcripción</strong><br><small class="text-muted">Intenta escribir manualmente</small>';
+                document.getElementById('btnGrabar').classList.remove('btn-outline-primary', 'btn-success');
+                document.getElementById('btnGrabar').classList.add('btn-warning');
+
+                // Ocultar mensaje después de 5 segundos
+                setTimeout(() => {
+                    document.getElementById('grabacionStatus').classList.add('d-none');
+                    document.getElementById('btnGrabar').disabled = false;
+                    document.getElementById('btnGrabar').classList.remove('btn-warning');
+                    document.getElementById('btnGrabar').classList.add('btn-outline-primary');
+                }, 5000);
             }
         }
 
@@ -1674,12 +1761,23 @@
                 tiene_cargador: tieneCargador ? 'si' : 'no'
             };
 
+            // Debug: mostrar datos que se envían
+            console.log('📤 Enviando datos:', data);
+
             fetch('/api/tarjetas', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    // Si la respuesta no es exitosa, intentar obtener el mensaje de error
+                    return response.text().then(text => {
+                        throw new Error(`Error ${response.status}: ${text || response.statusText}`);
+                    });
+                }
+                return response.json();
+            })
             .then(tarjeta => {
                 // Agregar la nueva tarjeta al array global
                 todasLasTarjetas.push(tarjeta);
@@ -1692,10 +1790,13 @@
                 const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
                 modal.hide();
                 resetearModal();
+
+                // Mostrar notificación de éxito (sin requerir click)
+                mostrarNotificacionExito('✅ Reparación creada exitosamente');
             })
             .catch(error => {
                 console.error('Error creando tarjeta:', error);
-                alert('Error al crear la reparación');
+                alert(`❌ Error al crear la reparación:\n${error.message}`);
             });
         }
 
@@ -1747,22 +1848,18 @@
             }
 
             // Resetear loading de IA
-            document.getElementById('loadingAI').style.display = 'none';
+            document.getElementById('loadingAI').classList.add('d-none');
 
             // Limpiar formularios
             document.getElementById('ai_nombre').value = '';
             document.getElementById('ai_whatsapp').value = '';
             document.getElementById('ai_cargador').checked = false;
+            document.getElementById('ai_cargador').removeAttribute('data-touched'); // Quitar marca de tocado
 
             // Ocultar indicador de IA
             document.getElementById('cargadorStatus').style.display = 'none';
             document.getElementById('problema_texto').value = '';
-
-            // Establecer fecha límite por defecto: 2 días después de hoy
-            const hoy = new Date();
-            hoy.setDate(hoy.getDate() + 2);
-            const fechaDefault = hoy.toISOString().split('T')[0];
-            document.getElementById('fecha_limite_final').value = fechaDefault;
+            document.getElementById('fecha_limite_final').value = ''; // Se establecerá automáticamente en mostrarPaso(2)
 
             // Resetear grabación
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
@@ -1773,8 +1870,7 @@
             document.getElementById('textoGrabar').textContent = 'Grabar';
             document.getElementById('grabacionStatus').classList.add('d-none');
 
-            // Limpiar resumen
-            actualizarResumen();
+            // Ya no hay resumen visible que limpiar
         }
 
         // Actualizar resumen en tiempo real
@@ -1806,13 +1902,99 @@
                    (window.innerWidth <= 768 && window.innerHeight <= 1024);
         }
 
-        // Event listeners para actualizar resumen
-        document.getElementById('ai_nombre').addEventListener('input', actualizarResumen);
-        document.getElementById('ai_whatsapp').addEventListener('input', formatearWhatsapp);
-        document.getElementById('ai_whatsapp').addEventListener('blur', formatearWhatsapp); // También al perder foco
-        document.getElementById('ai_cargador').addEventListener('change', actualizarResumen);
-        document.getElementById('problema_texto').addEventListener('input', actualizarResumen);
-        document.getElementById('fecha_limite_final').addEventListener('input', actualizarResumen);
+        // Validación en tiempo real y auto-habilitación del botón crear
+        function validarCamposEnTiempoReal() {
+            // Verificar que los elementos existan antes de acceder a ellos
+            const aiNombre = document.getElementById('ai_nombre');
+            const problemaTexto = document.getElementById('problema_texto');
+            const btnCrear = document.getElementById('btnCrear');
+            const btnSubtext = document.getElementById('btnCrearSubtext');
+
+            // Si los elementos no existen (modal cerrado), salir
+            if (!aiNombre || !problemaTexto || !btnCrear || !btnSubtext) {
+                return;
+            }
+
+            const nombre = aiNombre.value.trim();
+            const problema = problemaTexto.value.trim();
+            const fecha = document.getElementById('fecha_limite_final')?.value || '';
+
+            // Validar campos individuales con feedback visual
+            validarCampoIndividual('ai_nombre', nombre.length >= 2);
+            validarCampoIndividual('problema_texto', problema.length >= 5);
+
+            // Lógica del botón crear
+            const camposRequeridosCompletos = nombre.length >= 2 && problema.length >= 5;
+
+            if (camposRequeridosCompletos) {
+                btnCrear.disabled = false;
+                btnCrear.classList.add('btn-crear-listo');
+                btnSubtext.textContent = '¡Todo listo para crear!';
+                btnSubtext.style.color = '#198754';
+            } else {
+                btnCrear.disabled = true;
+                btnCrear.classList.remove('btn-crear-listo');
+                btnSubtext.textContent = 'Completa los campos requeridos';
+                btnSubtext.style.color = '';
+            }
+
+            // Auto-formateo de WhatsApp en móviles
+            if (esDispositivoMovil()) {
+                formatearWhatsappAuto();
+            }
+        }
+
+        // Validación visual de campos individuales
+        function validarCampoIndividual(campoId, esValido) {
+            const campo = document.getElementById(campoId);
+            if (!campo) return; // Si el campo no existe, salir
+
+            campo.classList.remove('campo-valido', 'campo-invalido');
+
+            if (campo.value.trim() !== '') { // Solo validar si tiene contenido
+                if (esValido) {
+                    campo.classList.add('campo-valido');
+                } else {
+                    campo.classList.add('campo-invalido');
+                }
+            }
+        }
+
+        // Formateo automático de WhatsApp mejorado para móviles
+        function formatearWhatsappAuto() {
+            const input = document.getElementById('ai_whatsapp');
+            if (!input) return; // Si el input no existe, salir
+
+            let valor = input.value.replace(/[^\d]/g, ''); // Solo números
+
+            if (valor && !valor.startsWith('57') && valor.length <= 10) {
+                // Agregar código de Colombia si no lo tiene
+                valor = '57' + valor;
+            }
+
+            if (valor !== input.value) {
+                input.value = valor;
+            }
+        }
+
+        // Event listeners mejorados para móviles (con verificación de existencia)
+        const aiNombre = document.getElementById('ai_nombre');
+        const aiWhatsapp = document.getElementById('ai_whatsapp');
+        const problemaTexto = document.getElementById('problema_texto');
+        const fechaLimite = document.getElementById('fecha_limite_final');
+
+        if (aiNombre) aiNombre.addEventListener('input', validarCamposEnTiempoReal);
+        if (aiWhatsapp) {
+            aiWhatsapp.addEventListener('input', validarCamposEnTiempoReal);
+            aiWhatsapp.addEventListener('blur', formatearWhatsappAuto);
+        }
+        if (problemaTexto) problemaTexto.addEventListener('input', validarCamposEnTiempoReal);
+        if (fechaLimite) fechaLimite.addEventListener('change', validarCamposEnTiempoReal);
+
+        // Auto-enfoque inteligente en móviles
+        if (esDispositivoMovil() && aiNombre) {
+            aiNombre.focus();
+        }
 
         // Event listener para el campo de edición de WhatsApp
         const editarWhatsappField = document.getElementById('editar_whatsapp');
@@ -2079,3 +2261,4 @@
     </script>
 </body>
 </html>
+

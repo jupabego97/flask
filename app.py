@@ -83,24 +83,56 @@ def get_tarjetas():
 
 @app.route('/api/tarjetas', methods=['POST'])
 def create_tarjeta():
-    data = request.get_json()
+    try:
+        data = request.get_json()
+        print(f"📥 Datos recibidos: {data}")  # Debug
 
-    nueva_tarjeta = TarjetaReparacion(
-        owner_name=data['nombre_propietario'],  # Mapeo a campos de Supabase
-        problem=data['problema'],
-        whatsapp_number=data['whatsapp'],
-        start_date=datetime.utcnow(),  # Fecha de inicio automática
-        due_date=datetime.strptime(data['fecha_limite'], '%Y-%m-%d'),
-        status='ingresado',  # Estado inicial
-        ingresado_date=datetime.utcnow(),  # Fecha de ingreso
-        image_url=data.get('imagen_url'),  # URL de imagen (opcional)
-        has_charger=data.get('tiene_cargador', 'si')  # Si incluye cargador (por defecto 'si')
-    )
+        # Validar campos requeridos
+        if not data:
+            return jsonify({'error': 'No se recibieron datos'}), 400
 
-    db.session.add(nueva_tarjeta)
-    db.session.commit()
+        problema = data.get('problema', '').strip()
+        fecha_limite = data.get('fecha_limite', '').strip()
 
-    return jsonify(nueva_tarjeta.to_dict()), 201
+        if not problema:
+            return jsonify({'error': 'El campo "problema" es requerido'}), 400
+
+        if not fecha_limite:
+            return jsonify({'error': 'El campo "fecha_limite" es requerido'}), 400
+
+        # Validar formato de fecha
+        try:
+            due_date = datetime.strptime(fecha_limite, '%Y-%m-%d')
+        except ValueError:
+            return jsonify({'error': 'Formato de fecha inválido. Use YYYY-MM-DD'}), 400
+
+        # Obtener valores con defaults seguros
+        nombre_propietario = data.get('nombre_propietario', 'Cliente').strip() or 'Cliente'
+        whatsapp = data.get('whatsapp', '').strip()
+        imagen_url = data.get('imagen_url') if data.get('imagen_url') else None
+        tiene_cargador = data.get('tiene_cargador', 'si')
+
+        nueva_tarjeta = TarjetaReparacion(
+            owner_name=nombre_propietario,
+            problem=problema,
+            whatsapp_number=whatsapp,
+            start_date=datetime.utcnow(),
+            due_date=due_date,
+            status='ingresado',
+            ingresado_date=datetime.utcnow(),
+            image_url=imagen_url,
+            has_charger=tiene_cargador
+        )
+
+        db.session.add(nueva_tarjeta)
+        db.session.commit()
+
+        return jsonify(nueva_tarjeta.to_dict()), 201
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error creando tarjeta: {e}")
+        return jsonify({'error': f'Error interno del servidor: {str(e)}'}), 500
 
 # Estados válidos que coinciden exactamente con los IDs de las columnas HTML
 ESTADOS_VALIDOS = ['ingresado', 'diagnosticada', 'para_entregar', 'listos']
