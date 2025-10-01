@@ -751,8 +751,8 @@
                         </div>
                         <input type="file" id="fileInput" class="d-none" accept="image/*" onchange="procesarArchivoSeleccionado()">
                         <div class="text-center">
-                            <button type="button" class="btn btn-success" id="btnTomarFoto" onclick="tomarFoto()" disabled>
-                                <i class="fas fa-camera-retro"></i> Tomar Foto
+                            <button type="button" class="btn btn-success btn-lg px-5 py-3" id="btnTomarFoto" onclick="tomarFoto()" disabled style="font-size: 1.2rem; min-height: 60px;">
+                                <i class="fas fa-camera-retro me-2"></i> Tomar Foto
                             </button>
                         </div>
                     </div>
@@ -822,8 +822,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btnAnterior" onclick="pasoAnterior()" disabled>Atrás</button>
-                    <button type="button" class="btn btn-success" id="btnCrear" onclick="crearTarjeta()">Crear Reparación</button>
+                    <button type="button" class="btn btn-success btn-lg px-5 py-3" id="btnCrear" onclick="crearTarjeta()" style="font-size: 1.2rem; min-height: 60px; width: 100%;">Crear Reparación</button>
                 </div>
             </div>
         </div>
@@ -1196,9 +1195,7 @@
             const progreso = (paso / 2) * 100;
             document.getElementById('progressBar').style.width = `${progreso}%`;
 
-            // Actualizar botones de navegación
-            document.getElementById('btnAnterior').disabled = paso === 1;
-            // El botón "Crear" siempre está visible en paso 2
+            // El botón "Crear" siempre está visible en paso 2 (botón "Atrás" eliminado)
 
             // Si se llega al paso 2 y hay imagen pero no se ha procesado, procesar automáticamente
             if (paso === 2 && imagenCapturada && !iaProcesada) {
