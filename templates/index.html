@@ -196,6 +196,55 @@
             align-items: center;
         }
 
+        /* Layout responsivo del Kanban */
+        .kanban-container {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .kanban-row {
+            display: flex;
+            gap: 1.5rem;
+            min-width: fit-content;
+            padding: 0 1rem;
+        }
+
+        .kanban-col {
+            flex: 0 0 300px;
+            min-width: 300px;
+            max-width: 300px;
+        }
+
+        /* En desktop y tablet: layout normal */
+        @media (min-width: 768px) {
+            .kanban-container {
+                overflow-x: visible;
+            }
+
+            .kanban-row {
+                flex-wrap: wrap;
+                padding: 0;
+                justify-content: center;
+            }
+
+            .kanban-col {
+                flex: 0 0 calc(50% - 0.75rem);
+                min-width: calc(50% - 0.75rem);
+                max-width: calc(50% - 0.75rem);
+            }
+        }
+
+        /* En desktop grande: 4 columnas */
+        @media (min-width: 992px) {
+            .kanban-col {
+                flex: 0 0 calc(25% - 1.125rem);
+                min-width: calc(25% - 1.125rem);
+                max-width: calc(25% - 1.125rem);
+            }
+        }
+
         .kanban-column h3::before {
             content: '';
             width: 8px;
@@ -535,6 +584,14 @@
                 margin-bottom: 1rem;
             }
 
+            .kanban-container {
+                padding: 0 0.5rem;
+            }
+
+            .kanban-row {
+                padding: 0 0.5rem;
+            }
+
             .repair-card .card-body {
                 padding: 0.75rem;
             }
@@ -685,29 +742,31 @@
         </div>
 
         <!-- Columnas Kanban Profesionales -->
-        <div class="row g-4">
-            <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kanban-column fade-in">
-                    <h3>Ingresado</h3>
-                    <div id="ingresado" class="droppable-column"></div>
+        <div class="kanban-container">
+            <div class="kanban-row g-4">
+                <div class="kanban-col">
+                    <div class="kanban-column fade-in">
+                        <h3>Ingresado</h3>
+                        <div id="ingresado" class="droppable-column"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kanban-column fade-in" style="animation-delay: 0.1s;">
-                    <h3>En Diagnóstico</h3>
-                    <div id="diagnosticada" class="droppable-column"></div>
+                <div class="kanban-col">
+                    <div class="kanban-column fade-in" style="animation-delay: 0.1s;">
+                        <h3>En Diagnóstico</h3>
+                        <div id="diagnosticada" class="droppable-column"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kanban-column fade-in" style="animation-delay: 0.2s;">
-                    <h3>Listos para Entregar</h3>
-                    <div id="para_entregar" class="droppable-column"></div>
+                <div class="kanban-col">
+                    <div class="kanban-column fade-in" style="animation-delay: 0.2s;">
+                        <h3>Listos para Entregar</h3>
+                        <div id="para_entregar" class="droppable-column"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kanban-column fade-in" style="animation-delay: 0.3s;">
-                    <h3>Completados</h3>
-                    <div id="listos" class="droppable-column"></div>
+                <div class="kanban-col">
+                    <div class="kanban-column fade-in" style="animation-delay: 0.3s;">
+                        <h3>Completados</h3>
+                        <div id="listos" class="droppable-column"></div>
+                    </div>
                 </div>
             </div>
         </div>
