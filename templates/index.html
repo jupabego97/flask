@@ -1084,7 +1084,13 @@
         }
 
         function cargarTarjetas() {
-            fetch('/api/tarjetas')
+            fetch('/api/tarjetas', {
+                method: 'GET',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            })
                 .then(response => response.json())
                 .then(tarjetas => {
                     todasLasTarjetas = tarjetas; // Almacenar todas las tarjetas
@@ -1893,14 +1899,32 @@
                     todasLasTarjetas[index] = tarjetaActualizada;
                 }
 
-                // Recargar las tarjetas para mostrar los cambios
-                cargarTarjetas();
+                // Actualizar la tarjeta en el DOM sin recargar todo
+                const elementoExistente = document.querySelector(`[data-id="${id}"]`);
+                if (elementoExistente) {
+                    // Remover la tarjeta existente
+                    elementoExistente.remove();
+
+                    // Crear y agregar la tarjeta actualizada
+                    const nuevaTarjeta = crearElementoTarjeta(tarjetaActualizada);
+                    const columna = document.getElementById(tarjetaActualizada.columna);
+                    if (columna) {
+                        columna.appendChild(nuevaTarjeta);
+                    }
+                }
+
+                // Limpiar cache del service worker
+                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({
+                        type: 'CLEAR_API_CACHE'
+                    });
+                }
 
                 // Cerrar modal
                 const modal = new bootstrap.Modal(document.getElementById('editarTarjetaModal'));
                 modal.hide();
 
-                alert('Tarjeta actualizada correctamente');
+                mostrarNotificacion('Tarjeta actualizada correctamente', 'success');
             })
             .catch(error => {
                 console.error('Error al actualizar:', error);
@@ -1949,14 +1973,24 @@
                     // Remover del array global
                     todasLasTarjetas = todasLasTarjetas.filter(t => t.id != id);
 
+                    // Remover del DOM
+                    const elementoExistente = document.querySelector(`[data-id="${id}"]`);
+                    if (elementoExistente) {
+                        elementoExistente.remove();
+                    }
+
+                    // Limpiar cache del service worker
+                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.controller.postMessage({
+                            type: 'CLEAR_API_CACHE'
+                        });
+                    }
+
                     // Cerrar el modal
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editarTarjetaModal'));
                     modal.hide();
 
-                    // Recargar las tarjetas
-                    cargarTarjetas();
-
-                    alert('Reparación eliminada correctamente');
+                    mostrarNotificacion('Reparación eliminada correctamente', 'warning');
                 } else {
                     alert('Error al eliminar la reparación');
                 }
@@ -1970,3 +2004,4 @@
     </script>
 </body>
 </html>
+

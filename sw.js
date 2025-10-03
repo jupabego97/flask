@@ -28,9 +28,10 @@ const ADDITIONAL_CACHE = [
     '/static/icons/icon-512.png'
 ];
 
-// Recursos dinámicos a cachear
+// Recursos dinámicos a cachear (solo recursos estáticos, NO APIs)
 const DYNAMIC_ASSETS = [
-    '/api/tarjetas'
+    // Las APIs no se cachean para evitar datos obsoletos
+    // '/api/tarjetas' - REMOVIDO para permitir sincronización en tiempo real
 ];
 
 // Instalación del Service Worker
@@ -170,18 +171,26 @@ self.addEventListener('message', (event) => {
     }
 });
 
-// Actualizar cache cuando hay cambios
+// Limpiar cache de API cuando hay actualizaciones (NO cachear)
 self.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'UPDATE_CACHE') {
-        console.log('🔄 Service Worker: Actualizando cache...');
+    if (event.data && event.data.type === 'CLEAR_API_CACHE') {
+        console.log('🧹 Service Worker: Limpiando cache de API...');
         event.waitUntil(
             caches.open(DYNAMIC_CACHE).then((cache) => {
-                return fetch('/api/tarjetas').then((response) => {
-                    if (response.ok) {
-                        return cache.put('/api/tarjetas', response);
-                    }
-                });
+                return cache.delete('/api/tarjetas');
+            }).then(() => {
+                console.log('✅ Cache de API limpiado');
+            }).catch((error) => {
+                console.log('⚠️ Error limpiando cache:', error);
             })
         );
+    }
+});
+
+// Evento legacy de actualización de cache (ya no cachea APIs)
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'UPDATE_CACHE') {
+        console.log('🔄 Service Worker: Evento UPDATE_CACHE legacy - APIs ya no se cachean');
+        // No hacer nada - las APIs no se cachean para permitir sincronización en tiempo real
     }
 });
