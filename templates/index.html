@@ -771,7 +771,7 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="d-flex justify-content-end gap-3">
-                        <button type="button" class="btn btn-primary-custom btn-nueva-large" data-bs-toggle="modal" data-bs-target="#nuevaTarjetaModal">
+                        <button type="button" class="btn btn-primary-custom btn-nueva-large" id="btnNuevaReparacion" onclick="nuevaReparacion()">
                             <i class="fas fa-plus-circle"></i><span class="ms-2">Nueva Reparación</span>
                     </button>
                 </div>
@@ -780,8 +780,11 @@
         </div>
     </header>
 
-    <div class="container-fluid">
-        <!-- Barra de búsqueda profesional -->
+        <div class="container-fluid">
+            <!-- Input oculto para captura de cámara en móviles -->
+            <input type="file" id="mobileCameraInput" class="d-none" accept="image/*" capture="environment" onchange="procesarFotoMovil(this)">
+
+            <!-- Barra de búsqueda profesional -->
         <div class="row mb-4">
             <div class="col-12">
                 <div class="d-flex justify-content-center">
@@ -1201,6 +1204,50 @@
                 }
             }
         });
+
+        // Función para manejar el botón "Nueva Reparación"
+        function nuevaReparacion() {
+            if (esDispositivoMovil()) {
+                // En móviles: abrir cámara nativa directamente
+                document.getElementById('mobileCameraInput').click();
+            } else {
+                // En desktop: abrir modal normalmente
+                const modal = new bootstrap.Modal(document.getElementById('nuevaTarjetaModal'));
+                modal.show();
+            }
+        }
+
+        // Función para procesar foto tomada desde móvil
+        function procesarFotoMovil(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagenCapturada = e.target.result;
+
+                    // Mostrar preview de la imagen
+                    mostrarPreview(imagenCapturada);
+
+                    // Abrir modal directamente en paso 2
+                    abrirModalEnPaso2();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Función para abrir modal directamente en paso 2 con imagen ya capturada
+        function abrirModalEnPaso2() {
+            const modal = new bootstrap.Modal(document.getElementById('nuevaTarjetaModal'));
+            modal.show();
+
+            // Cambiar al paso 2 inmediatamente
+            setTimeout(() => {
+                mostrarPaso(2);
+
+                // Iniciar procesamiento automático con IA
+                procesarConIA();
+            }, 300); // Pequeño delay para que el modal se abra completamente
+        }
 
         // Cargar tarjetas al iniciar
         document.addEventListener('DOMContentLoaded', function() {
