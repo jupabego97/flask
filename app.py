@@ -112,7 +112,14 @@ def service_worker():
 @app.route('/api/tarjetas', methods=['GET'])
 def get_tarjetas():
     tarjetas = TarjetaReparacion.query.all()
-    return jsonify([tarjeta.to_dict() for tarjeta in tarjetas])
+    response = jsonify([tarjeta.to_dict() for tarjeta in tarjetas])
+
+    # Headers para prevenir cache del navegador y asegurar sincronización en tiempo real
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+
+    return response
 
 @app.route('/api/tarjetas', methods=['POST'])
 def create_tarjeta():
