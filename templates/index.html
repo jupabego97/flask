@@ -1064,6 +1064,24 @@
             configurarModalesAccesibles();
         });
 
+        // Función auxiliar para mover foco fuera de un modal de manera segura
+        function moverFocoFueraModal(modalElement) {
+            const activeElement = document.activeElement;
+            if (activeElement && modalElement.contains(activeElement)) {
+                // Si hay un elemento enfocado dentro del modal, mover foco fuera
+                const focusableElements = document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                const firstFocusable = Array.from(focusableElements).find(el =>
+                    !el.closest('.modal') && !el.disabled && el.offsetParent !== null
+                );
+                if (firstFocusable) {
+                    firstFocusable.focus();
+                } else {
+                    // Fallback: mover foco al body
+                    document.body.focus();
+                }
+            }
+        }
+
         // Función para configurar manejo seguro de modales (prevenir error aria-hidden)
         function configurarModalesAccesibles() {
             // Escuchar todos los eventos de cierre de modal para asegurar accesibilidad
@@ -1072,20 +1090,7 @@
 
                 // Antes de que se aplique aria-hidden, asegurar que no haya elementos enfocados
                 setTimeout(() => {
-                    const activeElement = document.activeElement;
-                    if (activeElement && modal.contains(activeElement)) {
-                        // Si hay un elemento enfocado dentro del modal, mover foco fuera
-                        const focusableElements = document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-                        const firstFocusable = Array.from(focusableElements).find(el =>
-                            !el.closest('.modal') && !el.disabled && el.offsetParent !== null
-                        );
-                        if (firstFocusable) {
-                            firstFocusable.focus();
-                        } else {
-                            // Fallback: mover foco al body
-                            document.body.focus();
-                        }
-                    }
+                    moverFocoFueraModal(modal);
                 }, 100); // Pequeño delay para que Bootstrap termine su animación
             });
         }
@@ -1896,15 +1901,6 @@
                 return;
             }
 
-            // Deshabilitar botón para prevenir clics múltiples y mejorar accesibilidad
-            const saveButton = document.querySelector('#editarTarjetaModal .btn-primary');
-            const originalButtonText = saveButton.innerHTML;
-            saveButton.disabled = true;
-            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-
-            // Remover foco del botón para evitar problemas de accesibilidad
-            saveButton.blur();
-
             const data = {
                 nombre_propietario: nombre,
                 problema: problema,
@@ -1952,13 +1948,14 @@
                 const modalElement = document.getElementById('editarTarjetaModal');
                 const modal = bootstrap.Modal.getInstance(modalElement);
 
+                // Asegurar que ningún elemento del modal tenga foco antes de cerrarlo
+                // (especialmente el botón "Guardar cambios" que podría estar enfocado)
+                moverFocoFueraModal(modalElement);
+
                 if (modal) {
                     // Mover foco fuera del modal antes de cerrarlo para evitar error de accesibilidad
                     modalElement.addEventListener('hidden.bs.modal', function() {
                         // El foco ya se ha movido automáticamente por Bootstrap
-                        // Restaurar estado del botón después de que el modal se cierre completamente
-                        saveButton.disabled = false;
-                        saveButton.innerHTML = originalButtonText;
                         mostrarNotificacion('Tarjeta actualizada correctamente', 'success');
                     }, { once: true });
 
@@ -1967,17 +1964,11 @@
                     // Fallback si no hay instancia
                     const fallbackModal = new bootstrap.Modal(modalElement);
                     fallbackModal.hide();
-                    // Restaurar estado del botón antes de mostrar notificación
-                    saveButton.disabled = false;
-                    saveButton.innerHTML = originalButtonText;
                     mostrarNotificacion('Tarjeta actualizada correctamente', 'success');
                 }
             })
             .catch(error => {
                 console.error('Error al actualizar:', error);
-                // Restaurar estado del botón en caso de error
-                saveButton.disabled = false;
-                saveButton.innerHTML = originalButtonText;
                 alert('Error al actualizar la tarjeta');
             });
         }
@@ -2039,6 +2030,9 @@
                     // Cerrar el modal de manera segura (evitar error de accesibilidad aria-hidden)
                     const modalElement = document.getElementById('editarTarjetaModal');
                     const modal = bootstrap.Modal.getInstance(modalElement);
+
+                    // Asegurar que ningún elemento del modal tenga foco antes de cerrarlo
+                    moverFocoFueraModal(modalElement);
 
                     if (modal) {
                         // Mover foco fuera del modal antes de cerrarlo para evitar error de accesibilidad
