@@ -76,6 +76,10 @@ def manifest():
 def browserconfig():
     return send_from_directory('static', 'browserconfig.xml')
 
+@app.route('/sw.js')
+def service_worker():
+    return send_from_directory('.', 'sw.js', mimetype='application/javascript')
+
 @app.route('/api/tarjetas', methods=['GET'])
 def get_tarjetas():
     tarjetas = TarjetaReparacion.query.all()
