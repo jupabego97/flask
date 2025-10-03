@@ -1257,14 +1257,16 @@
                             if (index !== -1) {
                                 todasLasTarjetas[index].columna = nuevaColumna;
                                 // Actualizar el atributo data-status para los estilos
-                                draggedElement.setAttribute('data-status', nuevaColumna);
+                                if (draggedElement && draggedElement.setAttribute) {
+                                    draggedElement.setAttribute('data-status', nuevaColumna);
+                                }
                             }
                             console.log('✅ Tarjeta movida correctamente');
                         })
                         .catch(error => {
                             console.error('❌ Error al guardar:', error);
                             // Revertir movimiento si hay error
-                            if (draggedElement.parentNode) {
+                            if (draggedElement && draggedElement.parentNode && draggedElement.remove) {
                                 draggedElement.remove();
                             }
                             // Mostrar notificación de error moderna
