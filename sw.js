@@ -100,11 +100,13 @@ self.addEventListener('fetch', (event) => {
                     }
                     // Si no está en cache, intentar red
                     return fetch(request).then((fetchResponse) => {
-                        // Solo cachear respuestas exitosas
-                        if (fetchResponse.status === 200) {
+                        // Solo cachear respuestas exitosas de GET requests
+                        if (fetchResponse.status === 200 && request.method === 'GET') {
                             const responseClone = fetchResponse.clone();
                             caches.open(STATIC_CACHE).then((cache) => {
-                                cache.put(request, responseClone);
+                                cache.put(request, responseClone).catch((error) => {
+                                    console.log('⚠️ No se pudo cachear:', request.url, error);
+                                });
                             });
                         }
                         return fetchResponse;

@@ -916,8 +916,18 @@
         let socket = null;
 
         function initSocketIO() {
-            // Conectar a SocketIO
-            socket = io();
+            // Conectar a SocketIO con configuración robusta
+            socket = io({
+                transports: ['websocket', 'polling'],
+                upgrade: true,
+                rememberUpgrade: true,
+                timeout: 20000,
+                forceNew: false,
+                reconnection: true,
+                reconnectionAttempts: 5,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 5000
+            });
 
             socket.on('connect', function() {
                 console.log('🔗 Conectado a SocketIO - Sincronización en tiempo real activada');
@@ -999,6 +1009,21 @@
 
             socket.on('connect_error', function(error) {
                 console.error('❌ Error de conexión SocketIO:', error);
+                mostrarNotificacion('Error de conexión en tiempo real - usando modo offline', 'warning');
+            });
+
+            socket.on('reconnect', function(attemptNumber) {
+                console.log('🔄 Reconectado a SocketIO después de', attemptNumber, 'intentos');
+                mostrarNotificacion('Reconectado para sincronización en tiempo real', 'success');
+            });
+
+            socket.on('reconnect_error', function(error) {
+                console.error('❌ Error de reconexión SocketIO:', error);
+            });
+
+            socket.on('reconnect_failed', function() {
+                console.error('❌ Fallaron todos los intentos de reconexión SocketIO');
+                mostrarNotificacion('No se pudo reconectar - modo offline', 'danger');
             });
         }
 
