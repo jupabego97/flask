@@ -1059,7 +1059,36 @@
             cargarTarjetas();
             configurarDragAndDrop();
             initSocketIO(); // Inicializar sincronización en tiempo real
+
+            // Configurar manejo seguro de modales para accesibilidad
+            configurarModalesAccesibles();
         });
+
+        // Función para configurar manejo seguro de modales (prevenir error aria-hidden)
+        function configurarModalesAccesibles() {
+            // Escuchar todos los eventos de cierre de modal para asegurar accesibilidad
+            document.addEventListener('hide.bs.modal', function(event) {
+                const modal = event.target;
+
+                // Antes de que se aplique aria-hidden, asegurar que no haya elementos enfocados
+                setTimeout(() => {
+                    const activeElement = document.activeElement;
+                    if (activeElement && modal.contains(activeElement)) {
+                        // Si hay un elemento enfocado dentro del modal, mover foco fuera
+                        const focusableElements = document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                        const firstFocusable = Array.from(focusableElements).find(el =>
+                            !el.closest('.modal') && !el.disabled && el.offsetParent !== null
+                        );
+                        if (firstFocusable) {
+                            firstFocusable.focus();
+                        } else {
+                            // Fallback: mover foco al body
+                            document.body.focus();
+                        }
+                    }
+                }, 100); // Pequeño delay para que Bootstrap termine su animación
+            });
+        }
 
         // También ocultar si la app ya está cacheada
         if ('serviceWorker' in navigator && window.navigator.onLine === false) {
@@ -1910,11 +1939,24 @@
                     });
                 }
 
-                // Cerrar modal
-                const modal = new bootstrap.Modal(document.getElementById('editarTarjetaModal'));
-                modal.hide();
+                // Cerrar modal de manera segura (evitar error de accesibilidad aria-hidden)
+                const modalElement = document.getElementById('editarTarjetaModal');
+                const modal = bootstrap.Modal.getInstance(modalElement);
 
-                mostrarNotificacion('Tarjeta actualizada correctamente', 'success');
+                if (modal) {
+                    // Mover foco fuera del modal antes de cerrarlo para evitar error de accesibilidad
+                    modalElement.addEventListener('hidden.bs.modal', function() {
+                        // El foco ya se ha movido automáticamente por Bootstrap
+                        mostrarNotificacion('Tarjeta actualizada correctamente', 'success');
+                    }, { once: true });
+
+                    modal.hide();
+                } else {
+                    // Fallback si no hay instancia
+                    const fallbackModal = new bootstrap.Modal(modalElement);
+                    fallbackModal.hide();
+                    mostrarNotificacion('Tarjeta actualizada correctamente', 'success');
+                }
             })
             .catch(error => {
                 console.error('Error al actualizar:', error);
@@ -1976,11 +2018,23 @@
                         });
                     }
 
-                    // Cerrar el modal
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('editarTarjetaModal'));
-                    modal.hide();
+                    // Cerrar el modal de manera segura (evitar error de accesibilidad aria-hidden)
+                    const modalElement = document.getElementById('editarTarjetaModal');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
 
-                    mostrarNotificacion('Reparación eliminada correctamente', 'warning');
+                    if (modal) {
+                        // Mover foco fuera del modal antes de cerrarlo para evitar error de accesibilidad
+                        modalElement.addEventListener('hidden.bs.modal', function() {
+                            mostrarNotificacion('Reparación eliminada correctamente', 'warning');
+                        }, { once: true });
+
+                        modal.hide();
+                    } else {
+                        // Fallback si no hay instancia
+                        const fallbackModal = new bootstrap.Modal(modalElement);
+                        fallbackModal.hide();
+                        mostrarNotificacion('Reparación eliminada correctamente', 'warning');
+                    }
                 } else {
                     alert('Error al eliminar la reparación');
                 }
