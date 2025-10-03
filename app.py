@@ -1,10 +1,12 @@
 
 from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO, emit
 from datetime import datetime
 import os
 from dotenv import load_dotenv
 from gemini_service import GeminiService
+import eventlet
 
 # Cargar variables de entorno desde .env
 load_dotenv()
@@ -17,6 +19,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+# Inicializar SocketIO para sincronización en tiempo real
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
+
 # Inicializar servicio de Gemini
 try:
     gemini_service = GeminiService()
@@ -25,6 +30,21 @@ except Exception as e:
     print(f"Servicio de Gemini no disponible: {e}")
     print("La aplicacion funcionara sin funcionalidades de IA")
     gemini_service = None
+
+# Eventos de SocketIO para sincronización en tiempo real
+@socketio.on('connect')
+def handle_connect():
+    print(f"🔗 Cliente conectado: {request.sid}")
+    emit('status', {'message': 'Conectado al servidor en tiempo real'})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print(f"📴 Cliente desconectado: {request.sid}")
+
+@socketio.on('join')
+def handle_join(data):
+    print(f"👥 Cliente se unió: {request.sid}")
+    emit('status', {'message': 'Unido al canal de sincronización'})
 
 class TarjetaReparacion(db.Model):
     __tablename__ = 'repair_cards'  # Nombre de la tabla en Supabase
@@ -104,7 +124,12 @@ def create_tarjeta():
     db.session.add(nueva_tarjeta)
     db.session.commit()
 
-    return jsonify(nueva_tarjeta.to_dict()), 201
+    # Emitir evento de SocketIO para sincronización en tiempo real
+    tarjeta_data = nueva_tarjeta.to_dict()
+    socketio.emit('tarjeta_creada', tarjeta_data)
+    print(f"📡 Evento SocketIO emitido: tarjeta_creada - ID {tarjeta_data['id']}")
+
+    return jsonify(tarjeta_data), 201
 
 # Estados válidos que coinciden exactamente con los IDs de las columnas HTML
 ESTADOS_VALIDOS = ['ingresado', 'diagnosticada', 'para_entregar', 'listos']
@@ -147,13 +172,25 @@ def update_tarjeta(id):
             tarjeta.entregados_date = datetime.utcnow()
 
     db.session.commit()
-    return jsonify(tarjeta.to_dict())
+
+    # Emitir evento de SocketIO para sincronización en tiempo real
+    tarjeta_data = tarjeta.to_dict()
+    socketio.emit('tarjeta_actualizada', tarjeta_data)
+    print(f"📡 Evento SocketIO emitido: tarjeta_actualizada - ID {tarjeta_data['id']} -> columna {tarjeta_data['columna']}")
+
+    return jsonify(tarjeta_data)
 
 @app.route('/api/tarjetas/<int:id>', methods=['DELETE'])
 def delete_tarjeta(id):
     tarjeta = TarjetaReparacion.query.get_or_404(id)
+    tarjeta_data = tarjeta.to_dict()  # Guardar datos antes de eliminar
     db.session.delete(tarjeta)
     db.session.commit()
+
+    # Emitir evento de SocketIO para sincronización en tiempo real
+    socketio.emit('tarjeta_eliminada', {'id': id})
+    print(f"📡 Evento SocketIO emitido: tarjeta_eliminada - ID {id}")
+
     return '', 204
 
 @app.route('/api/procesar-imagen', methods=['POST'])
@@ -219,9 +256,10 @@ if __name__ == '__main__':
     debug_mode = os.getenv('FLASK_ENV') == 'development'
 
     if debug_mode:
-        # Desarrollo: permitir conexiones desde cualquier IP
-        app.run(host='0.0.0.0', port=port, debug=True, load_dotenv=False)
+        # Desarrollo: permitir conexiones desde cualquier IP con SocketIO
+        print("🚀 Iniciando servidor con SocketIO para sincronización en tiempo real...")
+        socketio.run(app, host='0.0.0.0', port=port, debug=True)
     else:
-        # Producción: usar gunicorn (Railway)
-        # Esta línea no se ejecutará cuando use gunicorn
-        app.run(host='0.0.0.0', port=port, debug=False)
+        # Producción: usar gunicorn con eventlet (Railway)
+        print("🚀 Iniciando servidor de producción con SocketIO...")
+        socketio.run(app, host='0.0.0.0', port=port)
