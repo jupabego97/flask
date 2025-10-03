@@ -771,7 +771,7 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="d-flex justify-content-end gap-3">
-                        <button type="button" class="btn btn-primary-custom btn-nueva-large" id="btnNuevaReparacion" onclick="nuevaReparacion()">
+                        <button type="button" class="btn btn-primary-custom btn-nueva-large" onclick="nuevaReparacion()">
                             <i class="fas fa-plus-circle"></i><span class="ms-2">Nueva Reparación</span>
                     </button>
                 </div>
@@ -780,11 +780,11 @@
         </div>
     </header>
 
-        <div class="container-fluid">
-            <!-- Input oculto para captura de cámara en móviles -->
-            <input type="file" id="mobileCameraInput" class="d-none" accept="image/*" capture="environment" onchange="procesarFotoMovil(this)">
+    <div class="container-fluid">
+        <!-- Input oculto para captura de cámara en móviles -->
+        <input type="file" id="mobileCameraInput" class="d-none" accept="image/*" capture="environment" onchange="procesarFotoMovil(this)">
 
-            <!-- Barra de búsqueda profesional -->
+        <!-- Barra de búsqueda profesional -->
         <div class="row mb-4">
             <div class="col-12">
                 <div class="d-flex justify-content-center">
@@ -1205,6 +1205,13 @@
             }
         });
 
+        // Cargar tarjetas al iniciar
+        // Función para detectar si es dispositivo móvil
+        function esDispositivoMovil() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                   (window.innerWidth <= 768 && window.innerHeight <= 1024);
+        }
+
         // Función para manejar el botón "Nueva Reparación"
         function nuevaReparacion() {
             if (esDispositivoMovil()) {
@@ -1281,7 +1288,6 @@
             }, 500); // Aumentar el delay para asegurar inicialización completa
         }
 
-        // Cargar tarjetas al iniciar
         document.addEventListener('DOMContentLoaded', function() {
             // Ocultar loading después de un pequeño delay para mejor UX
             setTimeout(() => {
@@ -1651,17 +1657,13 @@
 
         // Paso 2: Procesamiento con IA
         function procesarConIA() {
-            console.log('🤖 Intentando procesar con IA. imagenCapturada:', !!imagenCapturada, 'iaProcesada:', iaProcesada);
-
             if (!imagenCapturada) {
-                console.error('❌ Error: No hay imagen capturada para procesar con IA');
                 alert('Primero debes capturar una imagen');
                 return;
             }
 
             // Si ya se procesó esta imagen, no hacer nada
             if (iaProcesada) {
-                console.log('✅ Imagen ya procesada, omitiendo...');
                 return;
             }
 
@@ -1838,16 +1840,20 @@
 
         // Resetear modal cuando se abre
         document.getElementById('nuevaTarjetaModal').addEventListener('show.bs.modal', function() {
-            resetearModal();
+            // Solo resetear si NO tenemos una imagen capturada desde móvil
+            if (!imagenCapturada) {
+                resetearModal();
+            }
 
-            // Si es dispositivo móvil, abrir automáticamente la cámara
-            if (esDispositivoMovil()) {
-                document.getElementById('autoCameraNote').classList.remove('d-none');
-                document.getElementById('cameraButtons').classList.add('d-none'); // Ocultar botones de selección
-                setTimeout(() => {
-                    iniciarCamara();
-                }, 500); // Pequeño delay para asegurar que el modal esté listo
-            } else {
+            // Para móviles con imagen capturada, no hacer nada especial
+            // El modal se abrirá directamente en paso 2 desde abrirModalEnPaso2()
+            if (esDispositivoMovil() && imagenCapturada) {
+                // Ya manejado por abrirModalEnPaso2()
+                return;
+            }
+
+            // Para desktop o móviles sin imagen, comportamiento normal
+            if (!esDispositivoMovil()) {
                 document.getElementById('autoCameraNote').classList.add('d-none');
                 document.getElementById('cameraButtons').classList.remove('d-none'); // Mostrar botones en desktop
             }
