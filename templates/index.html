@@ -1223,10 +1223,17 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    // Guardar imagen y marcar como no procesada por IA
                     imagenCapturada = e.target.result;
+                    iaProcesada = false;
+
+                    console.log('📸 Foto capturada desde móvil, procesando...');
 
                     // Mostrar preview de la imagen
                     mostrarPreview(imagenCapturada);
+
+                    // Resetear el input para permitir múltiples capturas
+                    input.value = '';
 
                     // Abrir modal directamente en paso 2
                     abrirModalEnPaso2();
@@ -1237,16 +1244,41 @@
 
         // Función para abrir modal directamente en paso 2 con imagen ya capturada
         function abrirModalEnPaso2() {
+            console.log('📱 Abriendo modal en paso 2 con imagen capturada:', !!imagenCapturada);
+
+            // NO resetear el modal si ya tenemos una imagen capturada desde móvil
+            // Solo resetear campos del formulario, no la imagen
+            if (!imagenCapturada) {
+                resetearModal();
+            } else {
+                // Si tenemos imagen, solo resetear el paso y campos del formulario
+                pasoActual = 1;
+                mostrarPaso(1);
+
+                // Resetear campos del formulario pero mantener la imagen
+                document.getElementById('ai_nombre').value = '';
+                document.getElementById('ai_whatsapp').value = '';
+                document.getElementById('ai_cargador').checked = false;
+                document.getElementById('problema_texto').value = '';
+                document.getElementById('fecha_limite_final').value = '';
+            }
+
             const modal = new bootstrap.Modal(document.getElementById('nuevaTarjetaModal'));
             modal.show();
 
-            // Cambiar al paso 2 inmediatamente
+            // Usar un timeout más largo para asegurar que todo esté inicializado
             setTimeout(() => {
-                mostrarPaso(2);
+                console.log('📱 Modal debería estar abierto, cambiando a paso 2...');
 
-                // Iniciar procesamiento automático con IA
-                procesarConIA();
-            }, 300); // Pequeño delay para que el modal se abra completamente
+                // Verificar que la imagen esté disponible
+                if (!imagenCapturada) {
+                    console.error('❌ Error: imagenCapturada es null al abrir modal');
+                    return;
+                }
+
+                console.log('📱 Cambiando a paso 2...');
+                mostrarPaso(2);
+            }, 500); // Aumentar el delay para asegurar inicialización completa
         }
 
         // Cargar tarjetas al iniciar
@@ -1619,13 +1651,17 @@
 
         // Paso 2: Procesamiento con IA
         function procesarConIA() {
+            console.log('🤖 Intentando procesar con IA. imagenCapturada:', !!imagenCapturada, 'iaProcesada:', iaProcesada);
+
             if (!imagenCapturada) {
+                console.error('❌ Error: No hay imagen capturada para procesar con IA');
                 alert('Primero debes capturar una imagen');
                 return;
             }
 
             // Si ya se procesó esta imagen, no hacer nada
             if (iaProcesada) {
+                console.log('✅ Imagen ya procesada, omitiendo...');
                 return;
             }
 
