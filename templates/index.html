@@ -659,6 +659,9 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="d-flex justify-content-end gap-3">
+                        <button type="button" class="btn btn-outline-primary" onclick="forzarSincronizacion()" title="Sincronizar datos">
+                            <i class="fas fa-sync-alt"></i><span class="ms-2 d-none d-md-inline">Sincronizar</span>
+                        </button>
                         <button type="button" class="btn btn-primary-custom btn-nueva-large" data-bs-toggle="modal" data-bs-target="#nuevaTarjetaModal">
                             <i class="fas fa-plus-circle"></i><span class="ms-2">Nueva Reparación</span>
                     </button>
@@ -916,7 +919,7 @@
         let socket = null;
 
         function initSocketIO() {
-            // Conectar a SocketIO con configuración robusta
+            // Conectar a SocketIO con configuración ultra-robusta
             socket = io({
                 transports: ['websocket', 'polling'],
                 upgrade: true,
@@ -924,20 +927,73 @@
                 timeout: 20000,
                 forceNew: false,
                 reconnection: true,
-                reconnectionAttempts: 5,
+                reconnectionAttempts: Infinity,
                 reconnectionDelay: 1000,
-                reconnectionDelayMax: 5000
+                reconnectionDelayMax: 10000,
+                randomizationFactor: 0.5,
+                pingTimeout: 60000,
+                pingInterval: 25000
             });
 
             socket.on('connect', function() {
                 console.log('🔗 Conectado a SocketIO - Sincronización en tiempo real activada');
                 mostrarNotificacion('Conectado para sincronización en tiempo real', 'success');
+
+                // Unirse a la sala global para recibir actualizaciones
                 socket.emit('join');
+                console.log('📡 Unido a sala global para sincronización');
+
+                // Verificar conexión cada 30 segundos
+                setInterval(() => {
+                    if (socket && socket.connected) {
+                        console.log('🔍 Verificación de conexión: OK');
+                    } else {
+                        console.log('⚠️ Verificación de conexión: DESCONECTADO - Intentando reconectar...');
+                        if (socket) {
+                            socket.connect();
+                        }
+                    }
+                }, 30000);
             });
 
-            socket.on('disconnect', function() {
-                console.log('📴 Desconectado de SocketIO');
+            socket.on('disconnect', function(reason) {
+                console.log('📴 Desconectado de SocketIO:', reason);
                 mostrarNotificacion('Conexión perdida - trabajando en modo offline', 'warning');
+
+                // Intentar reconectar inmediatamente si no es por elección del cliente
+                if (reason !== 'io client disconnect') {
+                    setTimeout(() => {
+                        console.log('🔄 Intentando reconectar automáticamente...');
+                        if (socket) {
+                            socket.connect();
+                        }
+                    }, 1000);
+                }
+            });
+
+            socket.on('connect_error', function(error) {
+                console.log('❌ Error de conexión SocketIO:', error);
+                mostrarNotificacion('Error de conexión al servidor en tiempo real', 'error');
+            });
+
+            socket.on('reconnect', function(attemptNumber) {
+                console.log('🔄 Reconectado a SocketIO después de', attemptNumber, 'intentos');
+                mostrarNotificacion('Reconectado al servidor en tiempo real', 'success');
+
+                // Recargar datos para asegurar consistencia después de reconexión
+                setTimeout(() => {
+                    console.log('🔄 Recargando datos después de reconexión...');
+                    cargarTarjetas();
+                }, 1000);
+            });
+
+            socket.on('reconnect_error', function(error) {
+                console.log('⚠️ Error de reconexión SocketIO:', error);
+            });
+
+            socket.on('reconnect_failed', function() {
+                console.log('🚫 Falló la reconexión SocketIO después de todos los intentos');
+                mostrarNotificacion('No se pudo reconectar al servidor en tiempo real', 'error');
             });
 
             socket.on('status', function(data) {
@@ -947,63 +1003,93 @@
             // Evento: Nueva tarjeta creada
             socket.on('tarjeta_creada', function(tarjeta) {
                 console.log('📦 Nueva tarjeta recibida via SocketIO:', tarjeta);
-                // Agregar a array global
-                todasLasTarjetas.push(tarjeta);
-                // Agregar a DOM
-                const columna = document.getElementById(tarjeta.columna);
-                if (columna) {
-                    columna.appendChild(crearElementoTarjeta(tarjeta));
-                    mostrarNotificacion(`Nueva reparación agregada: ${tarjeta.nombre_propietario}`, 'success');
+                try {
+                    // Verificar si la tarjeta ya existe para evitar duplicados
+                    const existe = todasLasTarjetas.find(t => t.id == tarjeta.id);
+                    if (!existe) {
+                        // Agregar a array global
+                        todasLasTarjetas.push(tarjeta);
+                        // Agregar a DOM
+                        const columna = document.getElementById(tarjeta.columna);
+                        if (columna) {
+                            columna.appendChild(crearElementoTarjeta(tarjeta));
+                            mostrarNotificacion(`Nueva reparación agregada: ${tarjeta.nombre_propietario}`, 'success');
+                        }
+                    } else {
+                        console.log('⚠️ Tarjeta ya existe, ignorando duplicado:', tarjeta.id);
+                    }
+                } catch (error) {
+                    console.error('❌ Error procesando tarjeta_creada:', error);
                 }
             });
 
             // Evento: Tarjeta actualizada (movida entre columnas)
             socket.on('tarjeta_actualizada', function(tarjeta) {
                 console.log('🔄 Tarjeta actualizada via SocketIO:', tarjeta);
-                // Actualizar en array global
-                const index = todasLasTarjetas.findIndex(t => t.id == tarjeta.id);
-                if (index !== -1) {
-                    const columnaAnterior = todasLasTarjetas[index].columna;
-                    todasLasTarjetas[index] = tarjeta;
+                try {
+                    // Actualizar en array global
+                    const index = todasLasTarjetas.findIndex(t => t.id == tarjeta.id);
+                    if (index !== -1) {
+                        const columnaAnterior = todasLasTarjetas[index].columna;
+                        todasLasTarjetas[index] = tarjeta;
 
-                    // Si la columna cambió, mover en DOM
-                    if (columnaAnterior !== tarjeta.columna) {
-                        // Remover de columna anterior
-                        const elementoExistente = document.querySelector(`[data-id="${tarjeta.id}"]`);
-                        if (elementoExistente) {
-                            elementoExistente.remove();
-                        }
+                        // Si la columna cambió, mover en DOM
+                        if (columnaAnterior !== tarjeta.columna) {
+                            // Remover de columna anterior
+                            const elementoExistente = document.querySelector(`[data-id="${tarjeta.id}"]`);
+                            if (elementoExistente) {
+                                elementoExistente.remove();
+                            }
 
-                        // Agregar a nueva columna
-                        const nuevaColumna = document.getElementById(tarjeta.columna);
-                        if (nuevaColumna) {
-                            nuevaColumna.appendChild(crearElementoTarjeta(tarjeta));
-                            mostrarNotificacion(`Reparación movida: ${tarjeta.nombre_propietario}`, 'info');
+                            // Agregar a nueva columna
+                            const nuevaColumna = document.getElementById(tarjeta.columna);
+                            if (nuevaColumna) {
+                                nuevaColumna.appendChild(crearElementoTarjeta(tarjeta));
+                                mostrarNotificacion(`Reparación movida: ${tarjeta.nombre_propietario}`, 'info');
+                            }
+                        } else {
+                            // Solo actualizar datos del elemento existente
+                            const elementoExistente = document.querySelector(`[data-id="${tarjeta.id}"]`);
+                            if (elementoExistente) {
+                                // Podríamos actualizar datos específicos si fuera necesario
+                                elementoExistente.setAttribute('data-status', tarjeta.columna);
+                            }
                         }
                     } else {
-                        // Solo actualizar datos del elemento existente
-                        const elementoExistente = document.querySelector(`[data-id="${tarjeta.id}"]`);
-                        if (elementoExistente) {
-                            // Podríamos actualizar datos específicos si fuera necesario
-                            elementoExistente.setAttribute('data-status', tarjeta.columna);
-                        }
+                        console.log('⚠️ Tarjeta no encontrada en array local, forzando recarga de datos...');
+                        // Si no encontramos la tarjeta, recargar todos los datos
+                        forzarSincronizacion();
                     }
+                } catch (error) {
+                    console.error('❌ Error procesando tarjeta_actualizada:', error);
+                    // En caso de error grave, recargar datos
+                    forzarSincronizacion();
                 }
             });
 
             // Evento: Tarjeta eliminada
             socket.on('tarjeta_eliminada', function(data) {
                 console.log('🗑️ Tarjeta eliminada via SocketIO:', data);
-                const tarjetaId = data.id;
+                try {
+                    const tarjetaId = data.id;
 
-                // Remover del array global
-                todasLasTarjetas = todasLasTarjetas.filter(t => t.id != tarjetaId);
+                    // Remover del array global
+                    const antes = todasLasTarjetas.length;
+                    todasLasTarjetas = todasLasTarjetas.filter(t => t.id != tarjetaId);
+                    const despues = todasLasTarjetas.length;
 
-                // Remover del DOM
-                const elementoExistente = document.querySelector(`[data-id="${tarjetaId}"]`);
-                if (elementoExistente) {
-                    elementoExistente.remove();
-                    mostrarNotificacion('Reparación eliminada', 'warning');
+                    // Remover del DOM
+                    const elementoExistente = document.querySelector(`[data-id="${tarjetaId}"]`);
+                    if (elementoExistente) {
+                        elementoExistente.remove();
+                        mostrarNotificacion('Reparación eliminada', 'warning');
+                    }
+
+                    if (antes === despues) {
+                        console.log('⚠️ Tarjeta no encontrada para eliminar, puede que ya haya sido eliminada');
+                    }
+                } catch (error) {
+                    console.error('❌ Error procesando tarjeta_eliminada:', error);
                 }
             });
 
@@ -1106,6 +1192,20 @@
             setTimeout(() => {
                 hideLoadingScreen();
             }, 500);
+        }
+
+        // Función para forzar sincronización completa de datos
+        function forzarSincronizacion() {
+            console.log('🔄 Forzando sincronización completa de datos...');
+            mostrarNotificacion('Sincronizando datos...', 'info');
+
+            // Limpiar cache del service worker si existe
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_API_CACHE' });
+            }
+
+            // Recargar todas las tarjetas desde el servidor
+            cargarTarjetas();
         }
 
         function cargarTarjetas() {

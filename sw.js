@@ -88,7 +88,12 @@ function isOnline() {
 // Interceptar solicitudes de red
 self.addEventListener('fetch', (event) => {
     const { request } = event;
-    const url = new URL(request.url);
+
+    // Solo procesar URLs válidas para evitar conflictos con extensiones
+    if (!isValidUrl(request.url)) {
+        console.log('🚫 Service Worker: Ignorando URL no válida:', request.url);
+        return;
+    }
 
     // Estrategia de cache para recursos estáticos críticos
     if (STATIC_ASSETS.some(asset => request.url.includes(asset))) {
@@ -157,7 +162,7 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Para otras solicitudes, intentar red primero, luego cache
+    // Para otras solicitudes válidas, intentar red primero, luego cache
     event.respondWith(
         fetch(request)
             .catch(() => {
@@ -172,6 +177,22 @@ self.addEventListener('message', (event) => {
         self.skipWaiting();
     }
 });
+
+// Función para validar URLs antes de procesarlas
+function isValidUrl(urlString) {
+    try {
+        const url = new URL(urlString);
+        // Excluir esquemas no válidos para cache
+        const invalidSchemes = ['chrome-extension', 'moz-extension', 'safari-extension', 'edge-extension', 'blob', 'data', 'file', 'ftp', 'about', 'javascript'];
+        if (invalidSchemes.includes(url.protocol.replace(':', ''))) {
+            return false;
+        }
+        // Solo permitir HTTP/HTTPS
+        return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch (e) {
+        return false;
+    }
+}
 
 // Limpiar cache de API cuando hay actualizaciones (NO cachear)
 self.addEventListener('message', (event) => {
