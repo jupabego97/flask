@@ -1,7 +1,7 @@
 {
-  "name": "Nano - Sistema de Reparaciones",
-  "short_name": "Nano",
-  "description": "Nano - Sistema profesional de gestión de reparaciones de dispositivos electrónicos con IA integrada",
+  "name": "Sistema de Reparaciones de Nanotronics",
+  "short_name": "Nanotronics",
+  "description": "Sistema de Reparaciones de Nanotronics - Gestión profesional de reparaciones de dispositivos electrónicos con IA integrada",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

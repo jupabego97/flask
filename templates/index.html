@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nano - Sistema de Reparaciones IT</title>
+    <title>Sistema de Reparaciones de Nanotronics</title>
 
     <!-- PWA Meta Tags para máxima compatibilidad -->
     <meta name="theme-color" content="#00ACC1">
-    <meta name="description" content="Nano - Sistema de gestión de reparaciones de dispositivos electrónicos con IA integrada">
+    <meta name="description" content="Sistema de Reparaciones de Nanotronics - Gestión de reparaciones de dispositivos electrónicos con IA integrada">
 
     <!-- iOS Safari -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Nano">
+    <meta name="apple-mobile-web-app-title" content="Nanotronics">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/icon-192.png">
 
     <!-- Android Chrome -->
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Nano">
+    <meta name="application-name" content="Nanotronics">
     <link rel="icon" type="image/png" sizes="196x196" href="/static/icons/icon-192.png">
 
     <!-- Windows -->
@@ -156,118 +156,6 @@
 
             .app-header .col-12:last-child .d-flex {
                 justify-content: center !important;
-            }
-
-            /* Kanban Board con Scroll Horizontal para Móviles */
-            .kanban-board-container {
-                overflow-x: auto;
-                overflow-y: hidden;
-                -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
-                scrollbar-width: none; /* Firefox */
-                -ms-overflow-style: none; /* IE/Edge */
-                margin: 0 -1rem; /* Compensar padding del container */
-                padding: 0 1rem;
-            }
-
-            .kanban-board-container::-webkit-scrollbar {
-                display: none; /* Chrome/Safari */
-            }
-
-            .kanban-board {
-                display: flex;
-                flex-direction: row;
-                flex-wrap: nowrap;
-                min-width: 320px; /* Ancho mínimo para asegurar scroll */
-                gap: 1rem;
-                padding-bottom: 1rem;
-            }
-
-            .kanban-column-wrapper {
-                flex: 0 0 280px; /* Ancho fijo para cada columna en móviles */
-                max-width: 280px;
-                min-width: 280px;
-            }
-
-            .kanban-column {
-                min-height: 400px;
-                max-height: 60vh; /* Altura máxima relativa a la pantalla */
-                padding: 1rem;
-                margin-bottom: 0; /* Remover margin bottom ya que no se apila verticalmente */
-            }
-
-            .kanban-column h3 {
-                font-size: 0.95rem;
-                margin-bottom: 1rem;
-                font-weight: 600;
-            }
-
-            .droppable-column {
-                max-height: calc(60vh - 80px); /* Altura máxima para el área de drop */
-                overflow-y: auto;
-                overflow-x: hidden;
-            }
-
-            .repair-card {
-                font-size: 0.85rem;
-                padding: 0.875rem;
-                margin-bottom: 0.75rem;
-                cursor: grab;
-            }
-
-            .repair-card:active {
-                cursor: grabbing;
-            }
-
-            .repair-card .card-title {
-                font-size: 0.9rem;
-                font-weight: 600;
-                margin-bottom: 0.5rem;
-            }
-
-            .repair-card .card-text {
-                font-size: 0.8rem;
-                line-height: 1.4;
-            }
-
-            .repair-card .btn {
-                font-size: 0.75rem;
-                padding: 0.375rem 0.75rem;
-            }
-        }
-
-        /* Tablets: mantener diseño de 2 columnas */
-        @media (min-width: 768px) and (max-width: 991.98px) {
-            .kanban-board-container {
-                overflow-x: visible;
-            }
-
-            .kanban-board {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 1rem;
-            }
-
-            .kanban-column-wrapper {
-                flex: 1 1 48%; /* 2 columnas en tablets */
-                max-width: 48%;
-            }
-        }
-
-        /* Desktop: mantener diseño original de 4 columnas */
-        @media (min-width: 992px) {
-            .kanban-board-container {
-                overflow-x: visible;
-            }
-
-            .kanban-board {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 1.5rem;
-            }
-
-            .kanban-column-wrapper {
-                flex: 1 1 23%; /* 4 columnas en desktop */
-                max-width: 23%;
             }
         }
 
@@ -751,7 +639,7 @@
     <!-- PWA Loading Screen con Logo Nano -->
     <div id="pwaLoading" class="pwa-loading">
         <div class="text-center">
-            <img src="/static/icons/nano-logo.svg" alt="Nano" style="max-width: 200px; margin-bottom: 2rem;">
+            <img src="/static/icons/nano-logo.svg" alt="Nanotronics" style="max-width: 200px; margin-bottom: 2rem;">
             <div class="spinner-border mb-3" role="status" style="width: 3rem; height: 3rem; color: #00ACC1;">
                 <span class="visually-hidden">Cargando...</span>
             </div>
@@ -765,13 +653,13 @@
             <div class="row align-items-center">
                 <div class="col-12 col-md-6">
                     <div class="d-flex align-items-center gap-3">
-                        <img src="/static/icons/nano-logo.svg" alt="Nano" class="nano-logo" style="height: 45px; width: auto;">
-                        <span class="text-muted" style="font-size: 0.9rem;">Sistema de Reparaciones IT</span>
+                        <img src="/static/icons/nano-logo.svg" alt="Nanotronics" class="nano-logo" style="height: 45px; width: auto;">
+                        <span class="text-muted" style="font-size: 0.9rem;">Sistema de Reparaciones de Nanotronics</span>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="d-flex justify-content-end gap-3">
-                        <button type="button" class="btn btn-primary-custom btn-nueva-large" onclick="nuevaReparacion()">
+                        <button type="button" class="btn btn-primary-custom btn-nueva-large" data-bs-toggle="modal" data-bs-target="#nuevaTarjetaModal">
                             <i class="fas fa-plus-circle"></i><span class="ms-2">Nueva Reparación</span>
                     </button>
                 </div>
@@ -781,9 +669,6 @@
     </header>
 
     <div class="container-fluid">
-        <!-- Input oculto para captura de cámara en móviles -->
-        <input type="file" id="mobileCameraInput" class="d-none" accept="image/*" capture="environment" onchange="procesarFotoMovil(this)">
-
         <!-- Barra de búsqueda profesional -->
         <div class="row mb-4">
             <div class="col-12">
@@ -799,35 +684,33 @@
             </div>
         </div>
 
-          <!-- Columnas Kanban Profesionales -->
-          <div class="kanban-board-container">
-            <div class="kanban-board">
-                <div class="col-12 col-sm-6 col-lg-3 kanban-column-wrapper">
-                    <div class="kanban-column fade-in">
-                        <h3>Ingresado</h3>
-                        <div id="ingresado" class="droppable-column"></div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-lg-3 kanban-column-wrapper">
-                    <div class="kanban-column fade-in" style="animation-delay: 0.1s;">
-                        <h3>En Diagnóstico</h3>
-                        <div id="diagnosticada" class="droppable-column"></div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-lg-3 kanban-column-wrapper">
-                    <div class="kanban-column fade-in" style="animation-delay: 0.2s;">
-                        <h3>Listos para Entregar</h3>
-                        <div id="para_entregar" class="droppable-column"></div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-lg-3 kanban-column-wrapper">
-                    <div class="kanban-column fade-in" style="animation-delay: 0.3s;">
-                        <h3>Completados</h3>
-                        <div id="listos" class="droppable-column"></div>
-                    </div>
+        <!-- Columnas Kanban Profesionales -->
+        <div class="row g-4">
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="kanban-column fade-in">
+                    <h3>Ingresado</h3>
+                    <div id="ingresado" class="droppable-column"></div>
                 </div>
             </div>
-          </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="kanban-column fade-in" style="animation-delay: 0.1s;">
+                    <h3>En Diagnóstico</h3>
+                    <div id="diagnosticada" class="droppable-column"></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="kanban-column fade-in" style="animation-delay: 0.2s;">
+                    <h3>Listos para Entregar</h3>
+                    <div id="para_entregar" class="droppable-column"></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="kanban-column fade-in" style="animation-delay: 0.3s;">
+                    <h3>Completados</h3>
+                    <div id="listos" class="droppable-column"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal para nueva tarjeta con IA -->
@@ -1206,88 +1089,6 @@
         });
 
         // Cargar tarjetas al iniciar
-        // Función para detectar si es dispositivo móvil
-        function esDispositivoMovil() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-                   (window.innerWidth <= 768 && window.innerHeight <= 1024);
-        }
-
-        // Función para manejar el botón "Nueva Reparación"
-        function nuevaReparacion() {
-            if (esDispositivoMovil()) {
-                // En móviles: abrir cámara nativa directamente
-                document.getElementById('mobileCameraInput').click();
-            } else {
-                // En desktop: abrir modal normalmente
-                const modal = new bootstrap.Modal(document.getElementById('nuevaTarjetaModal'));
-                modal.show();
-            }
-        }
-
-        // Función para procesar foto tomada desde móvil
-        function procesarFotoMovil(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    // Guardar imagen y marcar como no procesada por IA
-                    imagenCapturada = e.target.result;
-                    iaProcesada = false;
-
-                    console.log('📸 Foto capturada desde móvil, procesando...');
-
-                    // Mostrar preview de la imagen
-                    mostrarPreview(imagenCapturada);
-
-                    // Resetear el input para permitir múltiples capturas
-                    input.value = '';
-
-                    // Abrir modal directamente en paso 2
-                    abrirModalEnPaso2();
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Función para abrir modal directamente en paso 2 con imagen ya capturada
-        function abrirModalEnPaso2() {
-            console.log('📱 Abriendo modal en paso 2 con imagen capturada:', !!imagenCapturada);
-
-            // NO resetear el modal si ya tenemos una imagen capturada desde móvil
-            // Solo resetear campos del formulario, no la imagen
-            if (!imagenCapturada) {
-                resetearModal();
-            } else {
-                // Si tenemos imagen, solo resetear el paso y campos del formulario
-                pasoActual = 1;
-                mostrarPaso(1);
-
-                // Resetear campos del formulario pero mantener la imagen
-                document.getElementById('ai_nombre').value = '';
-                document.getElementById('ai_whatsapp').value = '';
-                document.getElementById('ai_cargador').checked = false;
-                document.getElementById('problema_texto').value = '';
-                document.getElementById('fecha_limite_final').value = '';
-            }
-
-            const modal = new bootstrap.Modal(document.getElementById('nuevaTarjetaModal'));
-            modal.show();
-
-            // Usar un timeout más largo para asegurar que todo esté inicializado
-            setTimeout(() => {
-                console.log('📱 Modal debería estar abierto, cambiando a paso 2...');
-
-                // Verificar que la imagen esté disponible
-                if (!imagenCapturada) {
-                    console.error('❌ Error: imagenCapturada es null al abrir modal');
-                    return;
-                }
-
-                console.log('📱 Cambiando a paso 2...');
-                mostrarPaso(2);
-            }, 500); // Aumentar el delay para asegurar inicialización completa
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
             // Ocultar loading después de un pequeño delay para mejor UX
             setTimeout(() => {
@@ -1840,20 +1641,16 @@
 
         // Resetear modal cuando se abre
         document.getElementById('nuevaTarjetaModal').addEventListener('show.bs.modal', function() {
-            // Solo resetear si NO tenemos una imagen capturada desde móvil
-            if (!imagenCapturada) {
-                resetearModal();
-            }
+            resetearModal();
 
-            // Para móviles con imagen capturada, no hacer nada especial
-            // El modal se abrirá directamente en paso 2 desde abrirModalEnPaso2()
-            if (esDispositivoMovil() && imagenCapturada) {
-                // Ya manejado por abrirModalEnPaso2()
-                return;
-            }
-
-            // Para desktop o móviles sin imagen, comportamiento normal
-            if (!esDispositivoMovil()) {
+            // Si es dispositivo móvil, abrir automáticamente la cámara
+            if (esDispositivoMovil()) {
+                document.getElementById('autoCameraNote').classList.remove('d-none');
+                document.getElementById('cameraButtons').classList.add('d-none'); // Ocultar botones de selección
+                setTimeout(() => {
+                    iniciarCamara();
+                }, 500); // Pequeño delay para asegurar que el modal esté listo
+            } else {
                 document.getElementById('autoCameraNote').classList.add('d-none');
                 document.getElementById('cameraButtons').classList.remove('d-none'); // Mostrar botones en desktop
             }
