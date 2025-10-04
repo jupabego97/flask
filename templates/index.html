@@ -1286,11 +1286,20 @@
                             mostrarNotificacion(`Reparación movida: ${tarjeta.nombre_propietario}`, 'info');
                         }
                     } else {
-                        // Solo actualizar datos del elemento existente
+                        // Actualizar completamente la tarjeta en el DOM (cambio de datos sin cambio de columna)
                         const elementoExistente = document.querySelector(`[data-id="${tarjeta.id}"]`);
                         if (elementoExistente) {
-                            // Podríamos actualizar datos específicos si fuera necesario
-                            elementoExistente.setAttribute('data-status', tarjeta.columna);
+                            // Remover la tarjeta existente
+                            elementoExistente.remove();
+
+                            // Crear y agregar la tarjeta actualizada en la misma columna
+                            const nuevaTarjeta = crearElementoTarjeta(tarjeta);
+                            const columnaActual = document.getElementById(tarjeta.columna);
+                            if (columnaActual) {
+                                columnaActual.appendChild(nuevaTarjeta);
+                            }
+
+                            mostrarNotificacion(`Reparación actualizada: ${tarjeta.nombre_propietario}`, 'info');
                         }
                     }
                 }
