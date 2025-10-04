@@ -1013,6 +1013,33 @@
         // SocketIO para sincronización en tiempo real
         let socket = null;
 
+        // Manejador global para errores de runtime de extensiones
+        window.addEventListener('error', function(event) {
+            // Silenciar errores comunes de extensiones que no afectan la funcionalidad
+            const errorMessage = event.message || '';
+            if (errorMessage.includes('Extension context invalidated') ||
+                errorMessage.includes('message port closed') ||
+                errorMessage.includes('Could not establish connection') ||
+                errorMessage.includes('Receiving end does not exist')) {
+                console.log('🔌 Error de extensión externa (ignorado):', errorMessage);
+                event.preventDefault(); // Prevenir que aparezca en consola como error
+                return false;
+            }
+        });
+
+        // Manejador para promesas no manejadas (útil para extensiones)
+        window.addEventListener('unhandledrejection', function(event) {
+            const reason = event.reason || '';
+            if (typeof reason === 'string' &&
+                (reason.includes('Extension context invalidated') ||
+                 reason.includes('message port closed') ||
+                 reason.includes('Could not establish connection'))) {
+                console.log('🔌 Error de extensión externa en promesa (ignorado):', reason);
+                event.preventDefault();
+                return false;
+            }
+        });
+
         function initSocketIO() {
             // Conectar a SocketIO con configuración robusta
             socket = io({
@@ -1139,7 +1166,11 @@
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                     // Nueva versión disponible
                                     if (confirm('Nueva versión disponible. ¿Deseas actualizar?')) {
-                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        try {
+                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        } catch (error) {
+                                            console.log('⚠️ Error enviando mensaje al service worker:', error);
+                                        }
                                         window.location.reload();
                                     }
                                 }
@@ -2052,9 +2083,13 @@
 
                 // Limpiar cache del service worker
                 if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                    navigator.serviceWorker.controller.postMessage({
-                        type: 'CLEAR_API_CACHE'
-                    });
+                    try {
+                        navigator.serviceWorker.controller.postMessage({
+                            type: 'CLEAR_API_CACHE'
+                        });
+                    } catch (error) {
+                        console.log('⚠️ Error limpiando cache del service worker:', error);
+                    }
                 }
 
                 // Cerrar modal
@@ -2118,9 +2153,13 @@
 
                     // Limpiar cache del service worker
                     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                        navigator.serviceWorker.controller.postMessage({
-                            type: 'CLEAR_API_CACHE'
-                        });
+                        try {
+                            navigator.serviceWorker.controller.postMessage({
+                                type: 'CLEAR_API_CACHE'
+                            });
+                        } catch (error) {
+                            console.log('⚠️ Error limpiando cache del service worker:', error);
+                        }
                     }
 
                     // Cerrar el modal
