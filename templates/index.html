@@ -1332,11 +1332,14 @@
                     if (draggedElement) {
                         const nuevaColumna = this.id;
                         const tarjetaId = draggedElement.dataset.id;
+                        const elementoActual = draggedElement; // Referencia local para evitar null
 
                         // Agregar animación de movimiento
-                        draggedElement.style.transform = 'scale(0.95)';
+                        elementoActual.style.transform = 'scale(0.95)';
                         setTimeout(() => {
-                            draggedElement.style.transform = '';
+                            if (elementoActual && elementoActual.style) {
+                                elementoActual.style.transform = '';
+                            }
                         }, 200);
 
                         // 1. Mover inmediatamente en DOM para mejor UX
@@ -1355,8 +1358,8 @@
                             if (index !== -1) {
                                 todasLasTarjetas[index].columna = nuevaColumna;
                                 // Actualizar el atributo data-status para los estilos
-                                if (draggedElement && draggedElement.setAttribute) {
-                                    draggedElement.setAttribute('data-status', nuevaColumna);
+                                if (elementoActual && elementoActual.setAttribute) {
+                                    elementoActual.setAttribute('data-status', nuevaColumna);
                                 }
                             }
                             console.log('✅ Tarjeta movida correctamente');
@@ -1364,8 +1367,8 @@
                         .catch(error => {
                             console.error('❌ Error al guardar:', error);
                             // Revertir movimiento si hay error
-                            if (draggedElement && draggedElement.parentNode && draggedElement.remove) {
-                                draggedElement.remove();
+                            if (elementoActual && elementoActual.parentNode && elementoActual.remove) {
+                                elementoActual.remove();
                             }
                             // Mostrar notificación de error moderna
                             mostrarNotificacion('Error al guardar el movimiento. La tarjeta ha sido revertida.', 'danger');
