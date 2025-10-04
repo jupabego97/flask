@@ -1163,6 +1163,35 @@
             }
         }
 
+        // Función auxiliar para mover foco fuera de un modal de manera segura
+        function moverFocoFueraModal(modalElement) {
+            const activeElement = document.activeElement;
+            if (activeElement && modalElement.contains(activeElement)) {
+                const focusableElements = document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                const firstFocusable = Array.from(focusableElements).find(el =>
+                    !el.closest('.modal') && !el.disabled && el.offsetParent !== null
+                );
+                if (firstFocusable) {
+                    firstFocusable.focus();
+                } else {
+                    document.body.focus();
+                }
+            }
+        }
+
+        // Función para cerrar modal de edición de manera segura
+        function cerrarModalEdicion() {
+            const modal = document.getElementById('editarTarjetaModal');
+            if (modal) {
+                // Mover foco fuera del modal antes de cerrarlo
+                moverFocoFueraModal(modal);
+
+                // Cerrar modal
+                const bsModal = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
+                bsModal.hide();
+            }
+        }
+
         // Función para mostrar indicadores visuales de zonas de scroll (opcional)
         function mostrarIndicadoresScroll() {
             // Añadir clase al body para activar indicadores
@@ -2295,9 +2324,8 @@
                     }
                 }
 
-                // Cerrar modal
-                const modal = new bootstrap.Modal(document.getElementById('editarTarjetaModal'));
-                modal.hide();
+                // Cerrar modal de manera segura (maneja foco correctamente)
+                cerrarModalEdicion();
 
                 mostrarNotificacion('Tarjeta actualizada correctamente', 'success');
             })
@@ -2365,9 +2393,8 @@
                         }
                     }
 
-                    // Cerrar el modal
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('editarTarjetaModal'));
-                    modal.hide();
+                    // Cerrar el modal de manera segura (maneja foco correctamente)
+                    cerrarModalEdicion();
 
                     mostrarNotificacion('Reparación eliminada correctamente', 'warning');
                 } else {
