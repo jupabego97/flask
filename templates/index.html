@@ -1843,7 +1843,7 @@
         }
 
         // Paso 2: Procesamiento con IA
-        function procesarConIA() {
+        async function procesarConIA() {
             if (!imagenCapturada) {
                 alert('Primero debes capturar una imagen');
                 return;
@@ -1857,44 +1857,102 @@
             // Mostrar loading
             document.getElementById('loadingAI').classList.remove('d-none');
 
-            fetch('/api/procesar-imagen', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ image: imagenCapturada })
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Ocultar loading
-                document.getElementById('loadingAI').classList.add('d-none');
+            try {
+                // Intentar procesamiento paralelo si hay audio disponible
+                if (audioChunks && audioChunks.length > 0) {
+                    console.log('🎯 Procesando imagen y audio en paralelo...');
 
-                if (data.error) {
-                    console.error('Error procesando la imagen:', data.error);
-                    // En caso de error, no mostramos alerta, solo continuamos con campos vacíos
-                    console.log('IA no disponible, continuar con campos manuales');
+                    // Crear blob de audio para enviar
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const audioData = await blobToBase64(audioBlob);
+
+                    // Procesar imagen y audio en paralelo
+                    const response = await fetch('/api/procesar-multimedia', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            image: imagenCapturada,
+                            audio: audioData
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    // Procesar resultados
+                    if (data.imagen && !data.imagen.error) {
+                        console.log('✅ Imagen procesada exitosamente');
+                        // Llenar campos con datos de imagen
+                        document.getElementById('ai_nombre').value = data.imagen.nombre || '';
+                        document.getElementById('ai_whatsapp').value = data.imagen.telefono || '';
+                        document.getElementById('ai_cargador').checked = data.imagen.tiene_cargador || false;
+
+                        // Mostrar indicador si la IA detectó cargador
+                        const cargadorStatus = document.getElementById('cargadorStatus');
+                        if (data.imagen.tiene_cargador) {
+                            cargadorStatus.style.display = 'inline';
+                            setTimeout(() => {
+                                cargadorStatus.style.display = 'none';
+                            }, 4000);
+                        }
+                    } else if (data.imagen && data.imagen.error) {
+                        console.warn('⚠️ Error procesando imagen:', data.imagen.error);
+                    }
+
+                    if (data.audio && !data.audio.error) {
+                        console.log('✅ Audio procesado exitosamente');
+                        // Aquí puedes procesar la transcripción si es necesario
+                        console.log('🎤 Transcripción:', data.audio);
+                    } else if (data.audio && data.audio.error) {
+                        console.warn('⚠️ Error procesando audio:', data.audio.error);
+                    }
+
                 } else {
-                    // Llenar campos con datos de IA
-                    document.getElementById('ai_nombre').value = data.nombre || '';
-                    document.getElementById('ai_whatsapp').value = data.telefono || '';
-                    document.getElementById('ai_cargador').checked = data.tiene_cargador || false;
+                    // Procesamiento solo de imagen (método anterior)
+                    console.log('🖼️ Procesando solo imagen...');
+                    const response = await fetch('/api/procesar-imagen', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ image: imagenCapturada })
+                    });
 
-                    // Mostrar indicador si la IA detectó cargador
-                    const cargadorStatus = document.getElementById('cargadorStatus');
-                    if (data.tiene_cargador) {
-                        cargadorStatus.style.display = 'inline';
-                        // Ocultar después de 4 segundos
-                        setTimeout(() => {
-                            cargadorStatus.style.display = 'none';
-                        }, 4000);
+                    const data = await response.json();
+
+                    if (data.error) {
+                        console.error('Error procesando la imagen:', data.error);
+                        console.log('IA no disponible, continuar con campos manuales');
+                    } else {
+                        // Llenar campos con datos de IA
+                        document.getElementById('ai_nombre').value = data.nombre || '';
+                        document.getElementById('ai_whatsapp').value = data.telefono || '';
+                        document.getElementById('ai_cargador').checked = data.tiene_cargador || false;
+
+                        // Mostrar indicador si la IA detectó cargador
+                        const cargadorStatus = document.getElementById('cargadorStatus');
+                        if (data.tiene_cargador) {
+                            cargadorStatus.style.display = 'inline';
+                            setTimeout(() => {
+                                cargadorStatus.style.display = 'none';
+                            }, 4000);
+                        }
                     }
                 }
 
-                iaProcesada = true; // Marcar como procesada
-            })
-            .catch(error => {
-                // Ocultar loading en caso de error
-                document.getElementById('loadingAI').classList.add('d-none');
+            } catch (error) {
                 console.error('Error en procesamiento IA:', error);
-                iaProcesada = true; // Marcar como procesada para evitar reintentos
+            } finally {
+                // Ocultar loading
+                document.getElementById('loadingAI').classList.add('d-none');
+                iaProcesada = true; // Marcar como procesada
+            }
+        }
+
+        // Función auxiliar para convertir Blob a Base64
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
             });
         }
 
@@ -1915,10 +1973,10 @@
                         audioChunks.push(event.data);
                     };
 
-                    mediaRecorder.onstop = async () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                        await transcribirAudio(audioBlob);
+                    mediaRecorder.onstop = () => {
+                        // Solo detener el stream (el procesamiento se hace en paralelo en procesarConIA)
                         stream.getTracks().forEach(track => track.stop());
+                        console.log('🎤 Audio grabado, listo para procesamiento conjunto con imagen');
                     };
 
                     mediaRecorder.start();
