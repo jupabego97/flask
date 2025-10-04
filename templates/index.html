@@ -708,6 +708,75 @@
             }
         }
 
+        /* Indicadores visuales de zonas de auto-scroll durante drag */
+        #scroll-indicators {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        .scroll-zone {
+            position: absolute;
+            opacity: 0.1;
+            transition: opacity 0.3s ease;
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            border-radius: 4px;
+        }
+
+        .scroll-zone-top {
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to bottom, rgba(59, 130, 246, 0.3), transparent);
+        }
+
+        .scroll-zone-bottom {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to top, rgba(59, 130, 246, 0.3), transparent);
+        }
+
+        .scroll-zone-left {
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.3), transparent);
+        }
+
+        .scroll-zone-right {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 60px;
+            background: linear-gradient(to left, rgba(59, 130, 246, 0.3), transparent);
+        }
+
+        /* Animación sutil cuando se está arrastrando */
+        body.dragging-active .scroll-zone {
+            opacity: 0.2;
+        }
+
+        /* Para móviles, hacer las zonas un poco más grandes */
+        @media (max-width: 767.98px) {
+            .scroll-zone-top,
+            .scroll-zone-bottom {
+                height: 80px;
+            }
+
+            .scroll-zone-left,
+            .scroll-zone-right {
+                width: 80px;
+            }
+        }
+
         /* Utilidades adicionales */
         .text-gradient {
             background: var(--gradient-primary);
@@ -1012,6 +1081,117 @@
 
         // SocketIO para sincronización en tiempo real
         let socket = null;
+
+        // Variables para auto-scroll durante drag
+        let autoScrollInterval = null;
+        let autoScrollSpeed = 0;
+        const SCROLL_ZONE_SIZE = 60; // Pixeles desde el borde para activar scroll
+        const MAX_SCROLL_SPEED = 15; // Velocidad máxima de scroll
+
+        // Función para calcular velocidad de scroll basado en proximidad al borde
+        function calcularVelocidadScroll(mouseY, mouseX) {
+            const viewportHeight = window.innerHeight;
+            const viewportWidth = window.innerWidth;
+
+            // Calcular distancia a los bordes
+            const distanciaArriba = mouseY;
+            const distanciaAbajo = viewportHeight - mouseY;
+            const distanciaIzquierda = mouseX;
+            const distanciaDerecha = viewportWidth - mouseX;
+
+            let velocidadVertical = 0;
+            let velocidadHorizontal = 0;
+
+            // Scroll vertical hacia arriba
+            if (distanciaArriba < SCROLL_ZONE_SIZE) {
+                const factor = (SCROLL_ZONE_SIZE - distanciaArriba) / SCROLL_ZONE_SIZE;
+                velocidadVertical = -Math.round(MAX_SCROLL_SPEED * factor);
+            }
+            // Scroll vertical hacia abajo
+            else if (distanciaAbajo < SCROLL_ZONE_SIZE) {
+                const factor = (SCROLL_ZONE_SIZE - distanciaAbajo) / SCROLL_ZONE_SIZE;
+                velocidadVertical = Math.round(MAX_SCROLL_SPEED * factor);
+            }
+
+            // Scroll horizontal hacia izquierda (útil para móviles)
+            if (distanciaIzquierda < SCROLL_ZONE_SIZE) {
+                const factor = (SCROLL_ZONE_SIZE - distanciaIzquierda) / SCROLL_ZONE_SIZE;
+                velocidadHorizontal = -Math.round(MAX_SCROLL_SPEED * factor * 0.5);
+            }
+            // Scroll horizontal hacia derecha (útil para móviles)
+            else if (distanciaDerecha < SCROLL_ZONE_SIZE) {
+                const factor = (SCROLL_ZONE_SIZE - distanciaDerecha) / SCROLL_ZONE_SIZE;
+                velocidadHorizontal = Math.round(MAX_SCROLL_SPEED * factor * 0.5);
+            }
+
+            return { vertical: velocidadVertical, horizontal: velocidadHorizontal };
+        }
+
+        // Función para iniciar auto-scroll
+        function iniciarAutoScroll(mouseY, mouseX) {
+            const velocidad = calcularVelocidadScroll(mouseY, mouseX);
+            const necesitaScroll = velocidad.vertical !== 0 || velocidad.horizontal !== 0;
+
+            if (necesitaScroll && !autoScrollInterval) {
+                autoScrollInterval = setInterval(() => {
+                    const currentVelocidad = calcularVelocidadScroll(mouseY, mouseX);
+
+                    if (currentVelocidad.vertical !== 0) {
+                        window.scrollBy(0, currentVelocidad.vertical);
+                    }
+
+                    if (currentVelocidad.horizontal !== 0) {
+                        window.scrollBy(currentVelocidad.horizontal, 0);
+                    }
+
+                    // Actualizar posición del mouse para scroll continuo
+                    const rect = document.body.getBoundingClientRect();
+                    mouseY = (window.innerHeight / 2) - rect.top;
+                    mouseX = (window.innerWidth / 2) - rect.left;
+
+                }, 16); // ~60fps
+            } else if (!necesitaScroll && autoScrollInterval) {
+                detenerAutoScroll();
+            }
+        }
+
+        // Función para detener auto-scroll
+        function detenerAutoScroll() {
+            if (autoScrollInterval) {
+                clearInterval(autoScrollInterval);
+                autoScrollInterval = null;
+            }
+        }
+
+        // Función para mostrar indicadores visuales de zonas de scroll (opcional)
+        function mostrarIndicadoresScroll() {
+            // Añadir clase al body para activar indicadores
+            document.body.classList.add('dragging-active');
+
+            // Crear elementos visuales para las zonas de scroll (opcional)
+            if (!document.getElementById('scroll-indicators')) {
+                const indicators = document.createElement('div');
+                indicators.id = 'scroll-indicators';
+                indicators.innerHTML = `
+                    <div class="scroll-zone scroll-zone-top"></div>
+                    <div class="scroll-zone scroll-zone-bottom"></div>
+                    <div class="scroll-zone scroll-zone-left"></div>
+                    <div class="scroll-zone scroll-zone-right"></div>
+                `;
+                document.body.appendChild(indicators);
+            }
+        }
+
+        // Función para ocultar indicadores visuales de zonas de scroll
+        function ocultarIndicadoresScroll() {
+            // Remover clase del body
+            document.body.classList.remove('dragging-active');
+
+            const indicators = document.getElementById('scroll-indicators');
+            if (indicators) {
+                indicators.remove();
+            }
+        }
 
         // Manejador global para errores de runtime de extensiones
         window.addEventListener('error', function(event) {
@@ -1326,16 +1506,23 @@
             `;
             }
 
-            // Eventos de drag and drop mejorados
+            // Eventos de drag and drop mejorados con auto-scroll
             card.addEventListener('dragstart', function(e) {
                 draggedElement = this;
                 this.classList.add('dragging');
                 e.dataTransfer.effectAllowed = 'move';
+
+                // Mostrar indicador visual de zona de scroll (opcional)
+                mostrarIndicadoresScroll();
             });
 
             card.addEventListener('dragend', function(e) {
                 this.classList.remove('dragging');
                 draggedElement = null;
+
+                // Detener auto-scroll y ocultar indicadores
+                detenerAutoScroll();
+                ocultarIndicadoresScroll();
             });
 
             return card;
@@ -1347,6 +1534,13 @@
                 columna.addEventListener('dragover', function(e) {
                     e.preventDefault(); // CRUCIAL para permitir drop
                     this.classList.add('drag-over');
+
+                    // Auto-scroll durante drag si hay un elemento siendo arrastrado
+                    if (draggedElement) {
+                        const mouseY = e.clientY;
+                        const mouseX = e.clientX;
+                        iniciarAutoScroll(mouseY, mouseX);
+                    }
                 });
 
                 columna.addEventListener('dragleave', function(e) {
