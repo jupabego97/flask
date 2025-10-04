@@ -1222,6 +1222,23 @@
             }
         }
 
+        // Override de console.error para filtrar errores de extensiones
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+            const message = args.join(' ');
+            // Filtrar errores comunes de extensiones de Chrome
+            if (message.includes('Unchecked runtime.lastError') ||
+                message.includes('Could not establish connection') ||
+                message.includes('Receiving end does not exist') ||
+                message.includes('Extension context invalidated') ||
+                message.includes('message port closed')) {
+                console.log('🔌 Error de extensión externa filtrado:', message);
+                return; // No mostrar el error
+            }
+            // Para otros errores, usar el console.error original
+            originalConsoleError.apply(console, args);
+        };
+
         // Manejador global para errores de runtime de extensiones
         window.addEventListener('error', function(event) {
             // Silenciar errores comunes de extensiones que no afectan la funcionalidad
@@ -1229,7 +1246,8 @@
             if (errorMessage.includes('Extension context invalidated') ||
                 errorMessage.includes('message port closed') ||
                 errorMessage.includes('Could not establish connection') ||
-                errorMessage.includes('Receiving end does not exist')) {
+                errorMessage.includes('Receiving end does not exist') ||
+                errorMessage.includes('Unchecked runtime.lastError')) {
                 console.log('🔌 Error de extensión externa (ignorado):', errorMessage);
                 event.preventDefault(); // Prevenir que aparezca en consola como error
                 return false;
@@ -1242,7 +1260,8 @@
             if (typeof reason === 'string' &&
                 (reason.includes('Extension context invalidated') ||
                  reason.includes('message port closed') ||
-                 reason.includes('Could not establish connection'))) {
+                 reason.includes('Could not establish connection') ||
+                 reason.includes('Receiving end does not exist'))) {
                 console.log('🔌 Error de extensión externa en promesa (ignorado):', reason);
                 event.preventDefault();
                 return false;
