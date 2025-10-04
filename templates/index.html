@@ -1163,6 +1163,16 @@
             }
         }
 
+        // Función auxiliar para convertir Blob a Base64
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+
         // Función auxiliar para mover foco fuera de un modal de manera segura
         function moverFocoFueraModal(modalElement) {
             const activeElement = document.activeElement;
@@ -1858,15 +1868,15 @@
             document.getElementById('loadingAI').classList.remove('d-none');
 
             try {
-                // Intentar procesamiento paralelo si hay audio disponible
+                // Intentar procesamiento concurrente si hay audio disponible
                 if (audioChunks && audioChunks.length > 0) {
-                    console.log('🎯 Procesando imagen y audio en paralelo...');
+                    console.log('🎯 Procesando imagen y audio concurrentemente...');
 
                     // Crear blob de audio para enviar
                     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                     const audioData = await blobToBase64(audioBlob);
 
-                    // Procesar imagen y audio en paralelo
+                    // Procesar imagen y audio concurrentemente
                     const response = await fetch('/api/procesar-multimedia', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -1898,7 +1908,7 @@
                         console.warn('⚠️ Error procesando imagen:', data.imagen.error);
                     }
 
-                    if (data.audio && !data.audio.error) {
+                    if (data.audio && !data.audio.error && typeof data.audio === 'string') {
                         console.log('✅ Audio procesado exitosamente');
                         // Aquí puedes procesar la transcripción si es necesario
                         console.log('🎤 Transcripción:', data.audio);
@@ -1946,16 +1956,6 @@
             }
         }
 
-        // Función auxiliar para convertir Blob a Base64
-        function blobToBase64(blob) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
-            });
-        }
-
         // Paso 3: Grabación de voz
         async function toggleGrabacion() {
             const btn = document.getElementById('btnGrabar');
@@ -1973,10 +1973,10 @@
                         audioChunks.push(event.data);
                     };
 
-                    mediaRecorder.onstop = () => {
-                        // Solo detener el stream (el procesamiento se hace en paralelo en procesarConIA)
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        await transcribirAudio(audioBlob);
                         stream.getTracks().forEach(track => track.stop());
-                        console.log('🎤 Audio grabado, listo para procesamiento conjunto con imagen');
                     };
 
                     mediaRecorder.start();

@@ -5,7 +5,6 @@ import io
 from PIL import Image
 import requests
 from dotenv import load_dotenv
-import asyncio
 
 load_dotenv()
 
@@ -22,7 +21,7 @@ class GeminiService:
         except Exception as e:
             raise ValueError(f"Error configurando Gemini: {e}")
 
-    async def extract_client_info_from_image(self, image_data, image_format='jpeg'):
+    def extract_client_info_from_image(self, image_data, image_format='jpeg'):
         """
         Extrae información del cliente desde una imagen usando Gemini
         """
@@ -168,7 +167,7 @@ Responde ÚNICAMENTE con JSON válido:
             print(f"Error procesando imagen: {e}")
             return {"nombre": "Cliente", "telefono": "", "tiene_cargador": False}
 
-    async def transcribe_audio(self, audio_data):
+    def transcribe_audio(self, audio_data):
         """
         Transcribe audio usando Gemini
         """

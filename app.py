@@ -4,10 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit
 from datetime import datetime
 import os
+import asyncio
+import concurrent.futures
 from dotenv import load_dotenv
 from gemini_service import GeminiService
 import eventlet
-import asyncio
 
 # Cargar variables de entorno desde .env
 load_dotenv()
@@ -211,7 +212,7 @@ def delete_tarjeta(id):
     return '', 204
 
 @app.route('/api/procesar-imagen', methods=['POST'])
-async def procesar_imagen():
+def procesar_imagen():
     """
     Procesa una imagen para extraer información del cliente usando Gemini
     """
@@ -225,8 +226,8 @@ async def procesar_imagen():
         if not image_data:
             return jsonify({'error': 'No se proporcionó imagen'}), 400
 
-        # Procesar la imagen con Gemini (ahora asíncrono)
-        resultado = await gemini_service.extract_client_info_from_image(image_data)
+        # Procesar la imagen con Gemini
+        resultado = gemini_service.extract_client_info_from_image(image_data)
 
         return jsonify(resultado)
 
@@ -235,7 +236,7 @@ async def procesar_imagen():
         return jsonify({'error': 'Error procesando la imagen', 'details': str(e)}), 500
 
 @app.route('/api/transcribir-audio', methods=['POST'])
-async def transcribir_audio():
+def transcribir_audio():
     """
     Transcribe audio usando Gemini
     """
@@ -255,8 +256,8 @@ async def transcribir_audio():
         # Leer el archivo de audio
         audio_data = audio_file.read()
 
-        # Transcribir con Gemini (ahora asíncrono)
-        transcripcion = await gemini_service.transcribe_audio(audio_data)
+        # Transcribir con Gemini
+        transcripcion = gemini_service.transcribe_audio(audio_data)
 
         return jsonify({'transcripcion': transcripcion})
 
@@ -265,9 +266,9 @@ async def transcribir_audio():
         return jsonify({'error': 'Error procesando el audio', 'details': str(e)}), 500
 
 @app.route('/api/procesar-multimedia', methods=['POST'])
-async def procesar_multimedia():
+def procesar_multimedia():
     """
-    Procesa imagen y audio en paralelo para extracción de información concurrente
+    Procesa imagen y audio concurrentemente usando ThreadPoolExecutor
     """
     if not gemini_service:
         return jsonify({'error': 'Servicio de IA no disponible'}), 503
@@ -277,54 +278,71 @@ async def procesar_multimedia():
         image_data = data.get('image')
         audio_data = data.get('audio')
 
-        # Validar que al menos uno de los dos esté presente
-        if not image_data and not audio_data:
-            return jsonify({'error': 'No se proporcionó imagen ni audio'}), 400
+        if not image_data:
+            return jsonify({'error': 'No se proporcionó imagen'}), 400
 
-        results = {}
+        # Si no hay audio, procesar solo imagen
+        if not audio_data:
+            print('🎯 Procesando solo imagen (sin audio)...')
+            resultado_imagen = gemini_service.extract_client_info_from_image(image_data)
+            return jsonify({
+                'imagen': resultado_imagen,
+                'audio': {'error': 'No se proporcionó audio'}
+            })
 
-        # Crear tareas para procesamiento paralelo
-        tasks = []
+        print('🎯 Procesando imagen y audio concurrentemente...')
 
-        # Si hay imagen, agregar tarea de procesamiento de imagen
-        if image_data:
-            task_imagen = gemini_service.extract_client_info_from_image(image_data)
-            tasks.append(('imagen', task_imagen))
+        # Crear funciones para ejecutar en threads separados
+        def procesar_imagen():
+            try:
+                return gemini_service.extract_client_info_from_image(image_data)
+            except Exception as e:
+                print(f"Error procesando imagen: {e}")
+                return {'error': f'Error procesando imagen: {str(e)}'}
 
-        # Si hay audio, agregar tarea de transcripción de audio
-        if audio_data:
-            # Convertir base64 de audio a bytes si viene en ese formato
-            if isinstance(audio_data, str) and audio_data.startswith('data:audio'):
-                import base64
-                header, encoded = audio_data.split(",", 1)
-                audio_data = base64.b64decode(encoded)
-
-            task_audio = gemini_service.transcribe_audio(audio_data)
-            tasks.append(('audio', task_audio))
-
-        # Ejecutar todas las tareas en paralelo
-        if tasks:
-            print(f"🎯 Ejecutando {len(tasks)} tareas de IA en paralelo...")
-
-            # Ejecutar en paralelo usando asyncio.gather
-            task_objects = [task[1] for task in tasks]
-            task_results = await asyncio.gather(*task_objects, return_exceptions=True)
-
-            # Procesar resultados
-            for i, (task_name, _) in enumerate(tasks):
-                if isinstance(task_results[i], Exception):
-                    print(f"❌ Error en tarea {task_name}: {task_results[i]}")
-                    results[task_name] = {'error': str(task_results[i])}
+        def procesar_audio():
+            try:
+                # Convertir base64 a bytes si es necesario
+                if isinstance(audio_data, str) and audio_data.startswith('data:audio'):
+                    # Es base64 con data URL
+                    header, encoded = audio_data.split(",", 1)
+                    audio_bytes = base64.b64decode(encoded)
                 else:
-                    results[task_name] = task_results[i]
+                    audio_bytes = audio_data
 
-            print(f"✅ Procesamiento paralelo completado: {list(results.keys())}")
+                return gemini_service.transcribe_audio(audio_bytes)
+            except Exception as e:
+                print(f"Error procesando audio: {e}")
+                return f'Error procesando audio: {str(e)}'
 
-        return jsonify(results)
+        # Ejecutar ambas tareas concurrentemente usando ThreadPoolExecutor
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+            # Crear futures para ambas tareas
+            future_imagen = executor.submit(procesar_imagen)
+            future_audio = executor.submit(procesar_audio)
+
+            # Esperar resultados con timeout de 30 segundos
+            try:
+                resultado_imagen = future_imagen.result(timeout=30)
+                resultado_audio = future_audio.result(timeout=30)
+
+                print('✅ Procesamiento concurrente completado')
+
+                return jsonify({
+                    'imagen': resultado_imagen,
+                    'audio': resultado_audio
+                })
+
+            except concurrent.futures.TimeoutError:
+                print('⚠️ Timeout en procesamiento concurrente')
+                return jsonify({
+                    'imagen': {'error': 'Timeout procesando imagen'},
+                    'audio': {'error': 'Timeout procesando audio'}
+                }), 408
 
     except Exception as e:
-        print(f"Error procesando multimedia: {e}")
-        return jsonify({'error': 'Error procesando multimedia', 'details': str(e)}), 500
+        print(f"Error en procesamiento multimedia: {e}")
+        return jsonify({'error': 'Error en procesamiento multimedia', 'details': str(e)}), 500
 
 if __name__ == '__main__':
     with app.app_context():
