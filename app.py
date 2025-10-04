@@ -7,9 +7,14 @@ import os
 from dotenv import load_dotenv
 from gemini_service import GeminiService
 import eventlet
+from concurrent.futures import ThreadPoolExecutor
+import asyncio
 
 # Cargar variables de entorno desde .env
 load_dotenv()
+
+# Crear ThreadPoolExecutor para procesamiento concurrente de IA
+executor = ThreadPoolExecutor(max_workers=4, thread_name_prefix="gemini")
 
 app = Flask(__name__)
 
@@ -212,7 +217,7 @@ def delete_tarjeta(id):
 @app.route('/api/procesar-imagen', methods=['POST'])
 def procesar_imagen():
     """
-    Procesa una imagen para extraer información del cliente usando Gemini
+    Procesa una imagen para extraer información del cliente usando Gemini (concurrente)
     """
     if not gemini_service:
         return jsonify({'error': 'Servicio de IA no disponible'}), 503
@@ -224,8 +229,9 @@ def procesar_imagen():
         if not image_data:
             return jsonify({'error': 'No se proporcionó imagen'}), 400
 
-        # Procesar la imagen con Gemini
-        resultado = gemini_service.extract_client_info_from_image(image_data)
+        # Procesar la imagen de manera concurrente usando ThreadPoolExecutor
+        future = executor.submit(gemini_service.extract_client_info_from_image, image_data)
+        resultado = future.result(timeout=30)  # Timeout de 30 segundos
 
         return jsonify(resultado)
 
@@ -236,7 +242,7 @@ def procesar_imagen():
 @app.route('/api/transcribir-audio', methods=['POST'])
 def transcribir_audio():
     """
-    Transcribe audio usando Gemini
+    Transcribe audio usando Gemini (concurrente)
     """
     if not gemini_service:
         return jsonify({'error': 'Servicio de IA no disponible'}), 503
@@ -254,14 +260,65 @@ def transcribir_audio():
         # Leer el archivo de audio
         audio_data = audio_file.read()
 
-        # Transcribir con Gemini
-        transcripcion = gemini_service.transcribe_audio(audio_data)
+        # Transcribir de manera concurrente usando ThreadPoolExecutor
+        future = executor.submit(gemini_service.transcribe_audio, audio_data)
+        transcripcion = future.result(timeout=60)  # Timeout más largo para audio (60 segundos)
 
         return jsonify({'transcripcion': transcripcion})
 
     except Exception as e:
         print(f"Error transcribiendo audio: {e}")
         return jsonify({'error': 'Error procesando el audio', 'details': str(e)}), 500
+
+@app.route('/api/procesar-media-concurrente', methods=['POST'])
+def procesar_media_concurrente():
+    """
+    Procesa imagen y audio concurrentemente usando ThreadPoolExecutor
+    Útil cuando se necesitan ambos procesamientos al mismo tiempo
+    """
+    if not gemini_service:
+        return jsonify({'error': 'Servicio de IA no disponible'}), 503
+
+    try:
+        data = request.get_json()
+        image_data = data.get('image')
+        audio_data = data.get('audio')
+
+        if not image_data and not audio_data:
+            return jsonify({'error': 'No se proporcionaron imagen ni audio'}), 400
+
+        resultados = {}
+
+        # Crear futures para procesamiento concurrente
+        futures = {}
+
+        if image_data:
+            futures['imagen'] = executor.submit(gemini_service.extract_client_info_from_image, image_data)
+
+        if audio_data:
+            futures['audio'] = executor.submit(gemini_service.transcribe_audio, audio_data)
+
+        # Recopilar resultados con timeout
+        for tipo, future in futures.items():
+            try:
+                if tipo == 'imagen':
+                    resultados['imagen'] = future.result(timeout=30)
+                elif tipo == 'audio':
+                    resultados['audio'] = future.result(timeout=60)
+            except Exception as e:
+                print(f"Error procesando {tipo}: {e}")
+                resultados[tipo] = {'error': f'Error procesando {tipo}: {str(e)}'}
+
+        return jsonify(resultados)
+
+    except Exception as e:
+        print(f"Error en procesamiento concurrente: {e}")
+        return jsonify({'error': 'Error procesando media', 'details': str(e)}), 500
+
+
+# Función para cerrar el ThreadPoolExecutor al finalizar
+import atexit
+atexit.register(lambda: executor.shutdown(wait=True))
 
 if __name__ == '__main__':
     with app.app_context():
@@ -274,8 +331,10 @@ if __name__ == '__main__':
     if debug_mode:
         # Desarrollo: permitir conexiones desde cualquier IP con SocketIO
         print("🚀 Iniciando servidor con SocketIO para sincronización en tiempo real...")
+        print("🤖 ThreadPoolExecutor configurado para procesamiento concurrente de IA")
         socketio.run(app, host='0.0.0.0', port=port, debug=True)
     else:
         # Producción: usar gunicorn con eventlet (Railway)
         print("🚀 Iniciando servidor de producción con SocketIO...")
+        print("🤖 ThreadPoolExecutor configurado para procesamiento concurrente de IA")
         socketio.run(app, host='0.0.0.0', port=port)
