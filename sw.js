@@ -85,6 +85,18 @@ function isOnline() {
     return navigator.onLine;
 }
 
+// Función para verificar si una URL puede ser cacheada (solo esquemas HTTP/HTTPS)
+function isValidCacheUrl(url) {
+    try {
+        const urlObj = new URL(url);
+        // Solo permitir esquemas HTTP y HTTPS
+        return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch (error) {
+        // Si no es una URL válida, no cachear
+        return false;
+    }
+}
+
 // Interceptar solicitudes de red
 self.addEventListener('fetch', (event) => {
     const { request } = event;
@@ -100,8 +112,8 @@ self.addEventListener('fetch', (event) => {
                     }
                     // Si no está en cache, intentar red
                     return fetch(request).then((fetchResponse) => {
-                        // Solo cachear respuestas exitosas de GET requests
-                        if (fetchResponse.status === 200 && request.method === 'GET') {
+                        // Solo cachear respuestas exitosas de GET requests con URLs válidas
+                        if (fetchResponse.status === 200 && request.method === 'GET' && isValidCacheUrl(request.url)) {
                             const responseClone = fetchResponse.clone();
                             caches.open(STATIC_CACHE).then((cache) => {
                                 cache.put(request, responseClone).catch((error) => {
@@ -122,10 +134,12 @@ self.addEventListener('fetch', (event) => {
             caches.match(request)
                 .then((response) => {
                     return response || fetch(request).then((fetchResponse) => {
-                        if (fetchResponse.status === 200) {
+                        if (fetchResponse.status === 200 && isValidCacheUrl(request.url)) {
                             const responseClone = fetchResponse.clone();
                             caches.open(IMAGES_CACHE).then((cache) => {
-                                cache.put(request, responseClone);
+                                cache.put(request, responseClone).catch((error) => {
+                                    console.log('⚠️ No se pudo cachear icono:', request.url, error);
+                                });
                             });
                         }
                         return fetchResponse;
@@ -140,11 +154,13 @@ self.addEventListener('fetch', (event) => {
         event.respondWith(
             fetch(request)
                 .then((response) => {
-                    // Cachear respuestas exitosas
-                    if (response.status === 200) {
+                    // Cachear respuestas exitosas con URLs válidas
+                    if (response.status === 200 && isValidCacheUrl(request.url)) {
                         const responseClone = response.clone();
                         caches.open(DYNAMIC_CACHE).then((cache) => {
-                            cache.put(request, responseClone);
+                            cache.put(request, responseClone).catch((error) => {
+                                console.log('⚠️ No se pudo cachear API:', request.url, error);
+                            });
                         });
                     }
                     return response;
