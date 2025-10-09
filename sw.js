@@ -102,6 +102,12 @@ self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
 
+    // NO interceptar peticiones a APIs dinámicas - dejar que vayan directamente a la red
+    if (request.url.includes('/api/')) {
+        console.log('🚫 Service Worker: API request - no intercepting:', request.url);
+        return; // No interceptar, dejar que vaya directamente a la red
+    }
+
     // Estrategia de cache para recursos estáticos críticos
     if (STATIC_ASSETS.some(asset => request.url.includes(asset))) {
         event.respondWith(

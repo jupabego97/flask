@@ -846,27 +846,27 @@
         <!-- Columnas Kanban Profesionales -->
         <div class="row g-4">
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kanban-column fade-in">
-                    <h3>Ingresado</h3>
-                    <div id="ingresado" class="droppable-column"></div>
+                    <div class="kanban-column fade-in">
+                        <h3>Ingresado</h3>
+                        <div id="ingresado" class="droppable-column"></div>
+                    </div>
                 </div>
-            </div>
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kanban-column fade-in" style="animation-delay: 0.1s;">
-                    <h3>En Diagnóstico</h3>
-                    <div id="diagnosticada" class="droppable-column"></div>
+                    <div class="kanban-column fade-in" style="animation-delay: 0.1s;">
+                        <h3>En Diagnóstico</h3>
+                        <div id="diagnosticada" class="droppable-column"></div>
+                    </div>
                 </div>
-            </div>
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kanban-column fade-in" style="animation-delay: 0.2s;">
-                    <h3>Listos para Entregar</h3>
-                    <div id="para_entregar" class="droppable-column"></div>
+                    <div class="kanban-column fade-in" style="animation-delay: 0.2s;">
+                        <h3>Listos para Entregar</h3>
+                        <div id="para_entregar" class="droppable-column"></div>
+                    </div>
                 </div>
-            </div>
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="kanban-column fade-in" style="animation-delay: 0.3s;">
-                    <h3>Completados</h3>
-                    <div id="listos" class="droppable-column"></div>
+                    <div class="kanban-column fade-in" style="animation-delay: 0.3s;">
+                        <h3>Completados</h3>
+                        <div id="listos" class="droppable-column"></div>
                 </div>
             </div>
         </div>
@@ -905,20 +905,20 @@
                                 <button type="button" class="btn btn-success btn-camera-shutter" id="btnTomarFoto" onclick="tomarFoto()" disabled>
                                     <i class="fas fa-camera-retro"></i>
                                 </button>
-                            </div>
+                        </div>
 
                             <!-- Controles adicionales (solo visibles cuando no hay cámara activa) -->
                             <div class="camera-controls" id="cameraControls">
                                 <h6 class="mb-3 text-center">📷 Paso 1: Toma una foto del recibo o ticket <small id="autoCameraNote" class="text-muted d-none">(En móviles se abre automáticamente)</small></h6>
-                                <div class="d-flex justify-content-center gap-2 mb-3" id="cameraButtons">
-                                    <button type="button" class="btn btn-outline-primary d-none d-md-inline" id="btnCamera" onclick="iniciarCamara()">
-                                        <i class="fas fa-camera"></i> Usar Cámara
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary" onclick="seleccionarArchivo()">
-                                        <i class="fas fa-folder-open"></i> <span class="d-none d-md-inline">Seleccionar Archivo</span><span class="d-md-none">Archivo</span>
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="d-flex justify-content-center gap-2 mb-3" id="cameraButtons">
+                            <button type="button" class="btn btn-outline-primary d-none d-md-inline" id="btnCamera" onclick="iniciarCamara()">
+                                <i class="fas fa-camera"></i> Usar Cámara
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="seleccionarArchivo()">
+                                <i class="fas fa-folder-open"></i> <span class="d-none d-md-inline">Seleccionar Archivo</span><span class="d-md-none">Archivo</span>
+                            </button>
+                        </div>
+                        </div>
                         </div>
 
                         <input type="file" id="fileInput" class="d-none" accept="image/*" onchange="procesarArchivoSeleccionado()">
@@ -1173,6 +1173,51 @@
             });
         }
 
+        // Función para forzar actualización del Service Worker y limpiar caches
+        function forzarActualizacionCache() {
+            console.log('🔄 Forzando actualización del Service Worker y limpieza de cache...');
+
+            // Limpiar cualquier cache del navegador para esta URL
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name);
+                        console.log('🗑️ Cache eliminado:', name);
+                    });
+                });
+            }
+
+            // Forzar recarga del Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    registrations.forEach(registration => {
+                        registration.unregister().then(() => {
+                            console.log('🚫 Service Worker desregistrado');
+                        });
+                    });
+                });
+
+                // Recargar la página después de un breve delay
+                setTimeout(() => {
+                    window.location.reload(true);
+                }, 1000);
+            }
+        }
+
+        // Función para verificar si los datos están actualizados
+        function verificarDatosActualizados() {
+            const tarjetasMostradas = document.querySelectorAll('.kanban-card').length;
+            const tarjetasEnMemoria = todasLasTarjetas.length;
+
+            console.log(`📊 Estado actual: ${tarjetasMostradas} tarjetas mostradas, ${tarjetasEnMemoria} en memoria`);
+
+            // Si hay discrepancia, forzar recarga
+            if (tarjetasMostradas !== tarjetasEnMemoria) {
+                console.log('⚠️ Discrepancia detectada, forzando recarga...');
+                cargarTarjetas();
+            }
+        }
+
         // Función auxiliar para mover foco fuera de un modal de manera segura
         function moverFocoFueraModal(modalElement) {
             const activeElement = document.activeElement;
@@ -1318,6 +1363,8 @@
                     columna.appendChild(crearElementoTarjeta(tarjeta));
                     mostrarNotificacion(`Nueva reparación agregada: ${tarjeta.nombre_propietario}`, 'success');
                 }
+                // Verificar sincronización después de un breve delay
+                setTimeout(verificarDatosActualizados, 500);
             });
 
             // Evento: Tarjeta actualizada (movida entre columnas)
@@ -1361,6 +1408,8 @@
                         }
                     }
                 }
+                // Verificar sincronización después de un breve delay
+                setTimeout(verificarDatosActualizados, 500);
             });
 
             // Evento: Tarjeta eliminada
@@ -1377,6 +1426,8 @@
                     elementoExistente.remove();
                     mostrarNotificacion('Reparación eliminada', 'warning');
                 }
+                // Verificar sincronización después de un breve delay
+                setTimeout(verificarDatosActualizados, 500);
             });
 
             socket.on('connect_error', function(error) {
@@ -1409,17 +1460,17 @@
                         // Escuchar por actualizaciones del service worker
                         registration.addEventListener('updatefound', function() {
                             const newWorker = registration.installing;
-                            newWorker.addEventListener('statechange', function() {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // Nueva versión disponible
-                                    if (confirm('Nueva versión disponible. ¿Deseas actualizar?')) {
+                                newWorker.addEventListener('statechange', function() {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        // Nueva versión disponible
+                                        if (confirm('Nueva versión disponible. ¿Deseas actualizar?')) {
                                         try {
                                             newWorker.postMessage({ type: 'SKIP_WAITING' });
                                         } catch (error) {
                                             console.log('⚠️ Error enviando mensaje al service worker:', error);
                                         }
-                                        window.location.reload();
-                                    }
+                                            window.location.reload();
+                                        }
                                 }
                             });
                         });
@@ -1467,12 +1518,12 @@
         // Cargar tarjetas al iniciar
         document.addEventListener('DOMContentLoaded', function() {
             // Ocultar loading después de un pequeño delay para mejor UX
-            setTimeout(() => {
-                hideLoadingScreen();
-            }, 1000);
+                setTimeout(() => {
+                    hideLoadingScreen();
+                }, 1000);
 
-            cargarTarjetas();
-            configurarDragAndDrop();
+                cargarTarjetas();
+                configurarDragAndDrop();
             initSocketIO(); // Inicializar sincronización en tiempo real
         });
 
@@ -1485,15 +1536,19 @@
         }
 
         function cargarTarjetas() {
-            fetch('/api/tarjetas', {
+            console.log('🔄 Cargando tarjetas desde API...');
+            fetch(`/api/tarjetas?_t=${Date.now()}`, {
                 method: 'GET',
                 headers: {
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
-                }
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                },
+                cache: 'no-store' // Forzar no usar cache del navegador
             })
                 .then(response => response.json())
                 .then(tarjetas => {
+                    console.log(`✅ Cargadas ${tarjetas.length} tarjetas desde la base de datos`);
                     todasLasTarjetas = tarjetas; // Almacenar todas las tarjetas
 
                     // Limpiar columnas
@@ -1878,8 +1933,8 @@
 
                     // Procesar imagen y audio concurrentemente
                     const response = await fetch('/api/procesar-multimedia', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             image: imagenCapturada,
                             audio: audioData
@@ -1927,22 +1982,22 @@
 
                     const data = await response.json();
 
-                    if (data.error) {
-                        console.error('Error procesando la imagen:', data.error);
-                        console.log('IA no disponible, continuar con campos manuales');
-                    } else {
-                        // Llenar campos con datos de IA
-                        document.getElementById('ai_nombre').value = data.nombre || '';
-                        document.getElementById('ai_whatsapp').value = data.telefono || '';
-                        document.getElementById('ai_cargador').checked = data.tiene_cargador || false;
+                if (data.error) {
+                    console.error('Error procesando la imagen:', data.error);
+                    console.log('IA no disponible, continuar con campos manuales');
+                } else {
+                    // Llenar campos con datos de IA
+                    document.getElementById('ai_nombre').value = data.nombre || '';
+                    document.getElementById('ai_whatsapp').value = data.telefono || '';
+                    document.getElementById('ai_cargador').checked = data.tiene_cargador || false;
 
-                        // Mostrar indicador si la IA detectó cargador
-                        const cargadorStatus = document.getElementById('cargadorStatus');
-                        if (data.tiene_cargador) {
-                            cargadorStatus.style.display = 'inline';
-                            setTimeout(() => {
-                                cargadorStatus.style.display = 'none';
-                            }, 4000);
+                    // Mostrar indicador si la IA detectó cargador
+                    const cargadorStatus = document.getElementById('cargadorStatus');
+                    if (data.tiene_cargador) {
+                        cargadorStatus.style.display = 'inline';
+                        setTimeout(() => {
+                            cargadorStatus.style.display = 'none';
+                        }, 4000);
                         }
                     }
                 }
