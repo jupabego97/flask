@@ -792,6 +792,167 @@
         .border-custom {
             border: 1px solid var(--border-color);
         }
+
+        /* Timeline para historial de cambios */
+        .timeline-container {
+            position: relative;
+            padding-left: 30px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            border-left: 2px solid var(--border-color);
+            padding-left: 20px;
+        }
+
+        .timeline-item:last-child {
+            border-left-color: transparent;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+
+        .timeline-date {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .timeline-content {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge.ingresado {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .status-badge.diagnosticada {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.para_entregar {
+            background: #ddd6fe;
+            color: #5b21b6;
+        }
+
+        .status-badge.listos {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* Modo Oscuro */
+        :root[data-theme="dark"] {
+            --primary-color: #4DD0E1;
+            --primary-dark: #26a69a;
+            --secondary-color: #1e293b;
+            --accent-color: #80deea;
+            --danger-color: #f87171;
+            --warning-color: #fbbf24;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+            --gradient-primary: linear-gradient(135deg, #4DD0E1 0%, #26a69a 100%);
+        }
+
+        :root[data-theme="dark"] body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+        }
+
+        :root[data-theme="dark"] .app-header {
+            background: #1e293b;
+            border-bottom-color: var(--border-color);
+        }
+
+        :root[data-theme="dark"] .kanban-column {
+            background: #1e293b;
+            border-color: var(--border-color);
+        }
+
+        :root[data-theme="dark"] .repair-card {
+            background: #334155;
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        :root[data-theme="dark"] .modal-content {
+            background: #1e293b;
+            color: var(--text-primary);
+        }
+
+        :root[data-theme="dark"] .modal-header {
+            border-bottom-color: var(--border-color);
+        }
+
+        :root[data-theme="dark"] .modal-footer {
+            border-top-color: var(--border-color);
+        }
+
+        :root[data-theme="dark"] .form-control,
+        :root[data-theme="dark"] .form-select {
+            background: #334155;
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        :root[data-theme="dark"] .form-control:focus,
+        :root[data-theme="dark"] .form-select:focus {
+            background: #334155;
+            border-color: var(--primary-color);
+            color: var(--text-primary);
+        }
+
+        :root[data-theme="dark"] .card {
+            background: #334155;
+            border-color: var(--border-color);
+        }
+
+        :root[data-theme="dark"] .card-header {
+            background: #1e293b;
+            border-bottom-color: var(--border-color);
+        }
+
+        :root[data-theme="dark"] .bg-light {
+            background: #334155 !important;
+        }
+
+        :root[data-theme="dark"] .text-muted {
+            color: var(--text-secondary) !important;
+        }
+
+        :root[data-theme="dark"] .input-group-text {
+            background: #334155;
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
     </style>
 </head>
 <body>
@@ -817,9 +978,18 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
-                    <div class="d-flex justify-content-end gap-3">
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-outline-primary" onclick="mostrarEstadisticas()" title="Ver estadísticas">
+                            <i class="fas fa-chart-bar"></i><span class="d-none d-lg-inline ms-2">Estadísticas</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-success" onclick="mostrarExportacion()" title="Exportar datos">
+                            <i class="fas fa-download"></i><span class="d-none d-lg-inline ms-2">Exportar</span>
+                        </button>
+                        <button type="button" id="darkModeToggle" class="btn btn-outline-secondary" onclick="toggleDarkMode()" title="Cambiar tema">
+                            <i class="fas fa-moon"></i>
+                        </button>
                         <button type="button" class="btn btn-primary-custom btn-nueva-large" data-bs-toggle="modal" data-bs-target="#nuevaTarjetaModal">
-                            <i class="fas fa-plus-circle"></i><span class="ms-2">Nueva Reparación</span>
+                            <i class="fas fa-plus-circle"></i><span class="ms-2 d-none d-sm-inline">Nueva Reparación</span>
                     </button>
                 </div>
                 </div>
@@ -828,16 +998,75 @@
     </header>
 
     <div class="container-fluid">
-        <!-- Barra de búsqueda profesional -->
+        <!-- Barra de búsqueda profesional y filtros avanzados -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="d-flex justify-content-center">
-                    <div class="input-group" style="max-width: 500px;">
+                <div class="d-flex justify-content-center flex-column align-items-center gap-3">
+                    <!-- Búsqueda -->
+                    <div class="input-group" style="max-width: 600px;">
                         <span class="input-group-text bg-white border-end-0">
                             <i class="fas fa-search text-muted"></i>
                         </span>
-                        <input type="text" class="form-control border-start-0 ps-0" id="busquedaTarjetas"
-                               placeholder="Buscar reparaciones..." onkeyup="filtrarTarjetas()">
+                        <input type="text" class="form-control border-start-0 border-end-0 ps-0" id="busquedaTarjetas"
+                               placeholder="Buscar reparaciones..." onkeyup="aplicarFiltros()">
+                        <button class="btn btn-outline-secondary border-start-0" type="button" onclick="toggleFiltrosAvanzados()">
+                            <i class="fas fa-filter"></i> Filtros
+                        </button>
+                    </div>
+
+                    <!-- Filtros avanzados (colapsable) -->
+                    <div id="filtrosAvanzados" class="w-100" style="max-width: 800px; display: none;">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <label class="form-label small">Estado</label>
+                                        <select class="form-select form-select-sm" id="filtroEstado" onchange="aplicarFiltros()">
+                                            <option value="">Todos</option>
+                                            <option value="ingresado">Ingresado</option>
+                                            <option value="diagnosticada">En Diagnóstico</option>
+                                            <option value="para_entregar">Para Entregar</option>
+                                            <option value="listos">Completados</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small">Fecha desde</label>
+                                        <input type="date" class="form-control form-control-sm" id="filtroFechaDesde" onchange="aplicarFiltros()">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small">Fecha hasta</label>
+                                        <input type="date" class="form-control form-control-sm" id="filtroFechaHasta" onchange="aplicarFiltros()">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small">Cargador</label>
+                                        <select class="form-select form-select-sm" id="filtroCargador" onchange="aplicarFiltros()">
+                                            <option value="">Todos</option>
+                                            <option value="si">Con cargador</option>
+                                            <option value="no">Sin cargador</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small">Diagnóstico</label>
+                                        <select class="form-select form-select-sm" id="filtroDiagnostico" onchange="aplicarFiltros()">
+                                            <option value="">Todos</option>
+                                            <option value="con">Con diagnóstico</option>
+                                            <option value="sin">Sin diagnóstico</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 text-end d-flex align-items-end">
+                                        <button class="btn btn-sm btn-outline-secondary w-100" onclick="limpiarFiltros()">
+                                            <i class="fas fa-times me-1"></i>Limpiar filtros
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle"></i> 
+                                        Mostrando <span id="contadorResultados" class="fw-bold">0</span> resultados
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1034,6 +1263,20 @@
                                 </label>
                             </div>
                         </div>
+
+                        <!-- Notas Técnicas (Diagnóstico/Solución) -->
+                        <div class="mb-3">
+                            <label for="editar_notas_tecnicas" class="form-label">
+                                <i class="fas fa-tools text-primary me-1"></i>
+                                <strong>Diagnóstico y Solución Técnica</strong>
+                            </label>
+                            <textarea class="form-control" id="editar_notas_tecnicas" rows="4" 
+                                      placeholder="Describe qué se le hizo al equipo, piezas reemplazadas, diagnóstico, etc. Esta información se mostrará al cliente..."
+                                      style="border-left: 3px solid #00ACC1;"></textarea>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> Este campo es opcional y solo se puede editar después de crear la reparación.
+                            </small>
+                        </div>
                     </form>
 
                     <!-- Información de fechas (solo lectura) -->
@@ -1058,6 +1301,14 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Historial de Cambios -->
+                    <div class="mt-4" id="historial_cambios_container" style="display: none;">
+                        <h6 class="text-muted mb-3">
+                            <i class="fas fa-history"></i> Historial de Cambios de Estado
+                        </h6>
+                        <div id="historial_cambios_lista" class="timeline-container"></div>
+                    </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-outline-danger" onclick="eliminarTarjetaDesdeModal()" title="Eliminar reparación">
@@ -1072,9 +1323,172 @@
         </div>
     </div>
 
+    <!-- Modal de Estadísticas -->
+    <div class="modal fade" id="estadisticasModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-chart-bar me-2"></i>Estadísticas del Sistema</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="stats-loading" class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-3 text-muted">Cargando estadísticas...</p>
+                    </div>
+                    <div id="stats-content" style="display: none;">
+                        <!-- Métricas principales -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h3 id="stat-total" class="text-primary">0</h3>
+                                        <p class="text-muted mb-0">Total Reparaciones</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h3 id="stat-completadas" class="text-success">0</h3>
+                                        <p class="text-muted mb-0">Completadas (mes)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h3 id="stat-pendientes" class="text-warning">0</h3>
+                                        <p class="text-muted mb-0">Pendientes</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h3 id="stat-notas" class="text-info">0</h3>
+                                        <p class="text-muted mb-0">Con Diagnóstico</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Gráfico de estados -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header"><strong>Distribución por Estado</strong></div>
+                                    <div class="card-body">
+                                        <canvas id="chartEstados"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Gráfico de cargadores -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header"><strong>Reparaciones con/sin Cargador</strong></div>
+                                    <div class="card-body">
+                                        <canvas id="chartCargador"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top problemas -->
+                        <div class="card mb-4">
+                            <div class="card-header"><strong>Top 5 Problemas Más Frecuentes</strong></div>
+                            <div class="card-body">
+                                <div id="topProblemas"></div>
+                            </div>
+                        </div>
+
+                        <!-- Tiempos promedio -->
+                        <div class="card">
+                            <div class="card-header"><strong>Tiempos Promedio por Estado</strong></div>
+                            <div class="card-body">
+                                <div class="row" id="tiemposPromedio"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <small class="text-muted me-auto" id="stats-generado"></small>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Exportación -->
+    <div class="modal fade" id="exportacionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-download me-2"></i>Exportar Datos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Formato de Exportación</strong></label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="formatoExport" id="formatoCSV" value="csv" checked>
+                            <label class="form-check-label" for="formatoCSV">
+                                <i class="fas fa-file-csv text-success"></i> CSV (Compatible con Excel)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="formatoExport" id="formatoExcel" value="excel">
+                            <label class="form-check-label" for="formatoExcel">
+                                <i class="fas fa-file-excel text-success"></i> Excel (.xlsx)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Filtrar por Estado</strong></label>
+                        <select class="form-select" id="exportEstado">
+                            <option value="todos">Todos los estados</option>
+                            <option value="ingresado">Ingresado</option>
+                            <option value="diagnosticada">En Diagnóstico</option>
+                            <option value="para_entregar">Para Entregar</option>
+                            <option value="listos">Completados</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Rango de Fechas (Opcional)</strong></label>
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="date" class="form-control" id="exportFechaDesde" placeholder="Desde">
+                            </div>
+                            <div class="col-6">
+                                <input type="date" class="form-control" id="exportFechaHasta" placeholder="Hasta">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> <small>Se exportarán todos los datos disponibles según los filtros seleccionados.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" onclick="ejecutarExportacion()">
+                        <i class="fas fa-download me-1"></i>Descargar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- SocketIO para sincronización en tiempo real -->
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
         let draggedElement = null;
         let todasLasTarjetas = []; // Almacenar todas las tarjetas para filtrado
@@ -1551,20 +1965,8 @@
                     console.log(`✅ Cargadas ${tarjetas.length} tarjetas desde la base de datos`);
                     todasLasTarjetas = tarjetas; // Almacenar todas las tarjetas
 
-                    // Limpiar columnas
-                    document.querySelectorAll('.droppable-column').forEach(col => col.innerHTML = '');
-
-                    // Agregar tarjetas a sus columnas
-                    tarjetas.forEach((tarjeta, index) => {
-                        console.log(`🎴 Creando tarjeta ${index + 1}: ID=${tarjeta.id}, columna=${tarjeta.columna}`);
-                        const columna = document.getElementById(tarjeta.columna);
-                        if (columna) {
-                            columna.appendChild(crearElementoTarjeta(tarjeta));
-                            console.log(`✅ Tarjeta ${tarjeta.id} agregada a columna ${tarjeta.columna}`);
-                        } else {
-                            console.log(`❌ Columna ${tarjeta.columna} no encontrada para tarjeta ${tarjeta.id}`);
-                        }
-                    });
+                    // Aplicar filtros (que limpiará y mostrará las tarjetas)
+                    aplicarFiltros();
                 });
         }
 
@@ -1615,6 +2017,8 @@
                     </div>
 
                         ${tarjeta.tiene_cargador === 'si' ? '<div class="charger-indicator"><i class="fas fa-plug"></i> Incluye cargador</div>' : '<div class="no-charger-indicator"><i class="fas fa-plug-circle-exclamation"></i> Sin cargador</div>'}
+
+                        ${tarjeta.notas_tecnicas ? '<div class="mt-2 p-2 bg-light border-start border-primary border-3 rounded"><small class="text-muted d-block mb-1"><i class="fas fa-tools"></i> Diagnóstico Técnico:</small><small class="text-dark">' + tarjeta.notas_tecnicas + '</small></div>' : ''}
 
                         ${tarjeta.imagen_url ? '<div class="mt-3"><img src="' + tarjeta.imagen_url + '" class="img-fluid rounded border-custom" alt="Imagen del dispositivo" style="cursor: pointer;" onclick="abrirImagen(\'' + tarjeta.imagen_url.replace(/'/g, '\\\'') + '\')"></div>' : ''}
                 </div>
@@ -2328,35 +2732,92 @@
         }
 
 
-        function filtrarTarjetas() {
+        function toggleFiltrosAvanzados() {
+            const filtros = document.getElementById('filtrosAvanzados');
+            filtros.style.display = filtros.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('busquedaTarjetas').value = '';
+            document.getElementById('filtroEstado').value = '';
+            document.getElementById('filtroFechaDesde').value = '';
+            document.getElementById('filtroFechaHasta').value = '';
+            document.getElementById('filtroCargador').value = '';
+            document.getElementById('filtroDiagnostico').value = '';
+            aplicarFiltros();
+        }
+
+        function aplicarFiltros() {
             const terminoBusqueda = document.getElementById('busquedaTarjetas').value.toLowerCase().trim();
+            const filtroEstado = document.getElementById('filtroEstado')?.value || '';
+            const filtroFechaDesde = document.getElementById('filtroFechaDesde')?.value || '';
+            const filtroFechaHasta = document.getElementById('filtroFechaHasta')?.value || '';
+            const filtroCargador = document.getElementById('filtroCargador')?.value || '';
+            const filtroDiagnostico = document.getElementById('filtroDiagnostico')?.value || '';
 
             // Limpiar todas las columnas
             document.querySelectorAll('.droppable-column').forEach(col => col.innerHTML = '');
 
-            // Si no hay término de búsqueda, mostrar todas las tarjetas
-            if (terminoBusqueda === '') {
-                todasLasTarjetas.forEach(tarjeta => {
-                    const columna = document.getElementById(tarjeta.columna);
-                    if (columna) {
-                        columna.appendChild(crearElementoTarjeta(tarjeta));
-                    }
-                });
-                return;
-            }
-
-            // Filtrar tarjetas que coincidan con el término de búsqueda
+            // Aplicar filtros
             const tarjetasFiltradas = todasLasTarjetas.filter(tarjeta => {
-                const nombre = tarjeta.nombre_propietario.toLowerCase();
-                const problema = tarjeta.problema.toLowerCase();
-                const whatsapp = tarjeta.whatsapp.toLowerCase();
+                // Filtro de búsqueda por texto
+                if (terminoBusqueda) {
+                    const nombre = tarjeta.nombre_propietario.toLowerCase();
+                    const problema = tarjeta.problema.toLowerCase();
+                    const whatsapp = tarjeta.whatsapp.toLowerCase();
+                    const notas = (tarjeta.notas_tecnicas || '').toLowerCase();
 
-                return nombre.includes(terminoBusqueda) ||
-                       problema.includes(terminoBusqueda) ||
-                       whatsapp.includes(terminoBusqueda);
+                    if (!nombre.includes(terminoBusqueda) &&
+                        !problema.includes(terminoBusqueda) &&
+                        !whatsapp.includes(terminoBusqueda) &&
+                        !notas.includes(terminoBusqueda)) {
+                        return false;
+                    }
+                }
+
+                // Filtro de estado
+                if (filtroEstado && tarjeta.columna !== filtroEstado) {
+                    return false;
+                }
+
+                // Filtro de fecha desde
+                if (filtroFechaDesde) {
+                    const fechaTarjeta = new Date(tarjeta.fecha_limite);
+                    const fechaDesde = new Date(filtroFechaDesde);
+                    if (fechaTarjeta < fechaDesde) {
+                        return false;
+                    }
+                }
+
+                // Filtro de fecha hasta
+                if (filtroFechaHasta) {
+                    const fechaTarjeta = new Date(tarjeta.fecha_limite);
+                    const fechaHasta = new Date(filtroFechaHasta);
+                    if (fechaTarjeta > fechaHasta) {
+                        return false;
+                    }
+                }
+
+                // Filtro de cargador
+                if (filtroCargador && tarjeta.tiene_cargador !== filtroCargador) {
+                    return false;
+                }
+
+                // Filtro de diagnóstico
+                if (filtroDiagnostico) {
+                    const tieneDiagnostico = tarjeta.notas_tecnicas && tarjeta.notas_tecnicas.trim() !== '';
+                    if (filtroDiagnostico === 'con' && !tieneDiagnostico) {
+                        return false;
+                    }
+                    if (filtroDiagnostico === 'sin' && tieneDiagnostico) {
+                        return false;
+                    }
+                }
+
+                return true;
             });
 
-            // Mostrar solo las tarjetas filtradas
+            // Mostrar tarjetas filtradas
             tarjetasFiltradas.forEach(tarjeta => {
                 const columna = document.getElementById(tarjeta.columna);
                 if (columna) {
@@ -2364,7 +2825,18 @@
                 }
             });
 
+            // Actualizar contador
+            const contador = document.getElementById('contadorResultados');
+            if (contador) {
+                contador.textContent = tarjetasFiltradas.length;
+            }
+
             console.log(`🔍 Filtradas ${tarjetasFiltradas.length} de ${todasLasTarjetas.length} tarjetas`);
+        }
+
+        // Mantener compatibilidad con código antiguo
+        function filtrarTarjetas() {
+            aplicarFiltros();
         }
 
         function editarTarjeta(id) {
@@ -2383,6 +2855,7 @@
             document.getElementById('editar_fecha_limite').value = tarjeta.fecha_limite;
             document.getElementById('editar_imagen_url').value = tarjeta.imagen_url || '';
             document.getElementById('editar_tiene_cargador').checked = tarjeta.tiene_cargador === 'si';
+            document.getElementById('editar_notas_tecnicas').value = tarjeta.notas_tecnicas || '';
 
             // Llenar las fechas informativas
             document.getElementById('editar_fecha_inicio').textContent = tarjeta.fecha_inicio || 'No disponible';
@@ -2390,9 +2863,60 @@
             document.getElementById('editar_fecha_para_entregar').textContent = tarjeta.fecha_para_entregar ? tarjeta.fecha_para_entregar.split(' ')[0] : 'Pendiente';
             document.getElementById('editar_fecha_entregada').textContent = tarjeta.fecha_entregada ? tarjeta.fecha_entregada.split(' ')[0] : 'Pendiente';
 
+            // Cargar historial de cambios
+            cargarHistorialCambios(tarjeta.id);
+
             // Mostrar el modal
             const modal = new bootstrap.Modal(document.getElementById('editarTarjetaModal'));
             modal.show();
+        }
+
+        function cargarHistorialCambios(tarjetaId) {
+            fetch(`/api/tarjetas/${tarjetaId}/historial`)
+                .then(response => response.json())
+                .then(historial => {
+                    const container = document.getElementById('historial_cambios_container');
+                    const lista = document.getElementById('historial_cambios_lista');
+                    
+                    if (historial.length === 0) {
+                        container.style.display = 'none';
+                        return;
+                    }
+
+                    container.style.display = 'block';
+                    lista.innerHTML = '';
+
+                    historial.forEach(cambio => {
+                        const item = document.createElement('div');
+                        item.className = 'timeline-item';
+                        
+                        const estadoNombres = {
+                            'ingresado': 'Ingresado',
+                            'diagnosticada': 'En Diagnóstico',
+                            'para_entregar': 'Para Entregar',
+                            'listos': 'Completado'
+                        };
+
+                        const oldStatusText = cambio.old_status ? 
+                            `<span class="status-badge ${cambio.old_status}">${estadoNombres[cambio.old_status] || cambio.old_status}</span>` : 
+                            '<span class="text-muted">Inicio</span>';
+                        
+                        const newStatusText = `<span class="status-badge ${cambio.new_status}">${estadoNombres[cambio.new_status] || cambio.new_status}</span>`;
+
+                        item.innerHTML = `
+                            <div class="timeline-date">${cambio.changed_at}</div>
+                            <div class="timeline-content">
+                                ${oldStatusText} <i class="fas fa-arrow-right mx-1"></i> ${newStatusText}
+                            </div>
+                        `;
+                        
+                        lista.appendChild(item);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error cargando historial:', error);
+                    document.getElementById('historial_cambios_container').style.display = 'none';
+                });
         }
 
         function guardarEdicion() {
@@ -2403,6 +2927,7 @@
             const fechaLimite = document.getElementById('editar_fecha_limite').value;
             const imagenUrl = document.getElementById('editar_imagen_url').value;
             const tieneCargador = document.getElementById('editar_tiene_cargador').checked;
+            const notasTecnicas = document.getElementById('editar_notas_tecnicas').value;
 
             if (!nombre || !problema || !whatsapp || !fechaLimite) {
                 alert('Por favor complete todos los campos requeridos');
@@ -2415,7 +2940,8 @@
                 whatsapp: whatsapp,
                 fecha_limite: fechaLimite,
                 imagen_url: imagenUrl || null,
-                tiene_cargador: tieneCargador ? 'si' : 'no'
+                tiene_cargador: tieneCargador ? 'si' : 'no',
+                notas_tecnicas: notasTecnicas || null
             };
 
             fetch(`/api/tarjetas/${id}`, {
@@ -2538,6 +3064,187 @@
                 alert('Error al eliminar la reparación');
             });
         }
+
+        // ========== ESTADÍSTICAS ==========
+        let chartEstados, chartCargador;
+
+        function mostrarEstadisticas() {
+            const modal = new bootstrap.Modal(document.getElementById('estadisticasModal'));
+            modal.show();
+            
+            document.getElementById('stats-loading').style.display = 'block';
+            document.getElementById('stats-content').style.display = 'none';
+            
+            fetch('/api/estadisticas')
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizar métricas principales
+                    document.getElementById('stat-total').textContent = data.total_reparaciones;
+                    document.getElementById('stat-completadas').textContent = data.completadas_ultimo_mes;
+                    document.getElementById('stat-pendientes').textContent = data.pendientes;
+                    document.getElementById('stat-notas').textContent = data.con_notas_tecnicas;
+                    document.getElementById('stats-generado').textContent = `Generado: ${data.generado_at}`;
+                    
+                    // Gráfico de estados
+                    const estados = data.totales_por_estado;
+                    if (chartEstados) chartEstados.destroy();
+                    const ctxEstados = document.getElementById('chartEstados').getContext('2d');
+                    chartEstados = new Chart(ctxEstados, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Ingresado', 'En Diagnóstico', 'Para Entregar', 'Completados'],
+                            datasets: [{
+                                label: 'Cantidad',
+                                data: [
+                                    estados.ingresado || 0,
+                                    estados.diagnosticada || 0,
+                                    estados.para_entregar || 0,
+                                    estados.listos || 0
+                                ],
+                                backgroundColor: [
+                                    'rgba(3, 105, 161, 0.7)',
+                                    'rgba(146, 64, 14, 0.7)',
+                                    'rgba(91, 33, 182, 0.7)',
+                                    'rgba(6, 95, 70, 0.7)'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false }
+                            },
+                            scales: {
+                                y: { beginAtZero: true }
+                            }
+                        }
+                    });
+                    
+                    // Gráfico de cargadores
+                    if (chartCargador) chartCargador.destroy();
+                    const ctxCargador = document.getElementById('chartCargador').getContext('2d');
+                    chartCargador = new Chart(ctxCargador, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Con Cargador', 'Sin Cargador'],
+                            datasets: [{
+                                data: [
+                                    data.tasa_cargador.con_cargador,
+                                    data.tasa_cargador.sin_cargador
+                                ],
+                                backgroundColor: [
+                                    'rgba(16, 185, 129, 0.7)',
+                                    'rgba(239, 68, 68, 0.7)'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'bottom' }
+                            }
+                        }
+                    });
+                    
+                    // Top problemas
+                    const topProblemas = document.getElementById('topProblemas');
+                    topProblemas.innerHTML = '';
+                    data.top_problemas.forEach((item, index) => {
+                        const progress = (item.cantidad / data.top_problemas[0].cantidad) * 100;
+                        topProblemas.innerHTML += `
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span><strong>${index + 1}.</strong> ${item.problema}</span>
+                                    <span class="badge bg-primary">${item.cantidad}</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    // Tiempos promedio
+                    const tiempos = data.tiempos_promedio_dias;
+                    const tiemposDiv = document.getElementById('tiemposPromedio');
+                    tiemposDiv.innerHTML = `
+                        <div class="col-md-4">
+                            <div class="text-center p-3 bg-light rounded">
+                                <h5 class="text-primary">${tiempos.ingresado_a_diagnosticada} días</h5>
+                                <small class="text-muted">Ingresado → Diagnóstico</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3 bg-light rounded">
+                                <h5 class="text-warning">${tiempos.diagnosticada_a_para_entregar} días</h5>
+                                <small class="text-muted">Diagnóstico → Para Entregar</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3 bg-light rounded">
+                                <h5 class="text-success">${tiempos.para_entregar_a_entregados} días</h5>
+                                <small class="text-muted">Para Entregar → Completado</small>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('stats-loading').style.display = 'none';
+                    document.getElementById('stats-content').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error cargando estadísticas:', error);
+                    alert('Error al cargar estadísticas');
+                    modal.hide();
+                });
+        }
+
+        // ========== EXPORTACIÓN ==========
+        function mostrarExportacion() {
+            const modal = new bootstrap.Modal(document.getElementById('exportacionModal'));
+            modal.show();
+        }
+
+        function ejecutarExportacion() {
+            const formato = document.querySelector('input[name="formatoExport"]:checked').value;
+            const estado = document.getElementById('exportEstado').value;
+            const fechaDesde = document.getElementById('exportFechaDesde').value;
+            const fechaHasta = document.getElementById('exportFechaHasta').value;
+            
+            let url = `/api/exportar?formato=${formato}`;
+            if (estado !== 'todos') url += `&estado=${estado}`;
+            if (fechaDesde) url += `&fecha_desde=${fechaDesde}`;
+            if (fechaHasta) url += `&fecha_hasta=${fechaHasta}`;
+            
+            window.location.href = url;
+            
+            setTimeout(() => {
+                bootstrap.Modal.getInstance(document.getElementById('exportacionModal')).hide();
+            }, 500);
+        }
+
+        // ========== MODO OSCURO ==========
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const icon = document.querySelector('#darkModeToggle i');
+            icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Cargar tema guardado al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const icon = document.querySelector('#darkModeToggle i');
+            if (icon) {
+                icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        });
 
     </script>
 </body>

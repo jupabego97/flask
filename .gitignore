@@ -4,6 +4,9 @@ __pycache__/
 *$py.class
 *.so
 .Python
+env/
+venv/
+ENV/
 build/
 develop-eggs/
 dist/
@@ -24,17 +27,16 @@ wheels/
 instance/
 .webassets-cache
 
-# Databases
-*.db
-*.sqlite
-*.sqlite3
-
 # Environment variables
 .env
 .env.local
-.env.production
+.env.*.local
 
-# IDE
+# Logs
+logs/
+*.log
+
+# IDEs
 .vscode/
 .idea/
 *.swp
@@ -45,17 +47,14 @@ instance/
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
-logs/
+# Database
+*.db
+*.sqlite
+*.sqlite3
 
 # Temporary files
-tmp/
-temp/
 *.tmp
+add_column.py
 
 # Railway
 .railway/
-
-# Node modules (si usas Railway CLI)
-node_modules/

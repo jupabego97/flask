@@ -1,186 +1,245 @@
-# 🚀 Sistema de Reparaciones IT con IA
+# 🔧 Sistema de Reparaciones Nanotronics
 
-Aplicación web avanzada para gestionar reparaciones de equipos tecnológicos usando un tablero Kanban inteligente con integración de IA de Google Gemini.
+Sistema completo de gestión de reparaciones de dispositivos electrónicos con IA integrada (Google Gemini), sincronización en tiempo real y análisis de negocio.
+
+![Version](https://img.shields.io/badge/version-3.0-blue)
+![Python](https://img.shields.io/badge/python-3.11-green)
+![Flask](https://img.shields.io/badge/flask-3.0-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-orange)
 
 ## ✨ Características Principales
 
-### 🤖 **Inteligencia Artificial Integrada**
-- **OCR automático**: Extrae nombre, teléfono y detalles del equipo desde fotos de recibos
-- **Transcripción de voz**: Convierte audio a texto para describir problemas
-- **Análisis inteligente**: Detecta automáticamente si incluye cargador
-- **Procesamiento automático**: Sin necesidad de escribir manualmente
+### 🎯 Gestión de Reparaciones
+- **Tablero Kanban** con drag & drop para gestión visual
+- **4 Estados**: Ingresado → Diagnóstico → Para Entregar → Completado
+- **Sincronización en tiempo real** con WebSockets (SocketIO)
+- **PWA completa** - Funciona offline y se puede instalar como app
 
-### 📱 **Interfaz Moderna y Responsive**
-- **4 columnas Kanban**: Ingresado, Diagnosticada, Para entregar, Listos
-- **Información completa de cada tarjeta**:
-  - Nombre del propietario (extraído por IA)
-  - Tipo de problema (voz → texto automático)
-  - Número de WhatsApp (reconocido por IA)
-  - Fecha de inicio (automática)
-  - Fecha límite (configurable)
-  - Foto del equipo
-  - Estado del cargador
-- **Funcionalidad WhatsApp**: Botón para enviar mensajes directamente
-- **Arrastrar y soltar**: Mover tarjetas entre columnas
-- **Diseño móvil**: Optimizado para tablets y smartphones
+### 🤖 Inteligencia Artificial Integrada
+- **Extracción de datos desde fotos** con Google Gemini
+- **Transcripción de audio** para descripciones de problemas
+- **Procesamiento de multimedia** concurrente
 
-## 🚀 Despliegue
+### 📊 Análisis y Reportes
+- **Dashboard de estadísticas** con métricas clave:
+  - Total de reparaciones por estado
+  - Tiempos promedio en cada etapa
+  - Top 5 problemas más frecuentes
+  - Tendencias mensuales
+- **Exportación de datos** a CSV/Excel con filtros
+- **Gráficos interactivos** con Chart.js
 
-### Opción 1: Render (Recomendado - Fácil Setup)
-```bash
-# 1. Crear cuenta en Render: https://render.com
-# 2. Conectar repositorio de GitHub
-# 3. Render configura automáticamente PostgreSQL + SSL + HTTPS
-# 4. Agregar variable: GEMINI_API_KEY=tu_clave (opcional)
-# ¡Listo! URL automática: https://tu-app.onrender.com
-```
+### 🔧 Gestión Técnica
+- **Notas técnicas** - Documenta el diagnóstico y solución aplicada
+- **Historial de cambios** - Timeline automático de cada movimiento
+- **Registro fotográfico** de cada dispositivo
 
-### Opción 2: Railway (Escalable - Producción Avanzada)
-```bash
-# 1. Crear cuenta en Railway: https://railway.app
-# 2. Conectar repositorio de GitHub
-# 3. Railway configura automáticamente PostgreSQL + SSL
-# 4. Agregar variable: GEMINI_API_KEY=tu_clave
-# ¡Listo! URL automática: https://tu-app.up.railway.app
-```
+### 🔍 Búsqueda y Filtros
+- **Filtros avanzados** combinables:
+  - Por estado
+  - Por rango de fechas
+  - Con/sin cargador
+  - Con/sin diagnóstico técnico
+- **Búsqueda en tiempo real** en todos los campos
+- **Contador de resultados** dinámico
 
-### Opción 3: Instalación Local (Desarrollo)
+### 🎨 Experiencia de Usuario
+- **Modo oscuro** con persistencia automática
+- **Diseño responsive** - Optimizado para móvil y desktop
+- **Atajos de teclado** para acciones rápidas
+- **Notificaciones visuales** de cambios en tiempo real
 
-1. **Instalar Python** (si no está instalado):
-   - Descargar desde https://python.org
-   - Marcar "Add Python to PATH"
+### 🔒 Seguridad y Performance
+- **Rate limiting** en endpoints críticos
+- **Validación de entrada** con Marshmallow
+- **Logging estructurado** con Loguru
+- **Caché inteligente** con Redis/SimpleCache
+- **Compresión HTTP** con Flask-Compress
+- **Pool de conexiones** PostgreSQL optimizado
 
-2. **Instalar dependencias**:
-   ```bash
-   pip install -r requirements.txt
+## 🚀 Despliegue Rápido en Railway
+
+### Opción 1: Deploy con un Click
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/TU_USUARIO/TU_REPO)
+
+### Opción 2: Deploy Manual
+
+1. **Fork/Clone este repositorio**
+
+2. **Crea un nuevo proyecto en Railway**: https://railway.app
+
+3. **Agrega PostgreSQL**:
+   - Click en "New" → "Database" → "Add PostgreSQL"
+   - Railway generará automáticamente `DATABASE_URL`
+
+4. **Conecta tu repositorio de GitHub**:
+   - Click en "New" → "GitHub Repo"
+   - Selecciona este repositorio
+
+5. **Configura las variables de entorno**:
    ```
-
-3. **Configurar IA (opcional)**:
-   ```bash
-   # Crear archivo .env
-   echo "GEMINI_API_KEY=tu_clave_api" > .env
+   GEMINI_API_KEY=tu_api_key_de_google_gemini
+   ENVIRONMENT=production
+   ALLOWED_ORIGINS=https://tu-app.railway.app
    ```
-   *Obtén clave gratuita en: https://makersuite.google.com/app/apikey*
+   (No necesitas configurar `DATABASE_URL`, Railway lo hace automáticamente)
 
-4. **Ejecutar aplicación**:
-   ```bash
-   python app.py
-   ```
+6. **Deploy automático**: 
+   - Railway detectará el `Procfile` y desplegará automáticamente
+   - Obtendrás una URL tipo: `https://tu-app.railway.app`
 
-### Opción 3: Instalación Automática (Windows)
+## 💻 Instalación Local
+
+### Requisitos
+- Python 3.11+
+- PostgreSQL (o usar Neon/Supabase)
+- Google Gemini API Key
+
+### Pasos
+
+1. **Clonar el repositorio**:
 ```bash
-# Ejecutar archivo run.bat incluido
-run.bat
+git clone https://github.com/TU_USUARIO/TU_REPO.git
+cd TU_REPO
 ```
 
-**URLs disponibles:**
-- **Local**: `http://localhost:5000`
-- **Red local**: `http://192.168.X.X:5000`
-- **Render**: `https://tu-app.onrender.com`
-- **Railway**: `https://tu-app.up.railway.app`
-
-## 🎯 Uso de la Aplicación
-
-### 🤖 Crear Reparaciones con IA (Flujo Inteligente)
-
-#### Paso 1: Iniciar Nueva Reparación
-- Click en **"Nueva Reparación"** (botón grande en header)
-- Se abre modal con 4 pasos automatizados
-
-#### Paso 2: Capturar Información del Equipo
-- **📷 Opción A**: Usar cámara del dispositivo
-- **📁 Opción B**: Seleccionar foto desde archivos
-- La app automáticamente reconoce: laptop, PC, tablet, etc.
-
-#### Paso 3: Procesamiento IA Automático
-- **🤖 IA analiza** la imagen en segundos
-- **📝 Extrae automáticamente**:
-  - Nombre del cliente
-  - Número de WhatsApp
-  - Si incluye cargador
-- **✏️ Usuario verifica** y puede corregir
-
-#### Paso 4: Descripción por Voz
-- **🎤 Grabar audio** describiendo el problema
-- **📝 IA transcribe** automáticamente a texto
-- **✅ Verificación final** antes de crear
-
-#### Paso 5: ¡Listo!
-- Tarjeta creada automáticamente en columna "Ingresado"
-- Toda información guardada y organizada
-
-### 📋 Gestionar Reparaciones (Kanban)
-
-#### Mover entre Estados:
-- **🔵 Ingresado**: Equipos recién recibidos
-- **🟡 Diagnosticada**: Problema identificado y presupuesto dado
-- **🟠 Para Entregar**: Equipo reparado, listo para recoger
-- **🟢 Listos**: Reparaciones completadas y entregadas
-
-#### Funcionalidades de Cada Tarjeta:
-- **📱 WhatsApp**: Contactar directamente al cliente
-- **📅 Fechas**: Inicio automático, límite configurable
-- **🖼️ Foto**: Visualizar el equipo reparado
-- **🔌 Cargador**: Estado claramente indicado
-- **✏️ Editar**: Modificar cualquier información
-- **🗑️ Eliminar**: Remover tarjetas no deseadas
-
-### 🎨 Interfaz y Navegación
-
-#### Diseño Responsive:
-- **💻 Desktop**: Interfaz completa con todas las funciones
-- **📱 Tablet**: Optimizada para pantallas medianas
-- **📱 Móvil**: Funciones táctiles y simplificadas
-
-#### Búsqueda Inteligente:
-- **🔍 Barra de búsqueda**: Filtrar por nombre, problema o WhatsApp
-- **⚡ Búsqueda en tiempo real**: Resultados instantáneos
-
-#### Feedback Visual:
-- **🎯 Drag & Drop**: Columnas se iluminan al arrastrar
-- **⚠️ Estados**: Fechas vencidas en rojo
-- **✅ Confirmaciones**: Mensajes claros de éxito/error
-
-### 🔧 Configuración Avanzada
-
-#### Variables de Entorno:
-```env
-# Base de datos (Railway configura automáticamente)
-DATABASE_URL=postgresql://...
-
-# IA de Gemini (opcional)
-GEMINI_API_KEY=tu_clave_aqui
-
-# Entorno
-FLASK_ENV=development  # o production
+2. **Crear entorno virtual**:
+```bash
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
 ```
 
-#### Base de Datos:
-- **Desarrollo**: SQLite automático
-- **Producción**: PostgreSQL en Railway
-- **Migraciones**: Automáticas al iniciar
+3. **Instalar dependencias**:
+```bash
+pip install -r requirements.txt
+```
 
-### 🚨 Solución de Problemas
+4. **Configurar variables de entorno**:
+```bash
+cp .env.example .env
+# Edita .env con tus credenciales
+```
 
-#### IA no funciona:
-- Verificar `GEMINI_API_KEY` en variables de entorno
-- La app funciona perfectamente **sin IA** (modo manual)
+5. **Crear las tablas de la base de datos**:
+```bash
+python -c "from app import app, db; app.app_context().push(); db.create_all(); print('✅ BD creada')"
+```
 
-#### Problemas de conexión:
-- Railway: Verificar logs en dashboard
-- Local: Asegurar puerto 5000 disponible
+6. **Iniciar el servidor**:
+```bash
+python app.py
+```
 
-#### Funcionalidades móviles:
-- Requieren **HTTPS** para cámara/micrófono
-- Railway proporciona SSL automáticamente
+7. **Abrir en el navegador**: http://localhost:5000
 
-### 📚 Recursos Adicionales
+## 📱 Uso en Móvil
 
-- 🌐 **Despliegue en Render**: `RENDER_DEPLOY.md`
-- 🚂 **Despliegue en Railway**: `RAILWAY_DEPLOY.md`
-- 📱 **Pruebas móviles**: `MOBILE_TESTING.md`
-- 🤖 **Configuración IA**: `README_GEMINI.md`
+### Instalar como PWA
+
+**Android (Chrome)**:
+1. Abre la aplicación en Chrome
+2. Menú (⋮) → "Agregar a pantalla de inicio"
+3. ¡Listo! Funciona como app nativa
+
+**iOS (Safari)**:
+1. Abre la aplicación en Safari
+2. Botón Compartir (⎙) → "Agregar a pantalla de inicio"
+3. ¡Listo! Funciona como app nativa
+
+## 🔧 Tecnologías Utilizadas
+
+### Backend
+- **Flask 3.0** - Framework web
+- **SQLAlchemy** - ORM para base de datos
+- **PostgreSQL** - Base de datos principal
+- **Flask-SocketIO** - WebSockets para tiempo real
+- **Eventlet** - Servidor asíncrono
+- **Google Gemini AI** - Procesamiento de imágenes y audio
+- **Marshmallow** - Validación de datos
+- **Loguru** - Logging estructurado
+
+### Frontend
+- **HTML5/CSS3/JavaScript** - Vanilla JS (sin frameworks)
+- **Bootstrap 5.3** - UI components
+- **Chart.js 4.4** - Gráficos interactivos
+- **Font Awesome 6.4** - Iconos
+- **Service Worker** - PWA y offline support
+
+### Integraciones
+- **Neon PostgreSQL** - Base de datos en la nube
+- **Google Gemini API** - IA para procesamiento multimedia
+- **Railway** - Hosting y deployment
+
+## 📊 Estructura del Proyecto
+
+```
+flask copy/
+├── app.py                              # Backend principal
+├── gemini_service.py                   # Servicio de IA
+├── requirements.txt                    # Dependencias Python
+├── Procfile                           # Configuración Railway/Heroku
+├── runtime.txt                        # Versión de Python
+├── .env.example                       # Plantilla de variables de entorno
+├── .gitignore                         # Archivos ignorados por Git
+├── README.md                          # Este archivo
+├── templates/
+│   └── index.html                     # Frontend SPA
+├── static/
+│   ├── icons/                         # Iconos PWA
+│   ├── manifest.json                  # PWA manifest
+│   └── sw.js                         # Service Worker
+└── Documentación/
+    ├── GUIA_NUEVAS_FUNCIONES.md      # Tutorial de usuario
+    ├── MEJORAS_FASE3_COMPLETADAS.md  # Changelog técnico
+    └── INSTRUCCIONES_FINALES.md      # Guía de despliegue
+```
+
+## 📚 Documentación
+
+- **[Guía de Usuario](GUIA_NUEVAS_FUNCIONES.md)** - Tutorial completo de todas las funciones
+- **[Mejoras Implementadas](MEJORAS_FASE3_COMPLETADAS.md)** - Changelog técnico detallado
+- **[Instrucciones Finales](INSTRUCCIONES_FINALES.md)** - Guía de despliegue y configuración
+
+## 🔐 Variables de Entorno
+
+| Variable | Descripción | Ejemplo |
+|----------|-------------|---------|
+| `DATABASE_URL` | URL de conexión PostgreSQL | `postgresql://user:pass@host/db` |
+| `GEMINI_API_KEY` | API Key de Google Gemini | `AIzaSy...` |
+| `ENVIRONMENT` | Entorno de ejecución | `production` o `development` |
+| `PORT` | Puerto del servidor | `5000` (Railway lo asigna automáticamente) |
+| `ALLOWED_ORIGINS` | Orígenes permitidos CORS | `https://tu-app.railway.app` |
+
+## 🤝 Contribuir
+
+Las contribuciones son bienvenidas. Por favor:
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add: AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## 👤 Autor
+
+**Sistema de Reparaciones Nanotronics**
+- Versión 3.0 - Octubre 2025
+- Con IA integrada y análisis de negocio
+
+## 🙏 Agradecimientos
+
+- Google Gemini AI por el procesamiento inteligente
+- Neon PostgreSQL por la base de datos confiable
+- Railway por el hosting simplificado
+- La comunidad de Flask por el excelente framework
 
 ---
 
-**¡La aplicación combina lo mejor de la tecnología moderna con una interfaz intuitiva para maximizar la eficiencia en el taller de reparaciones!** 🚀✨
+⭐ Si este proyecto te fue útil, considera darle una estrella en GitHub!
+
+🐛 ¿Encontraste un bug? [Reportalo aquí](https://github.com/TU_USUARIO/TU_REPO/issues)
