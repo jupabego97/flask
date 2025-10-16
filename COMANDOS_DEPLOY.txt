@@ -1,0 +1,175 @@
+═══════════════════════════════════════════════════════════════
+🚀 COMANDOS PARA DESPLEGAR EN GITHUB + RAILWAY
+═══════════════════════════════════════════════════════════════
+
+📝 INSTRUCCIONES:
+1. Copia y pega estos comandos UNO POR UNO
+2. Reemplaza TU_USUARIO con tu usuario de GitHub
+3. Lee DEPLOY_RAILWAY.md para más detalles
+
+═══════════════════════════════════════════════════════════════
+
+
+PASO 1: CREAR REPOSITORIO EN GITHUB
+─────────────────────────────────────────────────────────────
+
+1. Ve a: https://github.com/new
+
+2. Configura así:
+   - Repository name: sistema-reparaciones-nanotronics
+   - Description: Sistema de gestión de reparaciones con IA
+   - Public o Private (tú eliges)
+   - NO marques "Add a README file"
+   - NO marques "Add .gitignore"
+   - NO marques "Choose a license"
+
+3. Click "Create repository"
+
+
+PASO 2: SUBIR CÓDIGO A GITHUB
+─────────────────────────────────────────────────────────────
+
+Ejecuta estos comandos en PowerShell (reemplaza TU_USUARIO):
+
+cd "D:\Desktop\python\flask copy"
+
+git remote add origin https://github.com/TU_USUARIO/sistema-reparaciones-nanotronics.git
+
+git branch -M main
+
+git push -u origin main
+
+
+Si pide credenciales:
+- Usuario: tu_usuario_de_github
+- Password: usa un Personal Access Token desde:
+  https://github.com/settings/tokens
+
+
+PASO 3: DESPLEGAR EN RAILWAY
+─────────────────────────────────────────────────────────────
+
+A. Crear cuenta y proyecto:
+
+1. Ve a: https://railway.app
+
+2. Click "Start a New Project"
+
+3. Login with GitHub
+
+4. Click "New" → "Database" → "Add PostgreSQL"
+   (Esto crea la base de datos automáticamente)
+
+5. Click "New" → "GitHub Repo"
+   Selecciona: sistema-reparaciones-nanotronics
+   (Railway comenzará a deployar automáticamente)
+
+
+B. Configurar variables de entorno:
+
+1. Click en tu servicio (no la BD)
+
+2. Ve a "Variables"
+
+3. Agrega estas variables:
+
+GEMINI_API_KEY=AIzaSyB7LTOd7bsW16jtLbLAuV2RAGRp8t2HDEU
+ENVIRONMENT=production
+ALLOWED_ORIGINS=https://tu-app.railway.app
+
+   (Reemplaza la URL cuando la obtengas en el siguiente paso)
+
+
+C. Obtener tu URL:
+
+1. Ve a "Settings" de tu servicio
+
+2. En "Domains" verás tu URL, ejemplo:
+   https://sistema-reparaciones-nanotronics-production.up.railway.app
+
+3. Copia esa URL
+
+4. Ve a "Variables" y edita ALLOWED_ORIGINS con tu URL real
+
+
+D. Inicializar base de datos (IMPORTANTE):
+
+Opción 1 - Desde Railway CLI:
+
+npm i -g @railway/cli
+railway login
+railway link
+railway run python -c "from app import app, db; app.app_context().push(); db.create_all(); print('✅ BD creada')"
+
+
+Opción 2 - Crear endpoint temporal:
+
+Agrega esto temporalmente en app.py antes de iniciar:
+
+@app.route('/init-db')
+def init_db():
+    db.create_all()
+    return 'Base de datos inicializada'
+
+Luego visita: https://tu-app.railway.app/init-db
+(Elimina el endpoint después)
+
+
+PASO 4: VERIFICAR QUE FUNCIONA
+─────────────────────────────────────────────────────────────
+
+1. Abre tu URL de Railway en el navegador
+
+2. Deberías ver el sistema de reparaciones
+
+3. Prueba crear una tarjeta de prueba
+
+4. Revisa los logs en Railway (pestaña "Logs")
+
+
+═══════════════════════════════════════════════════════════════
+✅ ¡LISTO! TU APP ESTÁ EN PRODUCCIÓN
+═══════════════════════════════════════════════════════════════
+
+🌐 URLs importantes:
+
+- GitHub Repo: https://github.com/TU_USUARIO/sistema-reparaciones-nanotronics
+- Railway App: https://tu-app.railway.app
+- Railway Dashboard: https://railway.app/project/tu-proyecto
+
+
+📚 Documentación adicional:
+
+- DEPLOY_RAILWAY.md - Guía completa paso a paso
+- README.md - Documentación del proyecto
+- GUIA_NUEVAS_FUNCIONES.md - Tutorial de usuario
+- INSTRUCCIONES_FINALES.md - Guía de configuración
+
+
+🔧 Comandos útiles Railway CLI:
+
+railway logs              # Ver logs en tiempo real
+railway variables         # Ver variables de entorno
+railway connect           # Conectar a la BD
+railway run comando       # Ejecutar comando en Railway
+
+
+🆘 Solución de problemas:
+
+1. "Application failed to respond"
+   → Verifica que PORT use os.getenv('PORT', 5000)
+
+2. "Database connection failed"
+   → Verifica que PostgreSQL esté agregado al proyecto
+
+3. "CORS policy blocked"
+   → Actualiza ALLOWED_ORIGINS con tu URL real
+
+4. Las tarjetas no cargan
+   → Inicializa la base de datos (Paso 3D)
+
+
+═══════════════════════════════════════════════════════════════
+📧 Soporte: revisa DEPLOY_RAILWAY.md o los logs de Railway
+═══════════════════════════════════════════════════════════════
+
